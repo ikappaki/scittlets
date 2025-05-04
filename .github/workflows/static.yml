@@ -32,8 +32,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Remove 'scittlets' link
-          run: |
-            rm -f ./scittlets
+        run: |
+          rm -f ./scittlets
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
