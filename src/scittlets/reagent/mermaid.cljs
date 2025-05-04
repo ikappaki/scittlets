@@ -5,8 +5,8 @@
 (defonce init (.initialize js/mermaid #js {}))
 
 (defn mermaid+
-  "Hello mermaid docstring."
-  [_GRAPH]
+  "Reagent component that renders a diagram from the Mermaid GRAPH definition."
+  [GRAPH]
   (let [primed?* (r/atom false)
         graph-prev* (r/atom nil)
         on-viewport?* (r/atom false)
