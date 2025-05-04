@@ -31,9 +31,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Remove 'scittlets' link
+      - name: rebase
         run: |
-          rm -f ./scittlets
+          find ./ -name "*.html" -exec sed -i 's|<base href="/">|<base href="/scittlets/">|g' {} \;
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
@@ -41,7 +41,6 @@ jobs:
         with:
           # Upload entire repository
           path: '.'
-          exclude: 'scittlets'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
