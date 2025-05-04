@@ -9,6 +9,34 @@
 
 (println :scittlest scittlets)
 
+(defn- html-escape [s]
+  (-> (clojure.string/replace s "&" "&amp;")
+      (clojure.string/replace "<" "&lt;")
+      (clojure.string/replace ">" "&gt;")
+      (clojure.string/replace "\"" "&quot;")
+      (clojure.string/replace "'" "&#39;")))
+
+(defn- url-open [url]
+  (let [window-name url
+        w (js/window.open "about:blank" window-name)]
+    (-> (js/fetch url)
+        (.then #(.text %))
+        (.then (fn [text]
+                 (let [doc (.-document w)]
+                   (.open doc)
+                   (.write doc (str "<title>" window-name "</title>"
+                                    "<pre>"(html-escape text)"</pre>"))
+                   (.close doc)))))))
+
+(defn file-open+ [label url]
+  [:button {:on-click #(url-open url)
+            :style {:all "unset"
+                    :cursor "pointer"
+                    :font-size "10px"
+                    :color "blue"
+                    :text-decoration "underline"}}
+   (str "[" label "]")])
+
 (defn dependencies+ [deps]
   (let [open?* (r/atom false)
         copied?* (r/atom )
@@ -18,15 +46,14 @@
       (let [open? @open?*
             copied? @copied?*]
         [:div
-         {:style {}}
          [:span {:on-click #(swap! open?* not)
-                 :style {:color "red"
-                         :font-weight "bold"
-                         :margin-right "4px"
-                         :cursor "pointer"
+                 :style {:cursor "pointer"
                          :user-select "none"}}
-          (if open? "▾" "▸")]
-         [:span "Dependencies"]
+          [:span {:style {:color "red"
+                          :font-weight "bold"
+                          :margin-right "4px"}}
+           (if open? "▾" "▸")]
+          "Dependencies" (when-not open? " ...")]
          (when open?
            [:div
             [:pre {:style {:border "1px solid #ccc"
@@ -53,13 +80,13 @@
               (if copied? "✔️" "📋")]]])]))))
 
 (defn API+ [var-fn]
-  (let [{:keys [doc arglists]
+  (let [{:keys [arglists doc file]
          nm :name nmspace :ns} (meta var-fn)
         name-full (str nmspace "/" nm)
         args (->> (first arglists)
                   (str/join " "))]
     [:div {:style {:font-family "Arial, sans-serif" :margin "1em"}}
-     [:h2 {:style {:color "#2c3e50"}} name-full]
+     [:h2 {:style {:color "#2c3e50"}} [:span name-full "  " [file-open+ "source" file]]]
      [:p [:code (str "Usage: " "[" nm " " args "]") ]]
      [:pre {:style {:background "#f4f4f4" :padding "1em" :border-radius "5px"}}
       doc]]))
