@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "cljs-josh": "github:chr15m/cljs-josh"
+  }
+}
