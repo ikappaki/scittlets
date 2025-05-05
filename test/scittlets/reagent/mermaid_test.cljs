@@ -33,7 +33,7 @@ graph LR
                            :padding-bottom "5px"}}
      [info+ :scittlets.reagent.mermaid #'mermaid+]]
     [:section.demo
-     [:h4 {:style {:color "#2c3e50"}} [:span "Demo " [file-open+ "source" (:file (meta #'graph+))]]]
+     [:h4 {:style {:color "#2c3e50"}} [:span "Demo " [file-open+ "code" (:file (meta #'graph+))]]]
      [text-input+ input*]
      [graph+ input*]]]
 
