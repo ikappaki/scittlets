@@ -40,7 +40,7 @@ SSE connection established
 
 Use this as a starting point:
 * Scittlet Code: [src/scittlets/reagent/mermaid.cljs](src/scittlets/reagent/mermaid.cljs)
-* HTML page: [test/scittlets/reagent/mermeaid.html](test/scittlets/reagent/mermeaid.html)
+* HTML page: [test/scittlets/reagent/mermaid.html](test/scittlets/reagent/mermaid.html)
 * Demo Web App: [test/scittlets/reagent/mermeaid_test.cljs](test/scittlets/reagent/mermeaid_test.cljs)
 
 Demo available at https://ikappaki.github.io/scittlets/.
