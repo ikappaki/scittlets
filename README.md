@@ -5,15 +5,15 @@
 
 ## Overview
 
-A **scittlet** is a Scittlet namespace with a defined set of `<script>` dependencies that can be loaded in a Scittle Web App.
+A **scittlet** is a Clojurescript namespace designed for use with [Scittle](https://babashka.org/scittle/), with a clearly defined set of `<script>` dependencies that can be loaded in any Scittle Web App.
 
-**Scittlets** is a catalog and repository of such scittlets, offering usage examples and instructions on how to load them into your Scittle web app directly from a CDN.
+**Scittlets** is a catalog and repository of these modules, providing examples and instructions for loading from a CDN into your Scittle web app.
 
-This repository provides the structure for developing, testing, showcasing, and publishing scittlets, served from this GitHub project behind [jsDelivr](https://www.jsdelivr.com/).
+This repository offers the scaffolding needed to develop, test, showcase, and publish scittlets, served via [jsDelivr](https://www.jsdelivr.com/) from this GitHub project.
 
 ## Usage
 
-Visite the [Scittlets Web Catalog](https://ikappaki.github.io/scittlets/) to explore available scittlets.
+Visit the [Scittlets Web Catalog](https://ikappaki.github.io/scittlets/) to explore available scittlets.
 
 To use one:
 
@@ -22,7 +22,7 @@ To use one:
 
 ## Development
 
-Install dependencies
+Install dependencies:
 ```bash
 $ npm install
 ```
@@ -39,9 +39,9 @@ SSE connection established
 ### Example Scittlet: `scittlet.reagent.mermaid`
 
 Use this as a starting point:
-* Scittlet Code: [src/scittlets/reagent/mermaid.cljs](src/scittlets/reagent/mermaid.cljs)
+* Scittlet code: [src/scittlets/reagent/mermaid.cljs](src/scittlets/reagent/mermaid.cljs)
 * HTML page: [test/scittlets/reagent/mermaid.html](test/scittlets/reagent/mermaid.html)
-* Demo Web App: [test/scittlets/reagent/mermeaid_test.cljs](test/scittlets/reagent/mermeaid_test.cljs)
+* Demo code: [test/scittlets/reagent/mermaid_test.cljs](test/scittlets/reagent/mermaid_test.cljs)
 
 Demo available at https://ikappaki.github.io/scittlets/.
 

@@ -35,6 +35,6 @@ graph LR
     [:section.demo
      [:h4 {:style {:color "#2c3e50"}} [:span "Demo " [file-open+ "code" (:file (meta #'graph+))]]]
      [text-input+ input*]
-     [graph+ input*]]]
+     [:div [graph+ input*]]]]
 
    (.getElementById js/document "app")))

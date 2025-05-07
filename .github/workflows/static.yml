@@ -2,9 +2,13 @@
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
+  release:
+    types: [published]
+
+# on:
+#   # Runs on pushes targeting the default branch
+#   push:
+#     branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -34,6 +38,10 @@ jobs:
       - name: rebase
         run: |
           find ./ -name "*.html" -exec sed -i 's|<base href="/">|<base href="/scittlets/">|g' {} \;
+          sed -i "s|https://cdn.jsdelivr.net/gh/ikappaki/scittlets|https://cdn.jsdelivr.net/gh/ikappaki/scittlets@${TAG_NAME}|g" catalog.js
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
@@ -44,3 +52,8 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Upload catalog.js to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: catalog.js

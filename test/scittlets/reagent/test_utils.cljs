@@ -101,7 +101,7 @@
       doc]]))
 
 (defn info+ [namespace-kw var-fn]
-  (let [{:keys [deps home see]} (get scittlets :scittlets.reagent.mermaid)]
+  (let [{:keys [deps home see]} (get scittlets namespace-kw)]
     [:<>
      [API+ var-fn home see]
      [dependencies+ deps]]))
