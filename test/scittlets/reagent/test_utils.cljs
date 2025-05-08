@@ -32,7 +32,7 @@
   [:button {:on-click #(url-text-open url)
             :style {:all "unset"
                     :cursor "pointer"
-                    :font-size "10px"
+                    :font-size "0.6em"
                     :padding-right "5px"
                     :color "blue"
                     :text-decoration "underline"}}
@@ -74,47 +74,59 @@
                        :border "none"
                        :background "transparent"
                        :cursor "pointer"
-                       :font-size "18px"
+                       :font-size "1.2em"
                        :color "#007bff"
                        :transition "color 0.3s ease"}}
               (if copied? "✔️" "📋")]]])]))))
 
-(defn API+ [var-fn home see]
-  (let [{:keys [arglists doc file]
-         nm :name nmspace :ns} (meta var-fn)
-        name-full nm ;;(str nmspace "/" nm)
-        args (->> (first arglists)
-                  (str/join " "))]
-    [:div {:style {:font-family "Arial, sans-serif" :margin "1em"}}
-     [:h2 {:style {:color "#2c3e50"}} name-full ]
-     [:p [:code (str "Usage: " "[" nm " " args "]") ]]
-     [:pre {:style {:background "#f4f4f4" :padding "1em" :border-radius "5px"}}
-      doc]]))
+(defn API+ [vars]
+  (into [:<>]
+        (for [[the-var props] vars]
+          (let [{:keys [reagent?]} props
+                {:keys [arglists doc file]
+                 nm :name nmspace :ns} (meta the-var)
+                args (->> (first arglists)
+                          (str/join " "))]
+            [:div {:style {:font-family "Arial, sans-serif" :margin "1em"}}
+             [:h2 {:style {:color "#2c3e50"}} nm
+              [:span {:style {:font-size "0.5em"}}
+               (cond
+                 reagent?
+                 " (reagent)"
+
+                 (fn? the-var)
+                 (str " (fn)" (ifn? the-var) the-var))]]
+             (cond
+               reagent?
+               [:p [:code (str "Usage: " "[" nm " " args "]")]]
+               (fn? the-var)
+               [:p [:code (str "Usage: " "(" nm " " args ")")]])
+             [:pre {:style {:background "#f4f4f4" :padding "1em" :border-radius "5px"}}
+              doc]]))))
 
 (defn namespace+ [ns-kw version home see]
   (let [my-ns (the-ns (symbol ns-kw))
         ns-var (first (vals (ns-publics my-ns)))
         {:keys [file] :as m
          nmspace :ns} (meta ns-var)]
-    (println :m m)
     [:h2 {:style {:color "#2c3e50"}} (into [:span (str nmspace)
                                             "  " [:code {:style {:padding-right "5px"
-                                                                :font-size "15px"}}
+                                                                :font-size "0.6em"}}
                                                   version] " "
                                             [:a {:href home :target "_blank"
                                                  :style {:padding-right "5px"
-                                                         :font-size "15px"}}
+                                                         :font-size "0.6em"}}
                                              "🏠"]
                                             [file-open+ "code" file]]
                                            (map (fn [[label url]] (vector  :a {:href url :target "_blank"
                                                                                :style {:padding-right "5px"
-                                                                                       :font-size "10px"}}
+                                                                                       :font-size "0.6em"}}
                                                                            (str "[" (name label) "]"))) see))]))
 
-(defn info+ [ns-kw var-fn]
+(defn info+ [ns-kw vars]
   (let [{:keys [version]} scittlets
         {:keys [deps home see]} (get scittlets ns-kw)]
     [:<>
      [namespace+ ns-kw version home see]
-     [API+ var-fn home see]
+     [API+ vars]
      [dependencies+ deps]]))

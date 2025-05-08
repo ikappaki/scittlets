@@ -31,7 +31,7 @@ graph LR
    [:div
     [:section.api {:style {:border-bottom "1px solid #ccc"
                            :padding-bottom "5px"}}
-     [info+ :scittlets.reagent.mermaid #'mermaid+]]
+     [info+ :scittlets.reagent.mermaid {#'mermaid+ {:reagent? true}}]]
     [:section.demo
      [:h4 {:style {:color "#2c3e50"}} [:span "Demo " [file-open+ "code" (:file (meta #'graph+))]]]
      [text-input+ input*]
