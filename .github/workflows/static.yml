@@ -38,8 +38,8 @@ jobs:
       - name: rebase
         run: |
           find ./ -name "*.html" -exec sed -i 's|<base href="/">|<base href="/scittlets/">|g' {} \;
-          sed -i 's|version>main</span>|version>${TAG_NAME}</span>|' index.html
-          sed -i 's/"version" *: *"main"/"version" : "${TAG_NAME}"/' catalog.js
+          sed -i "s|version>main</span>|version>${TAG_NAME}</span>|" index.html
+          sed -i "s/\"version\" *: *\"main\"/\"version\" : \"${TAG_NAME}\"/" catalog.js
           sed -i "s|https://cdn.jsdelivr.net/gh/ikappaki/scittlets|https://cdn.jsdelivr.net/gh/ikappaki/scittlets@${TAG_NAME}|g" catalog.js
         env:
           TAG_NAME: ${{ github.event.release.tag_name }}
