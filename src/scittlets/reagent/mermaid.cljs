@@ -6,10 +6,10 @@
 
 (defn mermaid+
   "Reagent component that renders a diagram in-place from the Mermaid
-  GRAPH definition."
-  [GRAPH]
+  DIAGRAM definition."
+  [DIAGRAM]
   (let [primed?* (r/atom false)
-        graph-prev* (r/atom nil)
+        diagram-prev* (r/atom nil)
         on-viewport?* (r/atom false)
         class* (atom nil)
         observer (js/IntersectionObserver.
@@ -39,9 +39,9 @@
         (.disconnect observer))
 
       :reagent-render
-      (fn [graph]
-        (when (not= graph @graph-prev*)
-          (reset! graph-prev* graph)
+      (fn [diagram]
+        (when (not= diagram @diagram-prev*)
+          (reset! diagram-prev* diagram)
           (reset! class* (str "scittlet-mermaid-" (random-uuid)))
           (reset! primed?* false))
         (let [primed? @primed?*
@@ -52,4 +52,4 @@
                                           (.observe observer el)))
                                  :class @class*
                                  :style {:visibility (if primed? :visible :hidden)}}
-                           graph]))})))
+                           diagram]))})))

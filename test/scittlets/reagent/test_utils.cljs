@@ -9,6 +9,73 @@
 
 ;;(println :scittlest scittlets)
 
+(defn url-text-box+ [URL]
+  (let [open?* (r/atom false)
+        copied?* (r/atom)
+
+        text* (r/atom nil)
+        p (-> (js/fetch URL)
+              (.then #(.text %))
+              (.then (fn [text]
+                       (println :hey)
+                       (reset! text* text))))]
+    (fn [url]
+      (let [open? @open?*
+            copied? @copied?*
+
+            text @text*]
+        (if text
+          [:div
+           [:span {:on-click #(swap! open?* not)
+                   :style {:cursor "pointer"
+                           :user-select "none"}}
+            [:span {:style {:color "red"
+                            :font-weight "bold"
+                            :margin-right "4px"}}
+             (if open? "▾" "▸")]
+            url (when-not open? " ...")]
+           (when open?
+             [:div
+              [:pre {:style {:border "1px solid #ccc"
+                             :margin-top "4px"
+                             :padding "8px"
+                             :font-family "'Courier New', Courier, monospace"
+                             :font-size "0.8em"
+                             :background "#f9f9f9"
+                             :position "relative"}}
+               text
+               [:button{:on-click (fn []
+                                    (copy-to-clipboard text)
+                                    (reset! copied?* true))
+                        :title (if copied? "Copied" "Copy")
+                        :style {:position "absolute"
+                                :top "8px"
+                                :right "8px"
+                                :border "none"
+                                :background "transparent"
+                                :cursor "pointer"
+                                :font-size "1.2em"
+                                :color "#007bff"
+                                :transition "color 0.3s ease"}}
+                (if copied? "✔️" "📋")]]])]
+
+          [:pre "loading..."])))))
+
+(defn demo+ [html-url cljs-url]
+  [:<>
+   [url-text-box+ html-url]
+   [url-text-box+ cljs-url]
+   [:iframe {:name html-url
+             :src html-url
+             :style {"height" "45vh"
+                     "width" "99%"
+                     "border" "5px solid #add8e6"
+                     "border-radius" "5px"
+                     "box-shadow" "0 4px 6px rgba(0, 0, 0, 0.1)"
+                     }}]]
+  )
+
+
 (defn- html-escape [s]
   (-> (clojure.string/replace s "&" "&amp;")
       (clojure.string/replace "<" "&lt;")
@@ -41,7 +108,7 @@
 (defn dependencies+ [deps]
   (let [open?* (r/atom false)
         copied?* (r/atom )
-        copy-tooltip* (r/atom false)
+
         sdeps (str/join "\n" deps)]
     (fn []
       (let [open? @open?*

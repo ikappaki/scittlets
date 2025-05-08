@@ -5,7 +5,7 @@
 
 ## Overview
 
-A **scittlet** is a Clojurescript namespace designed for use with [Scittle](https://babashka.org/scittle/), with a clearly defined set of `<script>` dependencies that can be loaded in any Scittle Web App.
+A **scittlet** is a Clojurescript namespace designed for use with [Scittle](https://babashka.org/scittle/), with a clearly defined set of `<script>` dependencies that can be loaded in any Scittle Web App HTML file.
 
 **Scittlets** is a catalog and repository of these modules, providing examples and instructions for loading from a CDN into your Scittle web app.
 
@@ -17,12 +17,12 @@ Visit the [Scittlets Web Catalog](https://ikappaki.github.io/scittlets/) to expl
 
 To use one:
 
-1. Add its listed dependencies to your Scittle app.
+1. Add its listed dependencies to your Scittle app HTML file.
 2. Follow the usage instructions and demo code provided.
 
 ## Development
 
-Install dependencies:
+Install dev dependencies:
 ```bash
 $ npm install
 ```
@@ -36,13 +36,18 @@ Serving ./ on port 8000:
 SSE connection established
 ```
 
+Scittlets are listed in the catalog file: [catalog.js](catalog.js), which serves as the metadata registry for all published scittlets.
+
 ### Example Scittlet: `scittlet.reagent.mermaid`
 
-Use this as a starting point:
+This is a provides a [reagent](https://reagent-project.github.io/) component around [mermaid](https://mermaid.js.org/), the diagramming and charting tool.
+
+Use this  scittlet as a starting point:
+* Example code: [examples/mermaid/mermaid_demo.cljs](examples/mermaid/mermaid_demo.cljs)
+* Example page: [examples/mermaid/mermaid_demo.html](examples/mermaid/mermaid_demo.html)
+* Test code: [test/scittlets/reagent/mermaid_test.cljs](test/scittlets/reagent/mermaid_test.cljs)
+* Test page: [test/scittlets/reagent/mermaid.html](test/scittlets/reagent/mermaid.html)
 * Scittlet code: [src/scittlets/reagent/mermaid.cljs](src/scittlets/reagent/mermaid.cljs)
-* HTML page: [test/scittlets/reagent/mermaid.html](test/scittlets/reagent/mermaid.html)
-* Demo code: [test/scittlets/reagent/mermaid_test.cljs](test/scittlets/reagent/mermaid_test.cljs)
+* Catalog metadata: [catalog.js](catalog.js)
 
-Demo available at https://ikappaki.github.io/scittlets/.
 
-Scittlets are listed in the catalog file: [catalog.js](catalog.js), which serves as the metadata registry for all published scittlets.
