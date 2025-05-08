@@ -82,26 +82,39 @@
 (defn API+ [var-fn home see]
   (let [{:keys [arglists doc file]
          nm :name nmspace :ns} (meta var-fn)
-        name-full (str nmspace "/" nm)
+        name-full nm ;;(str nmspace "/" nm)
         args (->> (first arglists)
                   (str/join " "))]
     [:div {:style {:font-family "Arial, sans-serif" :margin "1em"}}
-     [:h2 {:style {:color "#2c3e50"}} (into [:span name-full
-                                             "  " [:a {:href home :target "_blank"
-                                                       :style {:padding-right "5px"
-                                                               :font-size "15px"}}
-                                                   "🏠"]
-                                             [file-open+ "code" file]]
-                                            (map (fn [[label url]] (vector  :a {:href url :target "_blank"
-                                                                                :style {:padding-right "5px"
-                                                                                        :font-size "10px"}}
-                                                                            (str "[" (name label) "]"))) see))]
+     [:h2 {:style {:color "#2c3e50"}} name-full ]
      [:p [:code (str "Usage: " "[" nm " " args "]") ]]
      [:pre {:style {:background "#f4f4f4" :padding "1em" :border-radius "5px"}}
       doc]]))
 
-(defn info+ [namespace-kw var-fn]
-  (let [{:keys [deps home see]} (get scittlets namespace-kw)]
+(defn namespace+ [ns-kw version home see]
+  (let [my-ns (the-ns (symbol ns-kw))
+        ns-var (first (vals (ns-publics my-ns)))
+        {:keys [file] :as m
+         nmspace :ns} (meta ns-var)]
+    (println :m m)
+    [:h2 {:style {:color "#2c3e50"}} (into [:span (str nmspace)
+                                            "  " [:code {:style {:padding-right "5px"
+                                                                :font-size "15px"}}
+                                                  version] " "
+                                            [:a {:href home :target "_blank"
+                                                 :style {:padding-right "5px"
+                                                         :font-size "15px"}}
+                                             "🏠"]
+                                            [file-open+ "code" file]]
+                                           (map (fn [[label url]] (vector  :a {:href url :target "_blank"
+                                                                               :style {:padding-right "5px"
+                                                                                       :font-size "10px"}}
+                                                                           (str "[" (name label) "]"))) see))]))
+
+(defn info+ [ns-kw var-fn]
+  (let [{:keys [version]} scittlets
+        {:keys [deps home see]} (get scittlets ns-kw)]
     [:<>
+     [namespace+ ns-kw version home see]
      [API+ var-fn home see]
      [dependencies+ deps]]))

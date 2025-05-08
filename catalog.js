@@ -1,5 +1,6 @@
 // The Scittlets catalog
 var scittlets = {
+  "version" : "main",
   "scittlets.reagent.mermaid" :
   {"home": "https://github.com/ikappaki/scittlets",
    "deps" : ["<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",
