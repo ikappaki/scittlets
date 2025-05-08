@@ -35,12 +35,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
       - name: rebase
         run: |
           find ./ -name "*.html" -exec sed -i 's|<base href="/">|<base href="/scittlets/">|g' {} \;
           sed -i "s|version>main</span>|version>${TAG_NAME}</span>|" index.html
           sed -i "s/\"version\" *: *\"main\"/\"version\" : \"${TAG_NAME}\"/" catalog.js
           sed -i "s|https://cdn.jsdelivr.net/gh/ikappaki/scittlets|https://cdn.jsdelivr.net/gh/ikappaki/scittlets@${TAG_NAME}|g" catalog.js
+          # this has to be run after catalog has been updated
+          node scripts/examples_deps_update.js
         env:
           TAG_NAME: ${{ github.event.release.tag_name }}
 
