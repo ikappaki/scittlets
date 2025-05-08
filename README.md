@@ -20,6 +20,8 @@ To use one:
 1. Add its listed dependencies to your Scittle app HTML file.
 2. Follow the usage instructions and demo code provided.
 
+## Scittlets
+
 ### [scittlet.reagent.mermaid](https://ikappaki.github.io/scittlets/test/scittlets/reagent/mermaid.html)
 
 It provides a [reagent](https://reagent-project.github.io/) component around [mermaid](https://mermaid.js.org/), the diagramming and charting tool.
