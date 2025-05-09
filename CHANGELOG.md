@@ -3,4 +3,4 @@
 ## Unreleased
 
 * Created Scittlets framework.
-* Added `scittlet.reagent.mermaid` scittlet.
+* Added `scittlet.reagent.mermaid`.

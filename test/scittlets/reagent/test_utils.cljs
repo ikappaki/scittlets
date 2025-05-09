@@ -9,21 +9,27 @@
 
 ;;(println :scittlest scittlets)
 
+(defn fetch->ratom [url]
+  (let [ratom* (r/atom nil)
+        _p (-> (js/fetch url)
+               (.then #(.text %))
+               (.catch #(reset! ratom* {:error (str [:url url :error-fetch (str %)])}))
+               (.then (fn [text]
+                        (reset! ratom* {:result text})))
+               (.catch #(reset! ratom* {:error (str [:url url :error-text (str %)])})))]
+    (println :fetching... url)
+    ratom*))
+
 (defn url-text-box+ [URL]
   (let [open?* (r/atom false)
         copied?* (r/atom)
 
-        text* (r/atom nil)
-        p (-> (js/fetch URL)
-              (.then #(.text %))
-              (.then (fn [text]
-                       (println :hey)
-                       (reset! text* text))))]
+        text* (fetch->ratom URL)]
     (fn [url]
       (let [open? @open?*
             copied? @copied?*
 
-            text @text*]
+            {:keys [result error] :as text} @text*]
         (if text
           [:div
            [:span {:on-click #(swap! open?* not)
@@ -35,34 +41,40 @@
              (if open? "▾" "▸")]
             url (when-not open? " ...")]
            (when open?
-             [:div
-              [:pre {:style {:border "1px solid #ccc"
-                             :margin-top "4px"
-                             :padding "8px"
-                             :font-family "'Courier New', Courier, monospace"
-                             :font-size "0.8em"
-                             :background "#f9f9f9"
-                             :position "relative"}}
-               text
-               [:button{:on-click (fn []
-                                    (copy-to-clipboard text)
-                                    (reset! copied?* true))
-                        :title (if copied? "Copied" "Copy")
-                        :style {:position "absolute"
-                                :top "8px"
-                                :right "8px"
-                                :border "none"
-                                :background "transparent"
-                                :cursor "pointer"
-                                :font-size "1.2em"
-                                :color "#007bff"
-                                :transition "color 0.3s ease"}}
-                (if copied? "✔️" "📋")]]])]
+             (if error
+               [:div "Error: " (str error)]
 
-          [:pre "loading..."])))))
+               [:div
+                [:pre {:style {:border "1px solid #ccc"
+                               :margin-top "4px"
+                               :padding "8px"
+                               :font-family "'Courier New', Courier, monospace"
+                               :font-size "0.8em"
+                               :background "#f9f9f9"
+                               :position "relative"}}
+                 result
+                 [:button{:on-click (fn []
+                                      (copy-to-clipboard text)
+                                      (reset! copied?* true))
+                          :title (if copied? "Copied" "Copy")
+                          :style {:position "absolute"
+                                  :top "8px"
+                                  :right "8px"
+                                  :border "none"
+                                  :background "transparent"
+                                  :cursor "pointer"
+                                  :font-size "1.2em"
+                                  :color "#007bff"
+                                  :transition "color 0.3s ease"}}
+                  (if copied? "✔️" "📋")]]]))]
+
+          [:pre "reading... " url])))))
 
 (defn demo+ [html-url cljs-url]
   [:<>
+   [:h4 {:style {:color "#2c3e50"}} "Demo" [:span [:a {:href html-url
+                                                       :target "_blank"
+                                                       :style {:font-size "0.6em"}} " [open]"]]]
    [url-text-box+ html-url]
    [url-text-box+ cljs-url]
    [:iframe {:name html-url

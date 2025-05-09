@@ -40,7 +40,6 @@ graph LR
      [diagram+ input*]]
 
     [:section.demo
-     [:h4 {:style {:color "#2c3e50"}} "Demo"]
      [demo+ "examples/mermaid/mermaid_demo.html" "examples/mermaid/mermaid_demo.cljs"]]]
 
    (.getElementById js/document "app")))

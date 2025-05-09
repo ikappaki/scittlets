@@ -5,15 +5,15 @@
 
 ## Overview
 
-A **scittlet** is a Clojurescript namespace designed for use with [Scittle](https://babashka.org/scittle/), with a clearly defined set of `<script>` dependencies that can be loaded in any Scittle Web App HTML file.
+A **scittlet** is a Clojurescript namespace designed for use with [Scittle](https://babashka.org/scittle/), with a clearly defined set of `<script>` dependencies that can be loaded in any Scittle HTML file.
 
-**Scittlets** is a catalog and repository of these modules, providing examples and instructions for loading from a CDN into your Scittle web app.
+**Scittlets** is a versioned catalog and repository of these modules, providing examples and instructions for loading from CDN into your Scittle file.
 
 This repository offers the scaffolding needed to develop, test, showcase, and publish scittlets, served via [jsDelivr](https://www.jsdelivr.com/) from this GitHub project.
 
 ## Usage
 
-Visit the [Scittlets Web Catalog](https://ikappaki.github.io/scittlets/) to explore available scittlets.
+Explore available scittlets in the [Web Catalog](https://ikappaki.github.io/scittlets/).
 
 To use one:
 
@@ -24,7 +24,7 @@ To use one:
 
 ### [scittlet.reagent.mermaid](https://ikappaki.github.io/scittlets/test/scittlets/reagent/mermaid.html)
 
-It provides a [reagent](https://reagent-project.github.io/) component around [mermaid](https://mermaid.js.org/), the diagramming and charting tool.
+A [reagent](https://reagent-project.github.io/) component around [mermaid](https://mermaid.js.org/), the diagramming and charting tool.
 
 ## Development
 
@@ -42,16 +42,14 @@ Serving ./ on port 8000:
 SSE connection established
 ```
 
-Scittlets are listed in the catalog file: [catalog.js](catalog.js), which serves as the metadata registry for all published scittlets.
+Scittlets are listed in [catalog.js](catalog.js), the metadata registry.
 
 ### Example Scittlet: `scittlet.reagent.mermaid`
 
 Use this scittlet as a starting point for development:
-* Scittlet code: [src/scittlets/reagent/mermaid.cljs](src/scittlets/reagent/mermaid.cljs)
-* Catalog metadata: [catalog.js](catalog.js)
-* Test code: [test/scittlets/reagent/mermaid_test.cljs](test/scittlets/reagent/mermaid_test.cljs)
+* Code: [src/scittlets/reagent/mermaid.cljs](src/scittlets/reagent/mermaid.cljs)
+* Metadata: [catalog.js](catalog.js)
+* Test: [test/scittlets/reagent/mermaid_test.cljs](test/scittlets/reagent/mermaid_test.cljs)
 * Test page: [test/scittlets/reagent/mermaid.html](test/scittlets/reagent/mermaid.html)
-* Example code: [examples/mermaid/mermaid_demo.cljs](examples/mermaid/mermaid_demo.cljs)
-* Example page: [examples/mermaid/mermaid_demo.html](examples/mermaid/mermaid_demo.html)
-
-
+* Demo code: [examples/mermaid/mermaid_demo.cljs](examples/mermaid/mermaid_demo.cljs)
+* Demo page: [examples/mermaid/mermaid_demo.html](examples/mermaid/mermaid_demo.html)
