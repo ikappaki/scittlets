@@ -1,3 +1,5 @@
+[![Latest Release](https://img.shields.io/github/v/release/ikappaki/scittlets)](https://ikappaki.github.io/scittlets/)
+
 > [!NOTE]
 > Experimental, Proof Of Concept.
 
