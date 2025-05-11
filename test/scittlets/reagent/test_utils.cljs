@@ -2,23 +2,35 @@
   (:require [reagent.core :as r]
             [clojure.string :as str]))
 
+(defn fetch->ratom
+  ([url]
+   (fetch->ratom url nil))
+  ([url tx-fn]
+   (let [ratom* (r/atom nil)
+         _p (-> (js/fetch url)
+                (.then #(-> (.text %)
+                            (.then (fn [text]
+                                     (let [ret (if tx-fn
+                                                 (try
+                                                   {:result (tx-fn text)}
+                                                   (catch :default e
+                                                     {:error [:error-fetch-text-transform (str e) :url url]}))
+                                                 {:result text})]
+                                       (reset! ratom* ret))))
+                            (.catch (fn [err]
+                                      (reset! ratom* {:error (str [:url url :error-text (str err)])})))))
+                (.catch #(reset! ratom* {:error (str [:url url :error-fetch (str %)])})))]
+     (println :fetching... url)
+     ratom*)))
+
+(def catalog* (fetch->ratom "catalog.json" #(-> (.parse js/JSON %)
+                                                  (js->clj :keywordize-keys true))))
+
+(defn catalog [])
+;;(println :scittlest catalog)
+
 (defn copy-to-clipboard [text]
   (.writeText (.-clipboard js/navigator) text))
-
-(def scittlets (js->clj js/scittlets_metadata {:keywordize-keys true}))
-
-;;(println :scittlest scittlets)
-
-(defn fetch->ratom [url]
-  (let [ratom* (r/atom nil)
-        _p (-> (js/fetch url)
-               (.then #(.text %))
-               (.catch #(reset! ratom* {:error (str [:url url :error-fetch (str %)])}))
-               (.then (fn [text]
-                        (reset! ratom* {:result text})))
-               (.catch #(reset! ratom* {:error (str [:url url :error-text (str %)])})))]
-    (println :fetching... url)
-    ratom*))
 
 (defn url-text-box+ [URL]
   (let [open?* (r/atom false)
@@ -41,32 +53,33 @@
              (if open? "▾" "▸")]
             url (when-not open? " ...")]
            (when open?
-             (if error
-               [:div "Error: " (str error)]
+             (do (println :error error text)
+               (if error
+                 [:pre "Error: " (str error)]
 
-               [:div
-                [:pre {:style {:border "1px solid #ccc"
-                               :margin-top "4px"
-                               :padding "8px"
-                               :font-family "'Courier New', Courier, monospace"
-                               :font-size "0.8em"
-                               :background "#f9f9f9"
-                               :position "relative"}}
-                 result
-                 [:button{:on-click (fn []
-                                      (copy-to-clipboard text)
-                                      (reset! copied?* true))
-                          :title (if copied? "Copied" "Copy")
-                          :style {:position "absolute"
-                                  :top "8px"
-                                  :right "8px"
-                                  :border "none"
-                                  :background "transparent"
-                                  :cursor "pointer"
-                                  :font-size "1.2em"
-                                  :color "#007bff"
-                                  :transition "color 0.3s ease"}}
-                  (if copied? "✔️" "📋")]]]))]
+                 [:div
+                  [:pre {:style {:border "1px solid #ccc"
+                                 :margin-top "4px"
+                                 :padding "8px"
+                                 :font-family "'Courier New', Courier, monospace"
+                                 :font-size "0.8em"
+                                 :background "#f9f9f9"
+                                 :position "relative"}}
+                   result
+                   [:button{:on-click (fn []
+                                        (copy-to-clipboard text)
+                                        (reset! copied?* true))
+                            :title (if copied? "Copied" "Copy")
+                            :style {:position "absolute"
+                                    :top "8px"
+                                    :right "8px"
+                                    :border "none"
+                                    :background "transparent"
+                                    :cursor "pointer"
+                                    :font-size "1.2em"
+                                    :color "#007bff"
+                                    :transition "color 0.3s ease"}}
+                    (if copied? "✔️" "📋")]]])))]
 
           [:pre "reading... " url])))))
 
@@ -203,9 +216,16 @@
                                                                            (str "[" (name label) "]"))) see))]))
 
 (defn info+ [ns-kw vars]
-  (let [{:keys [version]} scittlets
-        {:keys [deps home see]} (get scittlets ns-kw)]
-    [:<>
-     [namespace+ ns-kw version home see]
-     [API+ vars]
-     [dependencies+ deps]]))
+  (let [{catalog :result
+         :keys [error] :as _catalog} @catalog*]
+    (if-not catalog
+      [:div "Loading scittlets catalog ..."]
+      (if error
+        [:pre (str "Error: " error)]
+
+        (let [{:keys [version]} catalog
+              {:keys [deps home see]} (get catalog ns-kw)]
+          [:<>
+           [namespace+ ns-kw version home see]
+           [API+ vars]
+           [dependencies+ deps]])))))

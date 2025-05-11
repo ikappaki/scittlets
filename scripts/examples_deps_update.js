@@ -9,9 +9,17 @@
 
 const fs = require('fs');
 const path = require('path');
-const catalog = require('../catalog');
+let catalog = null;
 
 const inputDir = 'examples';
+
+try {
+  const data = fs.readFileSync('catalog.json', 'utf8');
+  catalog = JSON.parse(data);
+  console.log(catalog);
+} catch (err) {
+  console.error('Error reading or parsing the catalog file:', err);
+}
 
 function processDirectory(dirPath) {
   const entries = fs.readdirSync(dirPath, { withFileTypes: true });

@@ -41,8 +41,8 @@ jobs:
         run: |
           find ./ -name "*.html" -exec sed -i 's|<base href="/">|<base href="/scittlets/">|g' {} \;
           sed -i "s|version>main</span>|version>${TAG_NAME}</span>|" index.html
-          sed -i "s/\"version\" *: *\"main\"/\"version\" : \"${TAG_NAME}\"/" catalog.js
-          sed -i "s|https://cdn.jsdelivr.net/gh/ikappaki/scittlets|https://cdn.jsdelivr.net/gh/ikappaki/scittlets@${TAG_NAME}|g" catalog.js
+          sed -i "s/\"version\" *: *\"main\"/\"version\" : \"${TAG_NAME}\"/" catalog.json
+          sed -i "s|https://cdn.jsdelivr.net/gh/ikappaki/scittlets|https://cdn.jsdelivr.net/gh/ikappaki/scittlets@${TAG_NAME}|g" catalog.json
           # this has to be run after catalog has been updated
           node scripts/examples_deps_update.js
         env:
@@ -59,7 +59,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Upload catalog.js to Release
+      - name: Upload catalog.json to Release
         uses: softprops/action-gh-release@v1
         with:
-          files: catalog.js
+          files: catalog.json
