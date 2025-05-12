@@ -1,5 +1,6 @@
 {
   "devDependencies": {
-    "cljs-josh": "github:chr15m/cljs-josh"
+    "cljs-josh": "github:chr15m/cljs-josh",
+    "nbb": "^1.3.201"
   }
 }
