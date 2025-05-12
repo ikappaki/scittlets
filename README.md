@@ -32,8 +32,7 @@ A [reagent](https://reagent-project.github.io/) component around [mermaid](https
 
 ### scripts/deps_update.cljs
 
-This [Nbb](https://github.com/babashka/nbb) script manages Scittlet dependencies in HTML files or lists available versions and scittlets from the Catalog.
-
+This [Nbb](https://github.com/babashka/nbb) script manages Scittlet dependencies in HTML files or lists available versions and scittlets from the Catalog:
 ```bash
 $ npx nbb scripts/deps_update.cljs -h
 
@@ -48,7 +47,7 @@ Usage: npx nbb <script> [-h] [version [scittlet file]]
   <version> <scittlet> <file>: Update the HTML FILE with dependencies for the SCITTLET in VERSION.
 ```
 
-The first time you add a scittlet dependency to an HTML file, the script will prompt you to insert dependency markers inside the `<head>` section:
+The first time you try to add a scittlet dependency to an HTML file, the script will prompt you to insert dependency markers inside the `<head>` section:
 ```bash
 $ npx nbb scripts/deps_update.cljs :latest scittlets.reagent.mermaid d:/scittlets-slides/index.html
 ...
@@ -63,7 +62,7 @@ Scittlet markers not found in HTML file for: scittlets.reagent.mermaid
    <script src="https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.min.js" type="application/javascript"></script>
 ```
 
-Once markers are present, the script will insert required scripts and metadata:
+Once markers are present, the script will insert or update the required script deps and metadata:
 ```bash
 $ npx nbb scripts/deps_update.cljs :latest scittlets.reagent.mermaid d:/scittlets-slides/index.html
 ...
