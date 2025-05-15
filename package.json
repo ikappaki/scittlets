@@ -1,9 +1,31 @@
 {
-  "devDependencies": {
-    "cljs-josh": "github:chr15m/cljs-josh"
+  "name": "scittlets",
+  "description": "CLI tool to help manage scittlet dependencies",
+  "homepage": "https://github.com/ikappaki/scittlets",
+  "author": "ikappaki",
+  "version": "0.1.0-rc.2",
+  "keywords": [
+    "cljs", "scittle"
+  ],
+  "type": "module",
+  "bin": {
+    "scittlets": "scripts/scittlets.mjs"
   },
   "dependencies": {
     "cherry-cljs": "^0.4.28",
     "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "cljs-josh": "^0.0.7"
+  },
+  "files": [
+    "scripts/scittlets.cljs",
+    "scripts/scittlets.mjs"
+  ],
+  "scripts": {
+    "prepublishOnly": "npx cherry compile scripts/scittlets.cljs && sed -i '1i #!/usr/bin/env node' scripts/scittlets.mjs"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

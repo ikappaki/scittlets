@@ -1,7 +1,6 @@
 (ns scittlets
   (:require ["fs" :as fs]
             ["yargs$default" :as yargs]
-            [clojure.pprint :as pp]
             [clojure.string :as str]))
 
 
@@ -10,23 +9,26 @@
   (when @v? (apply println args)))
 
 
+(def script-filename "scittlets")
+
 (def spec (-> (yargs)
               (.showHelpOnFail true)
-              (.usage "Usage: scittlets <command> [option]")
+              (.scriptName script-filename)
+              (.usage "Usage: scittlets <command> [options]")
               (.command "tags" "List all release TAGS available in the scittlet Catalog.")
               (.command "list [tag]" "List all scittlets in the catalog for the specified TAG."
                         (clj->js {:tag {:alias "t"
                                         :description "Catalog tag to use"
                                         :default "latest"
                                         :type "string"}}))
-              (.command "update <path> <scittlet> [tag]" "Update existing SCITTLET dependencies in the HTML file at PATH using the catalog at the specified TAG."
+              (.command "update <path> <scittlet> [tag]" "Update existing SCITTLET dependencies in the HTML file at PATH using the catalog for the specified TAG."
                         (fn [y]
                           (-> y
                               (.positional "path"
                                            (clj->js {:describe "Path to the HTML file"
                                                      :type "string"}))
                               (.positional "scittlet"
-                                           (clj->js {:describe "Scittlet to update"
+                                           (clj->js {:describe "Scittlet to update deps for"
                                                      :type "string"}))
                               (.option "tag"
                                        (clj->js {:alias "t"
@@ -43,9 +45,9 @@
                                         (reset! v? true))))
               (.help)))
 
-(def gh-token (.-GITHUB_PUBLIC_TOKEN js/process.env))
 (def releases-url "https://api.github.com/repos/ikappaki/scittlets/releases") 
 (def catalog-download-url "https://github.com/ikappaki/scittlets/releases/download/")
+(def gh-token (.-GITHUB_PUBLIC_TOKEN js/process.env))
 (def headers (clj->js (cond-> {:headers {"User-Agent" "scittlets"}}
                         gh-token
                         (assoc "Authorization" (str "Bearer " gh-token)))))
@@ -60,7 +62,6 @@
   (debug :releases/url releases-url)
   (debug :catalog/url catalog-download-url)
   (debug :env/GITHUB_PUBLIC_TOKEN (if gh-token :set :not-set) "\n")
-
 
   (let [cmd (get (.-_ argv) 0)]
     (case cmd
@@ -88,19 +89,22 @@
         (println "\nFile to update:" target "\n")
 
         (if-not (readable? target)
-          (exit 1 :error "Can't find, or read, file:" target)
+          (exit 1 :update-error "Can't find, or read, file:" target)
 
           (let [catalog (js/await (catalog-get tag))
                 scittlets (into {} (filter (fn [[_k v]] (and (map? v) (contains? v "deps"))) catalog))
                 scittlet-names (keys scittlets)]
             (debug :catalog/scittlets (str/join " " scittlet-names))
             (if-not (some #{scittlet} scittlet-names)
-              (exit 1 :error "can't find scittlet:" scittlet)
+              (exit 1 :update-error "can't find scittlet in the Catalog:" scittlet)
 
               (deps-update! target catalog scittlet)))))
 
+      nil
+      (.showHelp spec)
+
       ;; else
-      (do (when cmd (println :error ":command-unknown" cmd))
+      (do (println "Unknown command:" cmd "\n")
           (.showHelp spec)
           (exit 1)))))
 
@@ -126,7 +130,7 @@
             :else
             {:error [:data-fetch/error :uknown-content-type tp]}))))
     (catch :default e
-      (println :data-fetch-exception e)
+      (println :data-fetch/exception e)
       {:error (str e)})))
 
 (defn exit [code & msg]
@@ -212,13 +216,11 @@
            "  <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.min.js\" type=\"application/javascript\"></script>\n")
 
           (let [lw (get-leading-whitespace (get lines start-i))
-
                 deps-meta (concat [(str "<meta name=\"" key ".version\" content=\"" version "\">")] deps)
                 deps-up (map #(str lw %) deps-meta)
                 lines-up (replace-subvector lines (inc start-i) end-i deps-up)
                 updated (str/join "\n" lines-up)]
             (println "Scittlet deps:\n" (str/join "\n" deps-up))
-            ;; (pp/pprint {:deps/updating deps-up})
             (fs/writeFileSync html-path updated)
             (println "\nDeps updated:" html-path key)))))))
 
@@ -229,7 +231,7 @@
       (rest args)
       args)))
 
-(def args (args-get "scittlets"))
+(def args (args-get script-filename))
 (def yargv (.parse spec (clj->js args)))
 
-(js/process.exit (js/await (dispatch yargv)))
+(js/await (dispatch yargv))
