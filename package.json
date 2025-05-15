@@ -1,6 +1,9 @@
 {
   "devDependencies": {
-    "cljs-josh": "github:chr15m/cljs-josh",
-    "nbb": "^1.3.201"
+    "cljs-josh": "github:chr15m/cljs-josh"
+  },
+  "dependencies": {
+    "cherry-cljs": "^0.4.28",
+    "yargs": "^17.7.2"
   }
 }
