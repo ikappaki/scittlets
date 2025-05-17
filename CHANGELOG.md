@@ -4,7 +4,9 @@
 
 ## Unreleased Catalog
 
-## Unreleased cli
+## Unreleased CLI
+
+# cli-v0.1.0
 
 * Migrated `deps_update` script to a standalone npm `scittlets` cli tool (#1).
 
