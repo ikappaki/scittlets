@@ -143,7 +143,9 @@
       (exit 1 :tags-get/error error)
 
       (let [tags (.sort result (fn [a b] (- (js/Date. (.-published_at b)) (js/Date. (.-published_at a)))))
-            tags (js->clj (map #(.-tag_name %) tags))]
+            tags (js->clj (->> (map #(.-tag_name %) tags)
+                               ;; only the catalog releases
+                               (filter #(str/starts-with? % "v"))))]
         tags))))
 
 (defn ^:async catalog-get [tag]
