@@ -55,12 +55,8 @@ jobs:
         env: 
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Upload npm package tarball
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload catalog.json to Release
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./dist/*.tgz
-          asset_name: scittlets-cli.tgz
-          asset_content_type: application/gzip                      
+          files: ./dist/*.tgz
+
