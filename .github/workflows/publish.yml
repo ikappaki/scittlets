@@ -46,6 +46,8 @@ jobs:
           npm link
           scittlets
 
+          rm -fr ./dist
+          mkdir dist
           npm pack --pack-destination ./dist
           
       - name: Publish to npm
