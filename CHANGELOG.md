@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased
+**Note:** `v` versions is for Catalog, `cli-v` is for npm CLI releases.
+
+## Unreleased Catalog
+
+## Unreleased cli
+
+* Migrated `deps_update` script to a standalone npm `scittlets` cli tool (#1).
 
 ## v0.1.0
 

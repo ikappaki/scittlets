@@ -1,4 +1,4 @@
-[![Latest Release](https://img.shields.io/github/v/release/ikappaki/scittlets)](https://ikappaki.github.io/scittlets/)
+[![Catalog](https://img.shields.io/github/v/release/ikappaki/scittlets)](https://ikappaki.github.io/scittlets/) [![cli](https://img.shields.io/npm/v/scittlets.svg)](https://www.npmjs.com/package/scittlets)
 
 > [!NOTE]
 > Experimental, Proof Of Concept.
@@ -9,9 +9,9 @@
 
 A **scittlet** is a Clojurescript namespace designed for use with [Scittle](https://babashka.org/scittle/), with a clearly defined set of `<script>` dependencies that can be loaded in any Scittle HTML file.
 
-**Scittlets** is a versioned catalog and repository of these modules, providing examples and instructions for loading from CDN into your Scittle file.
+**Scittlets** is a versioned catalog and repository of these modules, providing examples and instructions for loading from CDN into your Scittle file. It also includes a command-line tool (`scittlets`) to help manage scittlet dependencies in HTML files.
 
-This repository offers the scaffolding needed to develop, test, showcase, and publish scittlets, served via [jsDelivr](https://www.jsdelivr.com/) from this GitHub project.
+The repository offers the scaffolding needed to develop, test, showcase, and publish scittlets, served via [jsDelivr](https://www.jsdelivr.com/) from the [Scitlets GitHub project](https://github.com/ikappaki/scittlets) itself.
 
 ## Usage
 
@@ -19,63 +19,77 @@ Explore available scittlets in the [Web Catalog](https://ikappaki.github.io/scit
 
 To use one:
 
-1. Add its listed dependencies to your Scittle HTML file manually, or use the [deps_update](#scriptsdeps_updatecljs) script.
-2. Follow the usage instructions and demo code provided.
+1. Add its listed dependencies to your Scittle HTML file manually, or
+2. Use the [scittlets](#CLI-scittlets) CLI command available via `npx` to manage dependencies easily.
+
+Follow the usage instructions and demo code provided.
+
+### CLI: scittlets
+
+Manage scittlet dependencies in HTML files.
+
+Use the CLI with `npx`, no install required. Optional global install: `npm install -g scittlets`.
+
+Run commands with:
+``` bash
+npx scittlets <command> [options]
+```
+
+#### Commands
+- `update <path> <scittlet> [tag]`
+
+  Update SCITTLET dependencies in the HTML file at PATH using the catalog at the specified TAG (default: `latest`).
+
+- `list [tag]`
+
+  List all scittlets for the specified catalog TAG (default: `latest`).
+
+- `tags`
+
+  List all release tags available in the scittlet catalog.
+
+#### Example usage
+List tags:
+
+```bash
+npx scittlets tags
+```
+
+List scittlets for the latest tag:
+```bash
+npx scittlets list
+```
+
+Update dependencies in an HTML file:
+
+```bash
+npx scittlets update ./index.html scittlets.reagent.mermaid
+```
+
+#### Important
+- When updating dependencies for the first time, insert these markers inside the HTML `<head>`:
+  ```html
+  <!-- Scittlet dependencies: scittlets.reagent.mermaid -->
+  <!-- Scittlet dependencies: end -->
+  ```
+
+- Place this block after the Scittle script tag:
+  ```html
+  <script src="https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.min.js" type="application/javascript"></script>
+  ```
+
+- To avoid GitHub API rate limits, set the environment variable `GITHUB_PUBLIC_TOKEN` (no scopes needed):
+  ```bash
+  export GITHUB_PUBLIC_TOKEN=your_token_here
+  # or, on PowerShell
+  $env:GITHUB_PUBLIC_TOKEN="your_token_here"
+  ```
 
 ## Scittlets
 
 ### [scittlet.reagent.mermaid](https://ikappaki.github.io/scittlets/test/scittlets/reagent/mermaid.html)
 
 A [reagent](https://reagent-project.github.io/) component around [mermaid](https://mermaid.js.org/), the diagramming and charting tool.
-
-## Scripts
-
-### scripts/deps_update.cljs
-
-This [Nbb](https://github.com/babashka/nbb) script manages Scittlet dependencies in HTML files or lists available versions and scittlets from the Catalog:
-```bash
-$ npx nbb scripts/deps_update.cljs -h
-
-Usage: npx nbb <script> [-h] [version [scittlet file]]
-  List catalog versions and scittlets, or update an HTML file with scittlet dependencies.
-
-  No arguments:                List catalog versions from GitHub releases.
-                               (Set GITHUB_PUBLIC_TOKEN to avoid API rate limits, no scopes needed)
-  <version>:                   List available scittlets in the given VERSION.
-                               (":latest" refers to the most recent version available)
-  <version> <scittlet>:        List metadata of the SCITTLET in VERSION.
-  <version> <scittlet> <file>: Update the HTML FILE with dependencies for the SCITTLET in VERSION.
-```
-
-The first time you try to add a scittlet dependency to an HTML file, the script will prompt you to insert dependency markers inside the `<head>` section:
-```bash
-$ npx nbb scripts/deps_update.cljs :latest scittlets.reagent.mermaid d:/scittlets-slides/index.html
-...
-Scittlet markers not found in HTML file for: scittlets.reagent.mermaid 
-
- Please place the following empty markers inside the <HEAD> of the HTML file, then rerun the script:
-
-  <!-- Scittlet dependencies: scittlets.reagent.mermaid -->
-  <!-- Scittlet dependencies: end -->
-
- Ensure this block appears after the Scittle script tag, which typically looks like:
-   <script src="https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.min.js" type="application/javascript"></script>
-```
-
-Once markers are present, the script will insert or update the required script deps and metadata:
-```bash
-$ npx nbb scripts/deps_update.cljs :latest scittlets.reagent.mermaid d:/scittlets-slides/index.html
-...
-{:deps/updating
- ("    <meta name=\"scittlets.reagent.mermaid.version\" content=\"v0.1.0b2\">"
-  "    <script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>"
-  "    <script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>"
-  "    <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>"
-  "    <script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\"></script>"
-  "    <script src=\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.1.0b2/src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>")}
-
-:deps/updated d:/scittlets-slides/index.html scittlets.reagent.mermaid
-```
 
 ## Development
 

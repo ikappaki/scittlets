@@ -1,0 +1,64 @@
+name: Publish CLI to npm
+
+on:
+  push:
+    tags:
+      - 'cli-v*'
+
+jobs:
+  publish-cli:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Verify tag version matches package.json
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/}
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+
+          # Remove prefix
+          TAG_VERSION=${TAG_VERSION#cli-v}
+
+          if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+            echo "Error: Tag version ($TAG_VERSION) does not match package.json version ($PACKAGE_VERSION)"
+            exit 1
+          else
+            echo "Version match confirmed: $TAG_VERSION"
+          fi
+
+      - name: Build 
+        run: |
+          npm run prepublishOnly # compile and add shebang
+
+          # test that it works
+          chmod +x ./scripts/scittlets.mjs
+          npm link
+          scittlets
+
+          npm pack --pack-destination ./dist
+          
+      - name: Publish to npm
+        run: npm publish
+        env: 
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Upload npm package tarball
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./dist/*.tgz
+          asset_name: scittlets-cli.tgz
+          asset_content_type: application/gzip                      
