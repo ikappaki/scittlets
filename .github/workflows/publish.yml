@@ -1,12 +1,13 @@
 name: Publish CLI to npm
 
 on:
-  push:
-    tags:
-      - 'cli-v*'
+  release:
+    types: [published]
 
 jobs:
   publish-cli:
+    environment:
+      name: npm publish
     runs-on: ubuntu-latest
 
     steps:
