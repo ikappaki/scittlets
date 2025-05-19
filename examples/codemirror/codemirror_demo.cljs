@@ -4,7 +4,7 @@
                                                 esm-import when-esm-modules-ready+
                                                 esm-codemirror* esm-codemirror-view*]])
 
-g(def esm-lang-clojure*
+(def esm-lang-clojure*
   "A Reagent atom holding the `clojure` `@nextjournal/lang-clojure`
   module symbol asynchronously loaded via `esm-import`."
   (esm-import "https://esm.sh/@nextjournal/lang-clojure" clojure))
