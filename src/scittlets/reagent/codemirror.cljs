@@ -6,29 +6,29 @@
 
 (defmacro esm-import
   "Asynchronously loads an ESM module from the given URL and imports the
-  specified SYMBOLS.
+  specified EXPORTS.
 
   Returns a Reagent atom initially set to nil, which is reset to a map
-  of keywordized symbol names to their corresponding module exports
+  of keywordized export names to their corresponding module exports
   once loading completes."
-  [url & symbols]
-  (let [symbols (into [] (map str symbols))]
+  [url & exports]
+  (let [exports (into [] (map str exports))]
     `(let [imports*# (r/atom nil)]
        (-> (js/import ~url)
            (.then (fn [module#]
                     (reset! imports*# (loop [imports# {}
-                                             symbols# ~symbols]
-                                         ;; (println :ximports imports# symbols#)
-                                        (if-let [sym# (first symbols#)]
+                                             exports# ~exports]
+                                         ;; (println :ximports imports# exports#)
+                                        (if-let [sym# (first exports#)]
                                           (recur (assoc imports# (keyword sym#) (gobj/get module# (str sym#)))
-                                                 (rest symbols#))
+                                                 (rest exports#))
                                           (assoc imports# :all module#))))))
            (.catch (fn [err#]
                      (println :esm-import/error err#))))
        imports*#)))
 
 (def esm-codemirror*
-  "A Reagent atom holding the following `codemirror` module symbols
+  "A Reagent atom holding the following `codemirror` module exports
   asynchronously loaded via `esm-import`:
 
   - basicSetup"
@@ -36,13 +36,13 @@
 
 (def esm-codemirror-view*
   "A Reagent atom holding the following `@codemirror/view` module
-  symbols asynchronously loaded via `esm-import`:
+  exports asynchronously loaded via `esm-import`:
 
   - EditorView"
   (esm-import "https://esm.sh/@codemirror/view" EditorView))
 
 (defn when-esm-modules-ready+
-  "Reagent component to wait for the MODULES reagent atom created with
+  "Reagent component to wait for the MODULES Reagent atom created with
   `esm-import` to be loaded before rendering the CHILDREN reagent
   components."
   [modules & children]
@@ -51,7 +51,7 @@
       (into [:<>] children))))
 
 (defn EditorView+
-  "Reagent component to create a @codemirror/view EditorView instance
+  "Reagent component to create a `@codemirror/view.EditorView` instance
   using the EDITOR-VIEW-CONFIG provided."
   [EDITOR-VIEW-CONFIG]
   (let [{:keys [basicSetup] :as esm-codemirror} @esm-codemirror*
