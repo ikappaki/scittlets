@@ -6,28 +6,24 @@
   ([url]
    (fetch->ratom url nil))
   ([url tx-fn]
+   (println :fetching/init url)
    (let [ratom* (r/atom nil)
          _p (-> (js/fetch url)
-                (.then #(-> (.text %)
-                            (.then (fn [text]
-                                     (let [ret (if tx-fn
-                                                 (try
-                                                   {:result (tx-fn text)}
-                                                   (catch :default e
-                                                     {:error [:error-fetch-text-transform (str e) :url url]}))
-                                                 {:result text})]
-                                       (reset! ratom* ret))))
-                            (.catch (fn [err]
-                                      (reset! ratom* {:error (str [:url url :error-text (str err)])})))))
-                (.catch #(reset! ratom* {:error (str [:url url :error-fetch (str %)])})))]
-     (println :fetching... url)
+                (.then (fn [res]
+                         (println :fetching/response url)
+                         (if-not (.-ok res)
+                           (throw (str "HTTP error: status " (.-status res) " url " url))
+                           (.text res))))
+                (.then (fn [text]
+                         (println :fetching/text url)
+                         (reset! ratom* {:result text})))
+                (.catch (fn [err]
+                           (println :fetching/error url (str err))
+                           (reset! ratom* {:fetch->ratom/error (str [url (str err)])}))))]
      ratom*)))
 
 (def catalog* (fetch->ratom "catalog.json" #(-> (.parse js/JSON %)
                                                   (js->clj :keywordize-keys true))))
-
-(defn catalog [])
-;;(println :scittlest catalog)
 
 (defn copy-to-clipboard [text]
   (.writeText (.-clipboard js/navigator) text))
@@ -174,24 +170,31 @@
 (defn API+ [vars]
   (into [:<>]
         (for [[the-var props] vars]
-          (let [{:keys [reagent?]} props
+          (let [{:keys [reagent?] user-type :type} props
                 {:keys [arglists doc file]
                  nm :name nmspace :ns} (meta the-var)
                 args (->> (first arglists)
-                          (str/join " "))]
+                          (str/join " "))
+                macro? (:macro (meta the-var))]
             [:div {:style {:font-family "Arial, sans-serif" :margin "1em"}}
-             [:h2 {:style {:color "#2c3e50"}} nm
+             [:h3 {:style {:color "#2c3e50"}} nm
               [:span {:style {:font-size "0.5em"}}
                (cond
+                 macro?
+                 (str " (macro)")
+
                  reagent?
                  " (reagent)"
 
                  (fn? the-var)
-                 (str " (fn)" (ifn? the-var) the-var))]]
+                 (str " (fn)" (ifn? the-var) the-var)
+
+                 user-type
+                 (str "(" user-type ")"))]]
              (cond
                reagent?
                [:p [:code (str "Usage: " "[" nm " " args "]")]]
-               (fn? the-var)
+               (or (fn? the-var) macro?)
                [:p [:code (str "Usage: " "(" nm " " args ")")]])
              [:pre {:style {:background "#f4f4f4" :padding "1em" :border-radius "5px"}}
               doc]]))))

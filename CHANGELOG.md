@@ -4,6 +4,8 @@
 
 ## Unreleased Catalog
 
+* Added scittlets.reagent.codemirror component
+
 ## Unreleased CLI
 
 ## cli-v0.2.1
