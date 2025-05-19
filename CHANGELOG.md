@@ -4,6 +4,8 @@
 
 ## Unreleased Catalog
 
+* Added scittlets.reagent.codemirror component
+
 ## Unreleased CLI
 
 * Added `html-local-deps-update.cljs` script to sync local html files in bulk from the local catalog (#3)
