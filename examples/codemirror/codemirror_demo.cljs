@@ -5,8 +5,8 @@
                                                 esm-codemirror* esm-codemirror-view*]])
 
 (def esm-lang-clojure*
-  "A Reagent atom holding the `clojure` `@nextjournal/lang-clojure`
-  module symbol asynchronously loaded via `esm-import`."
+  "A Reagent atom holding the `@nextjournal/lang-clojure.clojure` export
+  asynchronously loaded via `esm-import`."
   (esm-import "https://esm.sh/@nextjournal/lang-clojure" clojure))
 
 (def invaders
@@ -31,12 +31,9 @@
   "A reagent EditorView+ component that initial displays TEXT, with
   three extensions:
 
-  - `codemirror: basicSetup`
-
-  - `@codemirror/lang-clonjure: clojure`
-
-  - an EditorView update listener that syncs changes to the TXT*
-  atom."
+  - `codemirror.basicSetup`
+  - `@codemirror/lang-clonjure.clojure`
+  - an `EditorView` update listener that syncs changes to the TXT* atom."
   [TEXT TXT*]
   (let [{:keys [basicSetup]} @esm-codemirror*
         {:keys [EditorView]} @esm-codemirror-view*

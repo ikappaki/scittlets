@@ -31,7 +31,7 @@
       (let [syntax-error? @syntax-error?*]
         [:div
          [:div {:style {:margin-bottom "1rem"}}
-          "- Listener test: Introduce a CLJS syntax error (e.g., insert a stray #); the border turns red."] 
+          "- Listener test: Introduce a CLJS reader error (e.g., insert a stray #); the border turns red."]
          [:div {:style {:border (str "2px solid " (if syntax-error? "red" "green"))
                         :padding "8px"}}
           [EditorView+ {:doc TEXT
