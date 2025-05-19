@@ -12,6 +12,8 @@
 
 (defn text-input+ [input*]
   [:div
+   [:div {:style {:margin-bottom "1rem"}}
+    "- Update test: Modify text; the diagram updates."]
    [:textarea {:value @input*
                :rows 6
                :on-change #(reset! input* (-> % .-target .-value))

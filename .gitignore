@@ -2,6 +2,10 @@
 /package-lock.json
 /.clj-kondo
 /.lsp
+/dist
+
+scripts/scittlets.mjs
 
 #.*
 *~
+
