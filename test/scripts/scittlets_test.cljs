@@ -1,0 +1,157 @@
+(ns scripts.scittlets-test
+  (:require [cljs.test :refer [deftest is async run-tests use-fixtures]]
+            [clojure.string :as str]
+            ["child_process" :refer [exec]]
+            ["fs" :as fs]
+            ["os" :as os]
+            ["path" :as path]))
+
+(def scittlets-cmd "npx cherry run scripts/scittlets.cljs")
+
+(def corpus {:nodeps "test/corpus/nodeps.html"
+             :markers "test/corpus/markers.html"})
+
+#_(defn compile []
+  ;; Setup code before tests
+  (let [path "scripts/scittlets.mjs"]
+    (when (fs/existsSync path)
+      (fs/unlinkSync path)))
+  (println ":compiling")
+  (is (exec "npx cherry compile scripts/scittlets.cljs")))
+
+(def temp-dir-base* (atom nil))
+
+(defn transient-dir-make! []
+  (fs/mkdtempSync (path/join @temp-dir-base* "test-")))
+
+(use-fixtures :once
+  {:before #(let [base (fs/mkdtempSync (path/join (os/tmpdir) "scittlets-"))]
+              ;;(println :base base)
+              (reset! temp-dir-base* base))
+   :after #(when-let [base @temp-dir-base*]
+             ;;(println :cleaning base)
+             (fs/rmSync base #js {"recursive" true "force" true}))})
+
+(deftest test-cmd-tags
+  (async done
+         (exec (str scittlets-cmd " tags")
+               (fn [error stdout stderr]
+                 (is (nil? error))
+                 (is (empty? stderr))
+                 (let [tags (-> (re-find #"(?s)Release tags:\s+(.*)" stdout)
+                                second
+                                (str/split #"\s+"))]
+                   (is (some #{"v0.1.0"} tags))
+                   (is (every? #(or (str/starts-with? % "v")
+                                    (some #{%} ["latest" "local"])) tags)))
+                 (done)))))
+
+(deftest test-cmd-list
+  (async done
+         (exec (str scittlets-cmd " list")
+               (fn [error stdout stderr]
+                 (is (nil? error))
+                 (is (empty? stderr))
+                 (let [tag (-> (re-find #"Catalog tag: (.*?) \(latest\)" stdout)
+                               second)]
+                   (is (str/starts-with? tag "v")))
+                 (let [lines (str/split-lines stdout)
+                       idx (.indexOf lines "Catalog scittlets:")
+                       scittlets (subvec (vec lines) (inc idx))]
+                   (is (some #{"scittlets.reagent.mermaid"} scittlets)))
+                 (done)))))
+
+(deftest test-cmd-update-nodeps
+  (async done
+         (exec (str scittlets-cmd " update " (:nodeps corpus) " scittlets.reagent.mermaid")
+               (fn [error stdout stderr]
+                 (is (nil? error))
+                 (is (empty? stderr))
+                 (is (str/includes? stdout "Scittlet markers not found in HTML file for: scittlets.reagent.mermaid"))
+                 (done)))))
+
+(defn find-scittlet-info-lines [text]
+  (let [lines (str/split-lines text)
+        re #"(?s)<!-- Scittlet dependencies: ([^\s]+) -->\n.*?<!-- Scittlet dependencies: end -->"
+        line-starts (reductions + 0 (map #(inc (count %)) lines))]
+    (reduce
+     (fn [m match]
+       (let [full-match (first match)
+             name (second match)
+             start-pos (.indexOf text full-match)
+             end-pos (+ start-pos (count full-match))
+             start-line (count (filter #(<= % start-pos) line-starts))
+             end-line (count (filter #(<= % end-pos) line-starts))]
+         (assoc m name {:start-line start-line
+                        :end-line end-line
+                        :text (str/split-lines full-match)})))
+     {}
+     (re-seq re text))))
+
+(deftest test-cmd-update-single-dep
+  (async done
+         (let [src (:markers corpus)
+               target (path/join (transient-dir-make!) (path/basename src))]
+           (fs/copyFileSync src target)
+           (exec (str scittlets-cmd " update " target " scittlets.reagent.mermaid" " -t v0.1.0")
+                 (fn [error _stdout stderr]
+                   (is (nil? error))
+                   (is (empty? stderr))
+                   (let [content (fs/readFileSync target "utf8")
+                         matches (find-scittlet-info-lines content)]
+                     ;;(prn matches)
+                     (is (= {"scittlets.reagent.core"
+                             {:start-line 10, :end-line 11,
+                              :text
+                              ["<!-- Scittlet dependencies: scittlets.reagent.core -->"
+                               "    <!-- Scittlet dependencies: end -->"]},
+                             "scittlets.reagent.mermaid"
+                             {:start-line 13, :end-line 20,
+                              :text
+                              ["<!-- Scittlet dependencies: scittlets.reagent.mermaid -->"
+                               "    <meta name=\"scittlets.reagent.mermaid.version\" content=\"v0.1.0\">"
+                               "    <script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>"
+                               "    <script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>"
+                               "    <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>"
+                               "    <script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\"></script>"
+                               "    <script src=\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.1.0/src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>"
+                               "    <!-- Scittlet dependencies: end -->"]}}
+                            matches)))
+                   (done))))))
+
+(deftest test-cmd-update-all-deps-local
+  (async done
+         (let [src (:markers corpus)
+               target (path/join (transient-dir-make!) (path/basename src))]
+           (fs/copyFileSync src target)
+           (exec (str scittlets-cmd " update " target " -t local")
+                 (fn [error _stdout stderr]
+                   (is (nil? error))
+                   (is (empty? stderr))
+                   (let [content (fs/readFileSync target "utf8")
+                         matches (find-scittlet-info-lines content)]
+                     ;;(prn matches)
+                     (is (= {"scittlets.reagent.core"
+                             {:start-line 10, :end-line 15,
+                              :text
+                              ["<!-- Scittlet dependencies: scittlets.reagent.core -->"
+                               "    <meta name=\"scittlets.reagent.core.version\" content=\"main\">"
+                               "    <script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>"
+                               "    <script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>"
+                               "    <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>"
+                               "    <!-- Scittlet dependencies: end -->"
+                               ]},
+                             "scittlets.reagent.mermaid"
+                             {:start-line 17, :end-line 24,
+                              :text ["<!-- Scittlet dependencies: scittlets.reagent.mermaid -->"
+                                     "    <meta name=\"scittlets.reagent.mermaid.version\" content=\"main\">"
+                                     "    <script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>"
+                                     "    <script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>"
+                                     "    <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>"
+                                     "    <script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\"></script>"
+                                     "    <script src=\"src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>"
+                                     "    <!-- Scittlet dependencies: end -->"]}}
+                            matches)))
+                   (done))))))
+
+(run-tests)
