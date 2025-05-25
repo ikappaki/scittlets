@@ -25,6 +25,10 @@
     "scripts/scittlets.mjs"
   ],
   "scripts": {
+    "scittlets": "npx cherry run scripts/scittlets.cljs",
+    "tests": "npx nbb test/scripts/scittlets_test.cljs",
+    "updateLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs",
+    "updateAllLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs ./examples ./test/scittlets",
     "prepublishOnly": "npx cherry compile scripts/scittlets.cljs && sed -i '1i #!/usr/bin/env node' scripts/scittlets.mjs"
   },
   "engines": {

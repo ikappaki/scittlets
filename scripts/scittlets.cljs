@@ -12,19 +12,30 @@
 (def script-filename "scittlets")
 
 (def spec (-> (yargs)
+              (.wrap 120)
               (.showHelpOnFail true)
               (.scriptName script-filename)
               (.usage "Usage: scittlets <command> [options]")
               (.command "tags" "List all release TAGS of the scittlets Catalog.")
-              (.command "list [tag]" "List all scittlets in the catalog for the specified TAG (default: latest).")
-              (.command "update <path> [scittlets..]" "Update scittlet dependencies in the HTML file at PATH from the Catalog. If SCITTLETS are specified, update only those."
+              (.command "catalog [tag] [options]" "List all scittlets in the catalog for the specified TAG."
+                        (fn [y]
+                          (-> y
+                              (.positional "tag"
+                                           (clj->js {:description "Catalog tag to use"
+                                                     :default "latest"
+                                                     :type "string"}))
+                              (.option "rewrite"
+                                       (clj->js {:alias "r"
+                                                 :description "Rewrite source dependency URLs to this tag (may not exist) and print the result"
+                                                 :type "string"})))))
+              (.command "update <path> [scittlets..]" "Update all scittlet dependencies in the HTML file at PATH from the Catalog. If SCITTLETS are specified, update only those."
                         (fn [y]
                           (-> y
                               (.positional "path"
                                            (clj->js {:describe "Path to the HTML file"
                                                      :type "string"}))
                               (.positional "scittlets"
-                                           (clj->js {:describe "Scittlets to update deps for (default: all)"
+                                           (clj->js {:describe "Limit updates to these scittlets"
                                                      :type "string"}))
                               (.option "tag"
                                        (clj->js {:alias "t"
@@ -36,7 +47,9 @@
                                            :description "Enable verbose logging"
                                            :global true
                                            :default false}))
-              (.epilog "To avoid GitHub API rate limits, set the GITHUB_PUBLIC_TOKEN env var (no scopes needed).")
+              (.epilog (str "[1] TAG may also be a local path to a catalog file. The special value `latest` resolves to the most recent release tag."
+                            "\n[2] To avoid GitHub API rate limits, set the GITHUB_PUBLIC_TOKEN env var (no scopes needed)."
+                            ))
               (.middleware (fn [argv] (when (.-verbose argv)
                                         (reset! v? true))))
               (.help)))
@@ -46,15 +59,16 @@
 (def gh-token (.-GITHUB_PUBLIC_TOKEN js/process.env))
 (def headers (clj->js (cond-> {:headers {"User-Agent" "scittlets"}}
                         gh-token
-                        (assoc "Authorization" (str "Bearer " gh-token)))))
+                        (assoc :headers {"Authorization" (str "Bearer " gh-token)}))))
 
-(def scittlets-jsdelivr-url "https://cdn.jsdelivr.net/gh/ikappaki/scittlets/")
+(def scittlets-jsdelivr-url "https://cdn.jsdelivr.net/gh/ikappaki/scittlets")
 
 (declare tags-get)
 (declare catalog-get)
 (declare deps-update!)
 (declare readable?)
 (declare scittlets-get)
+(declare catalog-rewrite)
 (declare exit)
 
 (defn ^:async dispatch [argv]
@@ -66,21 +80,34 @@
     (case cmd
       "tags"
       (let [tags (js/await (tags-get))
-            tags (concat ["latest" "local"] tags)]
+            tags (concat ["latest"] tags)]
         (println)
-        (println "Release tags: " (str/join " " tags))
+        (println "Release tags:" (str/join " " tags))
 
         (exit 0))
 
-      "list"
-      (let [arg-tag (or (.-tag argv) "latest")
+      "catalog"
+      (let [arg-tag (.-tag argv)
+            arg-rewrite (.-rewrite argv)
             {:keys [catalog tag]} (js/await (catalog-get arg-tag))
             scittlets (scittlets-get catalog)
-            scittlet-names (keys scittlets)]
-        (println "Catalog tag:" tag (if (= arg-tag tag) "" (str "(" arg-tag ")")))
-        (println "\nCatalog scittlets:")
-        (println (str/join "\n" scittlet-names))
-        (exit 0))
+            scittlet-names (keys scittlets)
+            version (get catalog "version")]
+        (cond
+          arg-rewrite
+          (let [rewrite-tag (if (str/blank? arg-rewrite) "main" arg-rewrite)
+                catalog-up (catalog-rewrite catalog rewrite-tag)
+                json (.stringify js/JSON (clj->js catalog-up) nil 2)]
+            (println json)
+            (exit 0))
+
+          :else
+          (do
+            (println "Catalog tag    :" tag (if (= arg-tag tag) "" (str "(" arg-tag ")")))
+            (println "Catalog version:" version)
+            (println "\nCatalog scittlets:")
+            (println (str/join "\n" scittlet-names))
+            (exit 0))))
 
       "update"
       (let [target (.-path argv)
@@ -150,7 +177,7 @@
 
               tag)]
     (debug :catalog/tag tag)
-    (if (= tag "local")
+    (if (readable? tag)
       (let [data (fs/readFileSync "./catalog.json" "utf8")]
         {:tag tag :catalog  (js->clj (.parse js/JSON data))})
 
@@ -160,6 +187,21 @@
           (exit 1 :catalog-get/asset-error error)
 
           {:tag tag :catalog (js->clj (.parse js/JSON asset))})))))
+
+(defn catalog-rewrite [catalog rewrite-tag]
+  (let [cat-up (reduce (fn [acc [k v]]
+                         (if (and (map? v) (contains? v "deps"))
+                           (let [base (cond-> scittlets-jsdelivr-url
+                                        (not (= rewrite-tag "main"))
+                                        (str "@" rewrite-tag))
+                                 deps (get v "deps")
+                                 deps-up (map #(str/replace % #"\"src/scittlets" (str \" base "/src/scittlets"))
+                                              deps)]
+                             (assoc acc k (assoc v "deps" deps-up)))
+                           (assoc acc k v)))
+                       {} catalog)
+        cat-up (assoc cat-up "version" rewrite-tag)]
+    cat-up))
 
 (defn scittlets-get [catalog]
   (into {} (filter (fn [[_k v]] (and (map? v) (contains? v "deps"))) catalog)))
@@ -177,12 +219,9 @@
   (let [match (re-find #"^[ \t]+" line)]
     (or match "")))
 
-(defn dep-update! [tag lines catalog scittlet]
+(defn dep-update! [lines catalog scittlet]
   (let [version (get catalog "version")
-        deps (get-in catalog [scittlet "deps"])
-        deps (if (= tag "local")
-               (map #(str/replace % scittlets-jsdelivr-url "") deps)
-               deps)]
+        deps (get-in catalog [scittlet "deps"])]
 
     (if-not (seq deps)
       (throw  (js/Error. (str "Error: can't find dependency: " scittlet)))
@@ -209,10 +248,6 @@
 
         (let [lw (get-leading-whitespace (get lines start-i))
               deps-meta (concat [(str "<meta name=\"" scittlet ".version\" content=\"" version "\">")] deps)
-              ;; deps-up (if (= tag "local")
-              ;;           (map #(str/replace % #"\"src/scittlets" (str \" scittlets-jsdelivr-url "src/scittlets"))
-              ;;                deps-meta)
-              ;;           deps-meta)
               deps-up (map #(str lw %) deps-meta)
               lines-up (replace-subvector lines (inc start-i) end-i deps-up)]
           (println "Scittlet deps:")
@@ -240,7 +275,7 @@
         (println "Scittlets in file  :" (str/join ", " file-scitts))
         (println "Scittlets to update:" (str/join ", " update-scitts))
         (if (seq file-missing)
-          (do (println "Scittlet markers not found in HTML file for:" (str/join "," file-missing))
+          (do (println "Scittlet markers not found in HTML file for:" (str/join ", " file-missing))
               (println)
               (println "Please place the following empty markers inside the <HEAD> of the HTML file, then rerun the script:")
               (println)
@@ -256,7 +291,7 @@
                  lines (str/split-lines html)]
             (if-let [scitt (first remaining)]
               (do (println "\nUpdating scittlet:" scitt)
-                  (let [lines-up (dep-update! tag lines catalog scitt)]
+                  (let [lines-up (dep-update! lines catalog scitt)]
                     (debug :deps/updating scitt)
                     (recur (rest remaining)
                            lines-up)))

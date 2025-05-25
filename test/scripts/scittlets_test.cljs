@@ -9,7 +9,8 @@
 (def scittlets-cmd "npx cherry run scripts/scittlets.cljs")
 
 (def corpus {:nodeps "test/corpus/nodeps.html"
-             :markers "test/corpus/markers.html"})
+             :markers "test/corpus/markers.html"
+             :catalog-main "test/corpus/catalog-main.json"})
 
 #_(defn compile []
   ;; Setup code before tests
@@ -43,16 +44,16 @@
                                 (str/split #"\s+"))]
                    (is (some #{"v0.1.0"} tags))
                    (is (every? #(or (str/starts-with? % "v")
-                                    (some #{%} ["latest" "local"])) tags)))
+                                    (some #{%} ["latest"])) tags)))
                  (done)))))
 
-(deftest test-cmd-list
+(deftest test-cmd-catalog
   (async done
-         (exec (str scittlets-cmd " list")
+         (exec (str scittlets-cmd " catalog")
                (fn [error stdout stderr]
                  (is (nil? error))
                  (is (empty? stderr))
-                 (let [tag (-> (re-find #"Catalog tag: (.*?) \(latest\)" stdout)
+                 (let [tag (-> (re-find #"Catalog tag    : (.*?) \(latest\)" stdout)
                                second)]
                    (is (str/starts-with? tag "v")))
                  (let [lines (str/split-lines stdout)
@@ -119,18 +120,18 @@
                             matches)))
                    (done))))))
 
-(deftest test-cmd-update-all-deps-local
+(deftest test-cmd-update-two-deps
   (async done
-         (let [src (:markers corpus)
-               target (path/join (transient-dir-make!) (path/basename src))]
-           (fs/copyFileSync src target)
-           (exec (str scittlets-cmd " update " target " -t local")
+         (let [html-src (:markers corpus)
+               catalog-src (:catalog-main corpus)
+               html-target (path/join (transient-dir-make!) (path/basename html-src))]
+           (fs/copyFileSync html-src html-target)
+           (exec (str scittlets-cmd " update " html-target " -t " catalog-src)
                  (fn [error _stdout stderr]
                    (is (nil? error))
                    (is (empty? stderr))
-                   (let [content (fs/readFileSync target "utf8")
+                   (let [content (fs/readFileSync html-target "utf8")
                          matches (find-scittlet-info-lines content)]
-                     ;;(prn matches)
                      (is (= {"scittlets.reagent.core"
                              {:start-line 10, :end-line 15,
                               :text
@@ -152,6 +153,92 @@
                                      "    <script src=\"src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>"
                                      "    <!-- Scittlet dependencies: end -->"]}}
                             matches)))
+                   (done))))))
+
+(deftest test-cmd-catalog-rewrite
+  (async done
+         (let [src (:catalog-main corpus)]
+           (exec (str scittlets-cmd " catalog " src " -r")
+                 (fn [error stdout stderr]
+                   (is (nil? error))
+                   (is (empty? stderr))
+                   (let [lines (-> (str/split-lines stdout)
+                                   (rest))]
+                     (is (.parse js/JSON (str/join "\n" lines)))
+                     #_(prn lines)
+                     (is (= ["{"
+                             "  \"version\": \"main\","
+                             "  \"scittlets.reagent.core\": {"
+                             "    \"home\": \"https://github.com/ikappaki/scittlets\","
+                             "    \"deps\": ["
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\\\"></script>\""
+                             "    ],"
+                             "    \"see\": {"
+                             "      \"reagent\": \"https://reagent-project.github.io/\","
+                             "      \"scittle\": \"https://github.com/babashka/scittle\""
+                             "    }"
+                             "  },"
+                             "  \"scittlets.reagent.mermaid\": {"
+                             "    \"home\": \"https://github.com/ikappaki/scittlets\","
+                             "    \"deps\": ["
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets/src/scittlets/reagent/mermaid.cljs\\\" type=\\\"application/x-scittle\\\"></script>\""
+                             "    ],"
+                             "    \"see\": {"
+                             "      \"mermaid\": \"https://mermaid.js.org/\","
+                             "      \"reagent\": \"https://reagent-project.github.io/\""
+                             "    }"
+                             "  }"
+                             "}"]
+                            lines)))
+                   (done))))))
+
+(deftest test-cmd-catalog-rewrite-tag
+  (async done
+         (let [src (:catalog-main corpus)]
+           (exec (str scittlets-cmd " catalog " src " -r v99.99.99")
+                 (fn [error stdout stderr]
+                   (is (nil? error))
+                   (is (empty? stderr))
+                   (let [lines (-> (str/split-lines stdout)
+                                   (rest))]
+                     (is (.parse js/JSON (str/join "\n" lines)))
+                     #_(prn lines)
+                     (is (= ["{"
+                             "  \"version\": \"v99.99.99\","
+                             "  \"scittlets.reagent.core\": {"
+                             "    \"home\": \"https://github.com/ikappaki/scittlets\","
+                             "    \"deps\": ["
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\\\"></script>\""
+                             "    ],"
+                             "    \"see\": {"
+                             "      \"reagent\": \"https://reagent-project.github.io/\","
+                             "      \"scittle\": \"https://github.com/babashka/scittle\""
+                             "    }"
+                             "  },"
+                             "  \"scittlets.reagent.mermaid\": {"
+                             "    \"home\": \"https://github.com/ikappaki/scittlets\","
+                             "    \"deps\": ["
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\\\"></script>\","
+                             "      \"<script src=\\\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v99.99.99/src/scittlets/reagent/mermaid.cljs\\\" type=\\\"application/x-scittle\\\"></script>\""
+                             "    ],"
+                             "    \"see\": {"
+                             "      \"mermaid\": \"https://mermaid.js.org/\","
+                             "      \"reagent\": \"https://reagent-project.github.io/\""
+                             "    }"
+                             "  }"
+                             "}"]
+                            lines)))
                    (done))))))
 
 (run-tests)
