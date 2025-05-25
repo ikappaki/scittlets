@@ -5,7 +5,8 @@
   "author": "ikappaki",
   "version": "0.1.0",
   "keywords": [
-    "cljs", "scittle"
+    "cljs",
+    "scittle"
   ],
   "type": "module",
   "bin": {
@@ -16,13 +17,19 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "cljs-josh": "^0.0.7"
+    "cljs-josh": "github:chr15m/cljs-josh",
+    "nbb": "^1.3.204"
   },
   "files": [
     "scripts/scittlets.cljs",
     "scripts/scittlets.mjs"
   ],
   "scripts": {
+    "scittlets": "npx cherry run scripts/scittlets.cljs",
+    "tests": "npx nbb test/scripts/scittlets_test.cljs",
+    "updateLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs",
+    "updateAllLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs ./examples ./test/scittlets",
+    "gh-action-test": "act -j test -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest",
     "prepublishOnly": "npx cherry compile scripts/scittlets.cljs && sed -i '1i #!/usr/bin/env node' scripts/scittlets.mjs"
   },
   "engines": {
