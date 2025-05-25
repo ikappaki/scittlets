@@ -20,5 +20,21 @@ jobs:
           node-version: '18'
       - name: Install dependencies
         run: npm install
+
       - name: Run cli tests
-        run: npx nbb test/scripts/scittlets_test.cljs
+        run: npm run tests
+
+      - name: Verify example/test html dependencies are up to date
+        run: |
+          DIRS="./examples ./test/scittlets"
+          npm run updateLocalHtmlFiles $DIRS
+
+          for dir in $DIRS; do
+            echo -e "\n:test.yml/verifying.. $dir"
+            if ! git diff --quiet -w HEAD -- $dir; then
+              git --no-pager diff -w HEAD -- $dir
+              echo -e "\nHTML dependencies in $dir are out of sync with the catalog."
+              echo "Please update them and try again. Exiting.\n"
+              exit 1
+            fi
+          done
