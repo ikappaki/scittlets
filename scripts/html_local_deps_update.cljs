@@ -4,9 +4,16 @@
             ["path" :as path]
             ["child_process" :refer [execSync]]))
 
-(def dirs *command-line-args*)
+(def usage "Usage: npm run scripts/html_local_deps_update.cljs catalog-path dirs..")
+
+(def catalog-path (first *command-line-args*))
+(prn :html-local-deps-update/catalog catalog-path)
+(assert catalog-path usage)
+(fs/accessSync catalog-path (.-R_OK fs/constants))
+
+(def dirs (rest *command-line-args*))
 (prn :html-local-deps-update/dirs dirs)
-(assert (seq dirs) "Usage: npm run scripts/html_local_deps_update.cljs dirs..")
+(assert (seq dirs) usage)
 (doseq [dir dirs]
   (.isDirectory (fs/statSync dir)))
 
@@ -22,7 +29,7 @@
                    [p])))))))
 
 (defn exec-cmd [file]
-  (let [cmd (str "npm run scittlets -- update" " \"" file "\" -t ./catalog.json")]
+  (let [cmd (str "npm run scittlets -- update" " \"" file "\" -t " catalog-path)]
     (println)
     (prn :html-local-deps-update/info :file file :cmd cmd)
     (println)

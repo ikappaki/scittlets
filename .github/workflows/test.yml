@@ -32,7 +32,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           DIRS="./examples ./test/scittlets"
-          npm run updateLocalHtmlFiles $DIRS
+          npm run updateLocalHtmlFiles ./catalog.json $DIRS
 
           for dir in $DIRS; do
             echo -e "\n:test.yml/verifying.. $dir"
