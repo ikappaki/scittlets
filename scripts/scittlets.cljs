@@ -193,7 +193,7 @@
                          (if (and (map? v) (contains? v "deps"))
                            (let [base (cond-> scittlets-jsdelivr-url
                                         (not (= rewrite-tag "main"))
-                                        (str "@" rewrite-tag))
+                                        (str "@" (js/encodeURIComponent rewrite-tag)))
                                  deps (get v "deps")
                                  deps-up (map #(str/replace % #"\"src/scittlets" (str \" base "/src/scittlets"))
                                               deps)]
