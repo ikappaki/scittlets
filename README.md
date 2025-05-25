@@ -36,11 +36,11 @@ npx scittlets <command> [options]
 ```
 
 #### Commands
-- `update <path> <scittlet> [tag]`
+- `update <path> [scittlet..]`
 
-  Update SCITTLET dependencies in the HTML file at PATH using the catalog at the specified TAG (default: `latest`).
+  Update all scittlet dependencies in the HTML file at PATH using the latest catalog, or only those SCITTLETS if specified.
 
-- `list [tag]`
+- `catalog [tag]`
 
   List all scittlets for the specified catalog TAG (default: `latest`).
 
@@ -57,13 +57,13 @@ npx scittlets tags
 
 List scittlets for the latest tag:
 ```bash
-npx scittlets list
+npx scittlets catalog
 ```
 
 Update dependencies in an HTML file:
 
 ```bash
-npx scittlets update ./index.html scittlets.reagent.mermaid
+npx scittlets update ./index.html
 ```
 
 #### Important

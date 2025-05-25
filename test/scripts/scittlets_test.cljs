@@ -1,16 +1,16 @@
 (ns scripts.scittlets-test
-  (:require [cljs.test :refer [deftest is async run-tests use-fixtures]]
-            [clojure.string :as str]
-            ["child_process" :refer [exec]]
+  (:require ["child_process" :refer [exec]]
             ["fs" :as fs]
             ["os" :as os]
-            ["path" :as path]))
+            ["path" :as path]
+            [cljs.test :refer [deftest is async run-tests use-fixtures]]
+            [clojure.string :as str]))
 
 (def scittlets-cmd "npx cherry run scripts/scittlets.cljs")
 
-(def corpus {:nodeps "test/corpus/nodeps.html"
+(def corpus {:catalog-main "test/corpus/catalog-main.json"
              :markers "test/corpus/markers.html"
-             :catalog-main "test/corpus/catalog-main.json"})
+             :no-deps "test/corpus/no-deps.html"})
 
 #_(defn compile []
   ;; Setup code before tests
@@ -64,7 +64,7 @@
 
 (deftest test-cmd-update-nodeps
   (async done
-         (exec (str scittlets-cmd " update " (:nodeps corpus) " scittlets.reagent.mermaid")
+         (exec (str scittlets-cmd " update " (:no-deps corpus) " scittlets.reagent.mermaid")
                (fn [error stdout stderr]
                  (is (nil? error))
                  (is (empty? stderr))

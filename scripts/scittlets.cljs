@@ -112,13 +112,13 @@
       "update"
       (let [target (.-path argv)
             arg-scittlets (.-scittlets argv)
-            tag (.-tag argv)]
+            arg-tag (.-tag argv)]
         (println "\nFile to update:" target "\n")
 
         (if-not (readable? target)
           (exit 1 :update/error "Can't find, or read, file:" target)
 
-          (let [{:keys [catalog tag]} (js/await (catalog-get tag))
+          (let [{:keys [catalog tag]} (js/await (catalog-get arg-tag))
                 scittlets (scittlets-get catalog)]
             (debug :catalog/scittlets (str/join " " (keys scittlets)))
             (deps-update! tag target catalog arg-scittlets))))
@@ -178,7 +178,7 @@
               tag)]
     (debug :catalog/tag tag)
     (if (readable? tag)
-      (let [data (fs/readFileSync "./catalog.json" "utf8")]
+      (let [data (fs/readFileSync tag "utf8")]
         {:tag tag :catalog  (js->clj (.parse js/JSON data))})
 
       (let [catalog-url (str catalog-download-url tag "/catalog.json")
