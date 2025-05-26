@@ -30,7 +30,7 @@
     "updateLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs",
     "updateAllLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs ./catalog.json ./examples ./test/scittlets",
     "gh-action-test": "act -j test -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest",
-    "gh-action-deploy": "act --eventpath ./test/corpus/gh-deploy-release.json -j deploy --bind \"${PWD}/scittlets:/github/workspace/scittlets\" -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest",
+    "gh-action-pages": "act --eventpath ./test/corpus/gh-deploy-release.json -j deploy --bind \"${PWD}/scittlets:/github/workspace/scittlets\" -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest",
     "prepublishOnly": "npx cherry compile scripts/scittlets.cljs && sed -i '1i #!/usr/bin/env node' scripts/scittlets.mjs"
   },
   "engines": {

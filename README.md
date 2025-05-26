@@ -93,7 +93,7 @@ A [reagent](https://reagent-project.github.io/) component around [CodeMirror](ht
 
 ### [scittlet.reagent.mermaid](https://ikappaki.github.io/scittlets/test/scittlets/reagent/mermaid.html)
 
-A [reagent](https://reagent-project.github.io/) component around [mermaid](https://mermaid.js.org/), the diagramming and charting tool.
+A [reagent](https://reagent-project.github.io/) component around [Mermaid](https://mermaid.js.org/), the diagramming and charting tool.
 
 ## Development
 
