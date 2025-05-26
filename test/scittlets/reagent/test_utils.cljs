@@ -16,10 +16,12 @@
                            (.text res))))
                 (.then (fn [text]
                          (println :fetching/text url)
-                         (reset! ratom* {:result text})))
+                         (reset! ratom* {:result (if tx-fn
+                                                   (tx-fn text)
+                                                   text)})))
                 (.catch (fn [err]
-                           (println :fetching/error url (str err))
-                           (reset! ratom* {:fetch->ratom/error (str [url (str err)])}))))]
+                          (println :fetching/error url (str err))
+                          (reset! ratom* {:fetch->ratom/error (str [url (str err)])}))))]
      ratom*)))
 
 (def catalog* (fetch->ratom "catalog.json" #(-> (.parse js/JSON %)
