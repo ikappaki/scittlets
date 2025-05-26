@@ -87,6 +87,10 @@ npx scittlets update ./index.html
 
 ## Scittlets
 
+### [scittlet.reagent.codemirror](https://ikappaki.github.io/scittlets/test/scittlets/reagent/codemirror.html)
+
+A [reagent](https://reagent-project.github.io/) component around [CodeMirror](https://codemirror.net/), a code editor component for the web.
+
 ### [scittlet.reagent.mermaid](https://ikappaki.github.io/scittlets/test/scittlets/reagent/mermaid.html)
 
 A [reagent](https://reagent-project.github.io/) component around [mermaid](https://mermaid.js.org/), the diagramming and charting tool.

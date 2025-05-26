@@ -42,9 +42,9 @@
   (esm-import "https://esm.sh/@codemirror/view" EditorView))
 
 (defn when-esm-modules-ready+
-  "Reagent component to wait for the MODULES Reagent atom created with
-  `esm-import` to be loaded before rendering the CHILDREN reagent
-  components."
+  "Reagent component that waits for the MODULES sequence, where each
+  item is an atom created by esm-import, to load before rendering
+  CHILDREN components."
   [modules & children]
   (let [derefd (map deref modules)]
     (when (every? some? derefd)
