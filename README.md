@@ -1,7 +1,8 @@
 [![Catalog](https://img.shields.io/github/v/release/ikappaki/scittlets)](https://ikappaki.github.io/scittlets/) [![cli](https://img.shields.io/npm/v/scittlets.svg)](https://www.npmjs.com/package/scittlets)
 
 > [!NOTE]
-> Experimental, Proof Of Concept.
+> This project is in α.
+> Features and APIs are unstable and subject to change.
 
 [Scittle](https://babashka.org/scittle/) brings the Small Clojure Interpreter to the browser, allowing you to run ClojureScript using simple `<script>` tags.
 
