@@ -301,7 +301,7 @@
                 (println "\nScittlets updated:" (str/join ", " update-scitts))))))))))
 
 (defn args-get [script-name]
-  (let [pattern (re-pattern (str script-name "\\.\\w+$"))
+  (let [pattern (re-pattern (str script-name "(?:\\.\\w+)?$"))
         args  (rest (drop-while #(not (re-find pattern %)) (.-argv js/process)))]
     (if (= "--" (first args))
       (rest args)

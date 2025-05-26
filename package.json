@@ -3,7 +3,7 @@
   "description": "CLI tool to help manage scittlet dependencies",
   "homepage": "https://github.com/ikappaki/scittlets",
   "author": "ikappaki",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "keywords": [
     "cljs",
     "scittle"
@@ -30,7 +30,8 @@
     "updateLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs",
     "updateAllLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs ./catalog.json ./examples ./test/scittlets",
     "gh-action-test": "act -j test -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest",
-    "prepublishOnly": "npx cherry compile scripts/scittlets.cljs && sed -i '1i #!/usr/bin/env node' scripts/scittlets.mjs"
+    "prepublishOnly": "npx cherry compile scripts/scittlets.cljs && awk 'BEGIN{print \"#!/usr/bin/env node\"}1' scripts/scittlets.mjs > sctemp && mv sctemp scripts/scittlets.mjs",
+    "publishTest": "npm publish --tag test"
   },
   "engines": {
     "node": ">=18"
