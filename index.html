@@ -1,41 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Scittlets</title>
     <base href="/">
     <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f0f4f8;
+        margin: 10px 15px;
+        color: #333;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 700;
+        color: #2a6fdb;
+      }
+
+      header span[version] {
+        font-weight: 400;
+        font-size: 0.6em;
+        color: #999;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        max-width: 1024px;
+        margin: 0 auto;
+      }
+
+      li {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(42, 111, 219, 0.1);
+        margin-bottom: 15px;
+        padding: 15px;
+        transition: box-shadow 0.3s ease;
+      }
+      li:hover {
+        box-shadow: 0 8px 20px rgba(42, 111, 219, 0.2);
+      }
+
+      li h4 {
+        margin: 0 0 10px 0;
+        font-size: 1.1rem;
+      }
+      li h4 a {
+        color: #2a6fdb;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      li h4 a:hover {
+        text-decoration: underline;
+        color: #1948a3;
+      }
+
       iframe {
-          width: 95%;
-          height: 45vh;
-          border: none;
-          border: 5px solid #4CAF50;
-          border-radius: 5px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+        width: 100%;
+        height: 50vh;
+        border: 3px solid #2a6fdb;
+        border-radius: 10px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        transition: border-color 0.3s ease;
+      }
+      iframe:hover {
+        border-color: #1948a3;
       }
     </style>
   </head>
 
   <body>
-    <div style="position: absolute; right: 0; top: 5; margin-right: 10px" stylex="float: right">
-      <a href="https://github.com/ikappaki/scittlets">
-        <img src="https://img.shields.io/badge/GitHub-Scittlets-blue?style=flat-square&logo=github&logoColor=white">
+    <div class="github-badge" style="position: absolute; right: 0; top: 5; margin-right: 10px" stylex="float: right">
+      <a href="https://github.com/ikappaki/scittlets" target="_blank" aria-label="GitHub Scittlets">
+        <img
+          src="https://img.shields.io/badge/GitHub-Scittlets-blue?style=flat-square&logo=github&logoColor=white"
+          alt="GitHub Scittlets"
+        />
       </a>
     </div>
-    <h2 style="text-align: center; margin-bottom: 5px">Scittlets Web Catalog <span style="font-size: 0.5em" version>main</span></h2>
+
+    <header>
+      <h2>
+        Scittlets Web Catalog
+        <span version>main</span>
+      </h2>
+    </header>
 
     <ul>
       <li>
-        <h4><a href="test/scittlets/reagent/mermaid.html" target="_blank">scittlets.reagent.mermaid</a></h4>
-        <iframe name="scittlet.reagent.mermaid" src="test/scittlets/reagent/mermaid.html"></iframe>
+        <h4>
+          <a href="test/scittlets/reagent/codemirror.html" target="_blank"
+            >scittlets.reagent.codemirror</a
+          >
+        </h4>
+        <iframe
+          name="scittlets.reagent.codemirror"
+          src="test/scittlets/reagent/codemirror.html"
+          loading="lazy"
+        ></iframe>
       </li>
-      
-      <!-- <li> -->
-      <!--   <p><a href="test/scittlets/reagent/mermaid.html">mermaid</a></p> -->
-      <!--   <iframe name="frame2" src="test/scittlets/reagent/mermaid.html"></iframe> -->
-      <!-- </li> -->
+
+      <li>
+        <h4>
+          <a href="test/scittlets/reagent/mermaid.html" target="_blank"
+            >scittlets.reagent.mermaid</a
+          >
+        </h4>
+        <iframe
+          name="scittlets.reagent.mermaid"
+          src="test/scittlets/reagent/mermaid.html"
+          loading="lazy"
+        ></iframe>
+      </li>
 
     </ul>
-
   </body>
 </html>

@@ -1,5 +1,15 @@
 {"version" : "main",
 
+ "scittlets.reagent.codemirror" :
+ {"home": "https://github.com/ikappaki/scittlets",
+  "deps": ["<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",
+           "<script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>",
+           "<script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>",
+           "<script src=\"src/scittlets/reagent/codemirror.cljs\" type=\"application/x-scittle\"></script>"],
+  "see" : {"codemirror" : "https://codemirror.net/",
+           "reagent" : "https://reagent-project.github.io/"
+          }},
+
  "scittlets.reagent.mermaid" :
  {"home": "https://github.com/ikappaki/scittlets",
   "deps": ["<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",

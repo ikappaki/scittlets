@@ -37,14 +37,42 @@ jobs:
         uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
       - name: rebase
         run: |
-          find ./ -name "*.html" -exec sed -i 's|<base href="/">|<base href="/scittlets/">|g' {} \;
-          sed -i "s|version>main</span>|version>${TAG_NAME}</span>|" index.html
-          sed -i "s/\"version\" *: *\"main\"/\"version\" : \"${TAG_NAME}\"/" catalog.json
-          sed -i "s|https://cdn.jsdelivr.net/gh/ikappaki/scittlets|https://cdn.jsdelivr.net/gh/ikappaki/scittlets@${TAG_NAME}|g" catalog.json
-          # this has to be run after catalog has been updated
-          node scripts/examples_deps_update.js
+          # The target dir, it is named after the repo since this is
+          # how github-pages will be stored, useful for local testing.
+          TARGET="./scittlets"
+          rm -fr $TARGET
+          mkdir -p $TARGET
+
+          DIRS="./examples ./test/scittlets"
+          echo :github-pages/info :target $TARGET :source-dirs $DIRS
+
+          # copy html and cljs files
+          for dir in $DIRS; do
+            find "$dir" \( -name '*.html' -o -name '*.cljs' \) -exec cp --parents {} $TARGET/ \;
+          done
+          cp index.html $TARGET
+          ls -R $TARGET
+
+          # Update HTML root to github pages target dir
+          find $TARGET -name "*.html" -exec sed -i 's|<base href="/">|<base href="/scittlets/">|g' {} \;
+          sed -i "s|version>main</span>|version>${TAG_NAME}</span>|" $TARGET/index.html
+
+          # Regenerate catalog.json from TAG_NAME
+          npm run scittlets --silent -- catalog ./catalog.json -r ${TAG_NAME} > $TARGET/catalog.json
+          sed -i '1d' $TARGET/catalog.json
+
+          # use updated catalog to update HTML files deps in TARGET
+          cat $TARGET/catalog.json
+          npm run updateLocalHtmlFiles $TARGET/catalog.json $TARGET
+
         env:
           TAG_NAME: ${{ github.event.release.tag_name }}
 
@@ -53,8 +81,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: ./scittlets
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
@@ -62,4 +89,4 @@ jobs:
       - name: Upload catalog.json to Release
         uses: softprops/action-gh-release@v1
         with:
-          files: catalog.json
+          files: ./scittlets/catalog.json
