@@ -6,6 +6,10 @@
 
 ## Unreleased CLI
 
+## cli-v0.2.1
+
+* Fixed issue with scittlets binary not recognising options (#5)
+
 ## cli-v0.2.0
 
 * Added `html-local-deps-update.cljs` script to sync local html files in bulk from the local catalog (#3)
