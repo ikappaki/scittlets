@@ -27,7 +27,7 @@
    "descr": "A Reagent template around CodeMirror, a code editor component for the web",
    "files": [{"src": "codemirror_demo.html", "dest": "index.html"},
              "codemirror_demo.cljs"],
-   "target": "scits_mermaid_reagent"},
+   "target": "scits_codemirror_reagent"},
   "reagent/mermaid":
   {"src": "examples/mermaid",
    "descr": "A Reagent template around Mermaid, the diagramming and charting tool",

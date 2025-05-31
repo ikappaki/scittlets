@@ -18,5 +18,14 @@
            "<script src=\"src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>"],
   "see" : {"mermaid" : "https://mermaid.js.org/",
            "reagent" : "https://reagent-project.github.io/"
-          }}
+          }},
+
+ "templates" :
+ {"scittle/basic":
+  {"src": "examples/scittle",
+   "descr": "A minimal Scittle template with zero dependencies",
+   "files": [{"src": "scittle_basic.html", "dest": "index.html"},
+             "scittle_basic.cljs"],
+   "target": "scittle_basic"}
+ }
 }
