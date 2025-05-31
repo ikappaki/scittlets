@@ -6,6 +6,8 @@
 
 ## Unreleased CLI
 
+* Added `scittlets new` command to scaffold starter apps from templates (#6)
+
 ## v0.2.0
 
 * Added scittlets.reagent.codemirror component (#2)

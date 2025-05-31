@@ -37,6 +37,12 @@ npx scittlets <command> [options]
 ```
 
 #### Commands
+- `new [directory] [--template name] [--list]`
+
+  Create a new app from a template NAME (default: `scittle/basic`) and output it to DIRECTORY if provided, or use the template's default directory.
+
+  Use `--list` (or `-l`) to list available templates instead of creating an app.
+
 - `update <path> [scittlet..]`
 
   Update all scittlet dependencies in the HTML file at PATH using the latest catalog, or only those SCITTLETS if specified.
@@ -50,6 +56,17 @@ npx scittlets <command> [options]
   List all release tags available in the scittlet catalog.
 
 #### Example usage
+List available templates:
+```bash
+npx scittlets new --list
+```
+
+Create a new app with a specific template:
+
+```bash
+npx scittlets new --template reagent/codemirror
+```
+
 List tags:
 
 ```bash
@@ -88,11 +105,11 @@ npx scittlets update ./index.html
 
 ## Scittlets
 
-### [scittlet.reagent.codemirror](https://ikappaki.github.io/scittlets/test/scittlets/reagent/codemirror.html)
+### [scittlets.reagent.codemirror](https://ikappaki.github.io/scittlets/test/scittlets/reagent/codemirror.html)
 
 A [reagent](https://reagent-project.github.io/) component around [CodeMirror](https://codemirror.net/), a code editor component for the web.
 
-### [scittlet.reagent.mermaid](https://ikappaki.github.io/scittlets/test/scittlets/reagent/mermaid.html)
+### [scittlets.reagent.mermaid](https://ikappaki.github.io/scittlets/test/scittlets/reagent/mermaid.html)
 
 A [reagent](https://reagent-project.github.io/) component around [Mermaid](https://mermaid.js.org/), the diagramming and charting tool.
 
