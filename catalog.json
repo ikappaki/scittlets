@@ -27,13 +27,13 @@
    "descr": "A Reagent template around CodeMirror, a code editor component for the web",
    "files": [{"src": "codemirror_demo.html", "dest": "index.html"},
              "codemirror_demo.cljs"],
-   "target": "scits_codemirror_reagent"},
+   "target": "scits_reagent_codemirror"},
   "reagent/mermaid":
   {"src": "examples/mermaid",
    "descr": "A Reagent template around Mermaid, the diagramming and charting tool",
    "files": [{"src": "mermaid_demo.html", "dest": "index.html"},
              "mermaid_demo.cljs"],
-   "target": "scits_mermaid_reagent"},
+   "target": "scits_reagent_mermaid"},
   "scittle/basic":
   {"src": "examples/scittle",
    "descr": "A minimal Scittle template with zero dependencies",

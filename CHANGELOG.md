@@ -6,6 +6,10 @@
 
 ## Unreleased CLI
 
+## cli-v0.3.1
+
+* Removed minor debug output from `scittlets new` command (#8)
+
 ## cli-v0.3.0
 
 * Added `scittlets new` command to scaffold starter apps from templates (#6)
