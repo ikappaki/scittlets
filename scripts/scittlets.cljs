@@ -28,7 +28,7 @@
                                                      :type "string"}))
                               (.option "rewrite"
                                        (clj->js {:alias "r"
-                                                 :description "Rewrite source dependency URLs to this tag (may not exist) and print the result"
+                                                 :description "Rewrite source URLs to this tag (may not exist) and print the result"
                                                  :type "string"})))))
               (.command "new [directory] [--template name] [--list]" "Create a new app from a template NAME, or list available templates. Outputs to DIRECTORY if provided, or uses the template’s default."
                         (fn [y]
@@ -168,7 +168,7 @@
 
 scittlets new <template-name> [output-dir]"))
 
-          (template-new tag catalog arg-template arg-directory))
+          (js/await (template-new tag catalog arg-template arg-directory)))
         (exit 0))
       nil
       (.showHelp spec)
@@ -197,8 +197,11 @@ scittlets new <template-name> [output-dir]"))
             (.includes tp "application/octet-stream")
             {:result (js/await (.text res))}
 
+            (.includes tp "text/plain")
+            {:result (js/await (.text res))}
+
             :else
-            {:error [:data-fetch/error :uknown-content-type tp]}))))
+            {:error [:data-fetch/error :unknown-content-type tp]}))))
     (catch :default e
       (println :data-fetch/exception e)
       {:error (str e)})))
@@ -247,13 +250,35 @@ scittlets new <template-name> [output-dir]"))
                              (assoc acc k (assoc v "deps" deps-up)))
                            (assoc acc k v)))
                        {} catalog)
+        cat-up (update cat-up "templates"
+                       #(reduce (fn [acc [k v]]
+                                  (let [src (v "src")
+                                        base (cond-> scittlets-jsdelivr-url
+                                               (not (= rewrite-tag "main"))
+                                               (str "@" (js/encodeURIComponent rewrite-tag)))]
+                                    (->> (update v "files"
+                                                 (fn [files]
+                                                   (for [file files]
+                                                     (if (map? file)
+                                                       (update file "src"
+                                                               (fn [src-path]
+                                                                 (str base "/" src "/" src-path)))
+                                                       {"src" (str base "/" src "/" file) "dest" file}))))
+                                         (assoc acc k))))
+                                {} %))
         cat-up (assoc cat-up "version" rewrite-tag)]
     cat-up))
 
 (defn scittlets-get [catalog]
   (into {} (filter (fn [[_k v]] (and (map? v) (contains? v "deps"))) catalog)))
 
-(defn template-new [tag catalog template target-dir]
+(defn url-valid? [s]
+  (try
+    (js/URL. s)
+    true
+    (catch :default _ false)))
+
+(defn ^:async template-new [tag catalog template target-dir]
   (let [templates (catalog "templates")
         template-names (keys templates)]
 
@@ -266,7 +291,7 @@ scittlets new <template-name> [output-dir]"))
             target-dir (or target-dir target)]
         (println "🛠️ Scaffolding new app from template:" template)
         (debug :template/info src files target)
-        (debug :termplate/target target-dir)
+        (debug :template/target target-dir)
 
         (when (fs/existsSync target-dir)
           (exit 1 "❌ Error: target directory already exists:" target-dir))
@@ -278,10 +303,17 @@ scittlets new <template-name> [output-dir]"))
           (let [{src-file "src" dest-file "dest"} (if (map? entry)
                                                     entry
                                                     {"src" entry "dest" entry})
-                src-path (path/join src src-file)
                 dest-path (path/join target-dir dest-file)]
+            (debug :template-new/files :src src-file  :dest dest-path)
             (println " ↳"  dest-path)
-            (let [data (fs/readFileSync src-path "utf-8")
+            (let [data (if (url-valid? src-file)
+                         (let [{asset :result error :error} (js/await (data-fetch src-file))]
+                           (if error
+                             (exit 1 :tempalte-new/asset-error :set src-file :error error)
+
+                             asset))
+                         (let [src-path (path/join src src-file)]
+                           (fs/readFileSync src-path "utf-8")))
                   html? (str/ends-with? dest-file ".html")
                   data-up (if html?
                             (-> (.replace data
