@@ -253,9 +253,9 @@
                    (let [content (fs/readFileSync (path/join target "index.html") "utf8")]
                      (println)
                      ;;(prn matches)
-                     (is (= ["<!DOCTYPE html>" "<html>"
+                     (is (= ["<!DOCTYPE html>"
+                             "<html>"
                              "  <head>"
-                             ""
                              "    <meta charset=\"UTF-8\" />"
                              "    <title>Minimal cljs scittle app</title>"
                              ""
