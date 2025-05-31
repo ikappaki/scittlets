@@ -6,6 +6,11 @@
 
 ## Unreleased CLI
 
+## v0.3.0
+
+* Added `reagent/codemirror`, `reagent/mermaid` and `scittle/basic` templates to the catalog (#6)
+* Created a web page to showcase the templates (#6)
+
 ## cli-v0.3.1
 
 * Removed minor debug output from `scittlets new` command (#8)
