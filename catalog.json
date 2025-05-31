@@ -19,5 +19,26 @@
            "<script src=\"src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>"],
   "see" : {"mermaid" : "https://mermaid.js.org/",
            "reagent" : "https://reagent-project.github.io/"
-          }}
+          }},
+
+ "templates" :
+ {"reagent/codemirror":
+  {"src": "examples/codemirror",
+   "descr": "A Reagent template around CodeMirror, a code editor component for the web",
+   "files": [{"src": "codemirror_demo.html", "dest": "index.html"},
+             "codemirror_demo.cljs"],
+   "target": "scits_mermaid_reagent"},
+  "reagent/mermaid":
+  {"src": "examples/mermaid",
+   "descr": "A Reagent template around Mermaid, the diagramming and charting tool",
+   "files": [{"src": "mermaid_demo.html", "dest": "index.html"},
+             "mermaid_demo.cljs"],
+   "target": "scits_mermaid_reagent"},
+  "scittle/basic":
+  {"src": "examples/scittle",
+   "descr": "A minimal Scittle template with zero dependencies",
+   "files": [{"src": "scittle_basic.html", "dest": "index.html"},
+              "scittle_basic.cljs"],
+   "target": "scittle_basic"}
+ }
 }

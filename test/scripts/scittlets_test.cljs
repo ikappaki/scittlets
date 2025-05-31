@@ -241,4 +241,60 @@
                             lines)))
                    (done))))))
 
+(deftest test-cmd-new
+  (async done
+         (let [target (path/join (transient-dir-make!) "test-cmd-new")]
+           (exec (str scittlets-cmd " new " target " -t ./catalog.json")
+                 (fn [error stdout stderr]
+                   (is (nil? error) (str "stdout: " stdout
+                                         "\n\nstderr: " stderr))
+                   (is (empty? stderr))
+                   (is (= ["index.html" "scittle_basic.cljs"] (js->clj (fs/readdirSync target))))
+                   (let [content (fs/readFileSync (path/join target "index.html") "utf8")]
+                     (println)
+                     ;;(prn matches)
+                     (is (= ["<!DOCTYPE html>" "<html>"
+                             "  <head>"
+                             ""
+                             "    <meta charset=\"UTF-8\" />"
+                             "    <title>Minimal cljs scittle app</title>"
+                             ""
+                             ""
+                             "    <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.min.js\" type=\"application/javascript\"></script>"
+                             ""
+                             "    <script type=\"application/x-scittle\" src=\"scittle_basic.cljs\"></script>"
+                             "    "
+                             "  </head>"
+                             "  <body>"
+                             "    <div id=\"app\"></div>"
+                             "  </body>"
+                             ""
+                             "</html>"]
+                            (str/split-lines content)))
+                     (done)))))))
+
+
+(deftest test-cmd-new-other
+  (async done
+         (let [target (path/join (transient-dir-make!) "test-cmd-new-other")]
+           (exec (str scittlets-cmd " new " target " --template reagent/mermaid -t ./catalog.json")
+                 (fn [error stdout stderr]
+                   (is (nil? error) (str "stdout: " stdout
+                                         "\n\nstderr: " stderr))
+                   (is (empty? stderr))
+                   (is (= #{"index.html" "mermaid_demo.cljs"} (set (fs/readdirSync target))))
+
+                   (done))))))
+
+(deftest test-cmd-new-list
+  (async done
+         (exec (str scittlets-cmd " new " "--list -t ./catalog.json")
+               (fn [error stdout stderr]
+                 (is (nil? error) (str "stdout: " stdout
+                                       "\n\nstderr: " stderr))
+                 (is (empty? stderr))
+                 (is (every? #(.includes stdout %) ["-  reagent/mermaid" "-  scittle/basic"]) stdout)
+
+                 (done)))))
+
 (run-tests)
