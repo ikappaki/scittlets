@@ -403,7 +403,6 @@ Happy hacking! 🚀")))))
                          file-scitts)
          catalog-missing (remove (set catalog-scitts) update-scitts)]
 
-     (println :scitts file-scitts html)
      (prout "Catalog:" tag "\n")
      (if (seq catalog-missing)
        (exit 1 "Error: these scittlets dependencies are missing from the catalog:"
