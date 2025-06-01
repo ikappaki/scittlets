@@ -150,3 +150,7 @@ Use this scittlet as a starting point for development:
 * Test page: [test/scittlets/reagent/mermaid.html](test/scittlets/reagent/mermaid.html)
 * Demo code: [examples/mermaid/mermaid_demo.cljs](examples/mermaid/mermaid_demo.cljs)
 * Demo page: [examples/mermaid/mermaid_demo.html](examples/mermaid/mermaid_demo.html)
+
+## License
+
+Licensed under the Eclipse Public License 1.0, same as [Scittle](https://github.com/babashka/scittle). See [LICENSE](LICENSE) for details.
