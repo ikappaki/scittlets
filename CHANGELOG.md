@@ -6,6 +6,8 @@
 
 ## Unreleased CLI
 
+* Added `scittlets pack` command to inline `<script>` elements with `src` into the HTML file (#9)
+
 ## v0.3.0
 
 * Added `reagent/codemirror`, `reagent/mermaid` and `scittle/basic` templates to the catalog (#6)

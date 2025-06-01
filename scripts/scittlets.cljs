@@ -63,6 +63,16 @@
                                                  :description "Catalog tag to use"
                                                  :default "latest"
                                                  :type "string"})))))
+              (.command "pack <path> [target]" "Pack HTML file by inlining script elements"
+                        (fn [y]
+                          (-> y
+                              (.positional "path"
+                                           (clj->js {:describe "Path to the source HTML file"
+                                                     :type "string"}))
+                              (.positional "target"
+                                           (clj->js {:describe "Output HTML filename"
+                                                     :default "packed.html"
+                                                     :type "string"})))))
               (.option "verbose" (clj->js {:alias "v",
                                            :type "boolean"
                                            :description "Enable verbose logging"
@@ -90,6 +100,7 @@
 (declare scittlets-get)
 (declare catalog-rewrite)
 (declare template-new)
+(declare pack)
 (declare exit)
 
 (defn ^:async dispatch [argv]
@@ -170,6 +181,15 @@ scittlets new <template-name> [output-dir]"))
 
           (js/await (template-new tag catalog arg-template arg-directory)))
         (exit 0))
+
+      "pack"
+      (let [arg-path (.-path argv)
+            arg-target (.-target argv)]
+        (if-not (readable? arg-path)
+          (exit 1 :pack/error "Can't find, or read, file:" arg-path)
+
+          (js/await (pack arg-path arg-target))))
+
       nil
       (.showHelp spec)
 
@@ -438,6 +458,66 @@ Happy hacking! 🚀")))))
                (let [updated (str/join "\n" lines)]
                  (fs/writeFileSync html-path updated)
                  (prout "\nScittlets updated:" (str/join ", " update-scitts)))))))))))
+
+(defn html-attrs-parse [tag-str]
+  (let [[_ attrs-str] (re-find #"<\s*\w+\s*([^>]*)>" tag-str)
+        attr-regex #"([a-zA-Z\-]+)(?:=\"([^\"]*)\")?"
+        matches (re-seq attr-regex (or attrs-str ""))]
+    (reduce (fn [m [_ k v]]
+              (assoc m (keyword k) (if (nil? v) true v)))
+            {}
+            matches)))
+
+(defn html-attrs->string [attrs-map]
+  (->> attrs-map
+       (map (fn [[k v]]
+              (if (= v true)
+                (name k)
+                (str (name k) "=\"" v "\""))))
+       (str/join " ")))
+
+(defn ^:async pack [source target]
+  (println "📦 Packing file:" source)
+  (let [html (.readFileSync fs source "utf8")
+        base (path/dirname source)
+        script-regex #"([ \t]*)<script\b[^>]*>[\s\S]*?<\/script>"
+        matches (re-seq script-regex html)]
+    (println "🔍 Found" (count matches) "<script> elements for consideration")
+    (when (seq matches)
+      (loop [matches matches
+             html-up html
+             up-count 0]
+        (if-let [[match leading-ws] (first matches)]
+          (let [attrs (html-attrs-parse match)
+                {:keys [src]} attrs]
+            (debug :pack/info :match match :attrs attrs)
+            (if-not (and src (str/ends-with? src ".cljs"))
+              (recur (rest matches)
+                     html-up
+                     up-count)
+
+              (do
+                (println "📝 Inlining:" src)
+                (let [content (if (url-valid? src)
+                                (let [{:keys [result error]} (js/await (data-fetch src))]
+                                  (if error
+                                    (exit 1 :pack/data-fetch-error :url src :error error)
+                                    result))
+                                (.readFileSync fs (path/join base src) "utf8"))
+                      attrs-up (-> (dissoc attrs :src)
+                                   (assoc :scittlets-pack-src src))
+                      script-up (str leading-ws "<script " (html-attrs->string attrs-up) ">"
+                                     "\n" (->> (str/split-lines content)
+                                               (map #(str leading-ws "  " %))
+                                               (str/join "\n"))
+                                     "\n" leading-ws "</script>")]
+                  (recur (rest matches)
+                         (.replace html-up match script-up)
+                         (inc up-count))))))
+
+          (let [html-up  (str/replace html-up "\r" "")]
+            (println "✅ Inlined" up-count "<script> elements and saving output to" (path/resolve target))
+            (fs/writeFileSync target html-up "utf8")))))))
 
 (defn args-get [script-name]
   (let [pattern (re-pattern (str script-name "(?:\\.\\w+)?$"))
