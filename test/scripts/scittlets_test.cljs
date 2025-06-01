@@ -10,7 +10,8 @@
 
 (def corpus {:catalog-main "test/corpus/catalog-main.json"
              :markers "test/corpus/markers.html"
-             :no-deps "test/corpus/no-deps.html"})
+             :no-deps "test/corpus/no-deps.html"
+             :to-pack-html "test/corpus/topack.html"})
 
 #_(defn compile []
   ;; Setup code before tests
@@ -328,4 +329,116 @@
 
                  (done)))))
 
+(deftest test-cmd-pack
+  (async done
+         (let [target-dir (transient-dir-make!)
+               out-path (path/join target-dir "out.html")
+               to-pack-html (:to-pack-html  corpus)]
+           (exec (str scittlets-cmd " pack " to-pack-html  " " out-path)
+                 (fn [error stdout stderr]
+                   (is (nil? error) (str "stdout: " stdout
+                                         "\n\nstderr: " stderr))
+                   (is (empty? stderr))
+                   (is (str/includes? stdout "Inlined 2 <script> elements"))
+                   (let [content (fs/readFileSync out-path)]
+                     ;;(prn content)
+                     (is (= ["<!DOCTYPE html>"
+                             "<html lang=\"en-us\">"
+                             "  <head>"
+                             "    <title>Mermaid Demo</title>"
+                             "    <meta charset=\"utf-8\">"
+                             ""
+                             "    <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.min.js\" type=\"application/javascript\"></script>"
+                             ""
+                             "    <!-- Scittlet dependencies: scittlets.reagent.mermaid -->"
+                             "    <meta name=\"scittlets.reagent.mermaid.version\" content=\"v0.3.0\">"
+                             "    <script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>"
+                             "    <script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>"
+                             "    <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>"
+                             "    <script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\"></script>"
+                             "    <script type=\"application/x-scittle\" scittlets-pack-src=\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.3.0/src/scittlets/reagent/mermaid.cljs\">"
+                             "      (ns scittlets.reagent.mermaid"
+                             "        (:require"
+                             "         [reagent.core :as r]))"
+                             "      "
+                             "      (defonce init (.initialize js/mermaid #js {}))"
+                             "      "
+                             "      (defn mermaid+"
+                             "        \"Reagent component that renders a diagram in-place from the Mermaid"
+                             "        DIAGRAM definition.\""
+                             "        [DIAGRAM]"
+                             "        (let [primed?* (r/atom false)"
+                             "              diagram-prev* (r/atom nil)"
+                             "              on-viewport?* (r/atom false)"
+                             "              class* (atom nil)"
+                             "              observer (js/IntersectionObserver."
+                             "                        (fn [entries]"
+                             "                          (let [on-viewport? @on-viewport?*]"
+                             "                            (when-not on-viewport?"
+                             "                              (doseq [entry entries]"
+                             "                                (when (.-isIntersecting entry)"
+                             "                                  (reset! on-viewport?* true)))))))"
+                             "              prime! #(let [on-viewport? @on-viewport?*"
+                             "                            primed? @primed?*]"
+                             "                        (when (and on-viewport? (not primed?))"
+                             "                          (.run js/mermaid #js {\"querySelector\" (str \".\" @class*)})"
+                             "                          (reset! primed?* true)))]"
+                             "          (r/create-class"
+                             "           {:component-did-mount"
+                             "            (fn [_this]"
+                             "              (prime!))"
+                             "      "
+                             "            :component-did-update"
+                             "            (fn [_this _old]"
+                             "              (prime!))"
+                             "      "
+                             "            :component-will-unmount"
+                             "            (fn []"
+                             "              (println :disconnecting...)"
+                             "              (.disconnect observer))"
+                             "      "
+                             "            :reagent-render"
+                             "            (fn [diagram]"
+                             "              (when (not= diagram @diagram-prev*)"
+                             "                (reset! diagram-prev* diagram)"
+                             "                (reset! class* (str \"scittlet-mermaid-\" (random-uuid)))"
+                             "                (reset! primed?* false))"
+                             "              (let [primed? @primed?*"
+                             "                    _on-viewport? @on-viewport?* ;; trigger when visible on viewport"
+                             "                    ]"
+                             "                ^{:key @class*} [:div {:ref (fn [el]"
+                             "                                              (when el"
+                             "                                                (.observe observer el)))"
+                             "                                       :class @class*"
+                             "                                       :style {:visibility (if primed? :visible :hidden)}}"
+                             "                                 diagram]))})))"
+                             "    </script>"
+                             "    <!-- Scittlet dependencies: end -->"
+                             ""
+                             "    <!-- Scittle App -->"
+                             "    <script type=\"application/x-scittle\" deref scittlets-pack-src=\"topack.cljs\">"
+                             "      (require '[reagent.dom :as rdom]"
+                             "               '[scittlets.reagent.mermaid :refer [mermaid+]])"
+                             "      "
+                             "      (rdom/render"
+                             "       [mermaid+ \"journey"
+                             "          title My working day"
+                             "          section Go to work"
+                             "            Make tea: 5: Me"
+                             "            Go upstairs: 3: Me"
+                             "            Do work: 1: Me, Cat"
+                             "          section Go home"
+                             "            Go downstairs: 5: Me"
+                             "            Sit down: 5: Me\"]"
+                             "      "
+                             "       (.getElementById js/document \"app\"))"
+                             "    </script>"
+                             ""
+                             "  </head>"
+                             "  <body>"
+                             "    <div id=\"app\"></div></div>"
+                             "  </body>"
+                             "</html>"]
+                            (str/split-lines content))))
+                   (done))))))
 (run-tests)

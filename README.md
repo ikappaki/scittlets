@@ -47,6 +47,11 @@ npx scittlets <command> [options]
 
   Update all scittlet dependencies in the HTML file at PATH using the latest catalog, or only those SCITTLETS if specified.
 
+- `pack <path> [target]`
+
+  Pack the HTML file at `<path>` by inlining `<script src="">` elements directly into the file.
+  Saves the output to `[target]` (default: `packed.html`).
+
 - `catalog [tag]`
 
   List all scittlets for the specified catalog TAG (default: `latest`).
@@ -82,6 +87,11 @@ Update dependencies in an HTML file:
 
 ```bash
 npx scittlets update ./index.html
+```
+
+Pack an HTML file and specify output filename:
+```bash
+npx scittlets pack ./index.html output.html
 ```
 
 #### Important
