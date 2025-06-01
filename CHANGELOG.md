@@ -6,7 +6,7 @@
 
 ## Unreleased CLI
 
-* Added `scittlets pack` command to inline `<script>` elements with `src` into the HTML file
+* Added `scittlets pack` command to inline `<script>` elements with `src` into the HTML file (#9)
 
 ## v0.3.0
 
