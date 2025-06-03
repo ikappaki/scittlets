@@ -51,11 +51,11 @@
    [:<>
     [:section.api {:style {:border-bottom "1px solid #ccc"
                            :padding-bottom "5px"}}
-     [info+ :scittlets.reagent.codemirror {#'EditorView+ {:reagent? true}
-                                           #'esm-codemirror* {:type "reagent atom"}
-                                           #'esm-codemirror-view* {:type "reagent atom"}
-                                           #'esm-import nil
-                                           #'when-esm-modules-ready+ {:reagent? true}}]]
+     [info+ :scittlets.reagent.codemirror {:vars {#'EditorView+ {:reagent? true}
+                                                  #'esm-codemirror* {:type "reagent atom"}
+                                                  #'esm-codemirror-view* {:type "reagent atom"}
+                                                  #'esm-import nil
+                                                  #'when-esm-modules-ready+ {:reagent? true}}}]]
     [:section.test
      [:h4 {:style {:color "#2c3e50"}} [:span "Test " [file-open+ "code" (:file (meta #'info+))]]]
      [:div
