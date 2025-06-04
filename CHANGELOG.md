@@ -4,7 +4,7 @@
 
 ## Unreleased Catalog
 
-* Added `scittlets.reagent` scittlet.
+* Added `scittlets.reagent` scittlet (#10)
 
 ## Unreleased CLI
 
