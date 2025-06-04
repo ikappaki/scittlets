@@ -247,30 +247,29 @@ scittlets new <template-name> [output-dir]"))
           options-up (if (empty? proxy-url)
                        fetch-opts
                        (do (debug :data-fetch/proxy-url proxy-url)
-                           (js/Object.assign fetch-opts #js {:agent (HttpsProxyAgent. proxy-url)})))]
+                           (js/Object.assign fetch-opts #js {:agent (HttpsProxyAgent. proxy-url)})))
+          res (js/await (fetch url options-up))]
+      (if-not (.-ok res)
+        (let [text (js/await (.text res))]
+          (println :data-fetch/error url text)
+          {:error [:data-fetch/error url text]})
 
-      (let [res (js/await (fetch url options-up))]
-        (if-not (.-ok res)
-          (let [text (js/await (.text res))]
-            (println :data-fetch/error url text)
-            {:error [:data-fetch/error url text]})
+        (let [tp (-> res
+                     .-headers
+                     (.get "content-type"))]
+          (debug :fetch/type url tp)
+          (cond
+            (.includes tp "application/json")
+            {:result (js/await (.json res))}
 
-          (let [tp (-> res
-                       .-headers
-                       (.get "content-type"))]
-            (debug :fetch/type url tp)
-            (cond
-              (.includes tp "application/json")
-              {:result (js/await (.json res))}
+            (.includes tp "application/octet-stream")
+            {:result (js/await (.text res))}
 
-              (.includes tp "application/octet-stream")
-              {:result (js/await (.text res))}
+            (.includes tp "text/plain")
+            {:result (js/await (.text res))}
 
-              (.includes tp "text/plain")
-              {:result (js/await (.text res))}
-
-              :else
-              {:error [:data-fetch/error :unknown-content-type tp]})))))
+            :else
+            {:error [:data-fetch/error :unknown-content-type tp]}))))
     (catch :default e
       (println :data-fetch/exception e)
       {:error (str e)})))
