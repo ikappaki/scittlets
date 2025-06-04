@@ -8,6 +8,8 @@
 
 ## Unreleased CLI
 
+## cli-v0.5.0
+
 * Added `scittlets add` command to add a list of scittlet dependencies to a target HTML file (#11)
 * Added Support for proxy and custom CA setup via `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`, and `NODE_EXTRA_CA_CERTS` (#12)
 
