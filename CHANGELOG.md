@@ -6,7 +6,7 @@
 
 ## Unreleased CLI
 
-* Added `scittlets add` command to add a list of scittlet dependencies to a target HTML file (#??)
+* Added `scittlets add` command to add a list of scittlet dependencies to a target HTML file (#11)
 
 ## cli-v0.4.0
 
