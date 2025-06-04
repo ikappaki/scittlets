@@ -551,7 +551,25 @@
                              "Error: these scittlets dependencies are already defined in the HTML file")))))))
 
 
+(deftest test-proxy
+  (testing "wihtout proxy"
+    (try
+      (let [stdout (execSync (str scittlets-cmd " tags "))]
+        (is (str/includes? stdout "v0.3.0")))
+      (catch :default e
+        (is false {:status (.-status e)
+                   :stdout (.-stdout e)
+                   :stderr (.-stderr e)}))))
 
+  (testing "with invalid proxy"
+    (try
+      (let [stdout (execSync (str scittlets-cmd " tags ")
+                             #js {:env (js/Object.assign
+                                        (.-env js/process)
+                                        #js {:HTTPS_PROXY "https://127.0.0.1:0"})})]
+        (is false stdout))
+      (catch :default e
+        (is (str/includes? (str (.-stdout e)) "connect EADDRNOTAVAIL 127.0.0.1"))))))
 
 
 (run-tests)
