@@ -1,6 +1,10 @@
 (ns scittlets
   (:require ["fs" :as fs]
+            ["https" :as https]
+            ["https-proxy-agent" :refer [HttpsProxyAgent]]
+            ["node-fetch$default" :as fetch]
             ["path" :as path]
+            ["proxy-from-env" :refer [getProxyForUrl]]
             ["yargs$default" :as yargs]
             [clojure.string :as str]))
 
@@ -93,7 +97,8 @@
                                            :global true
                                            :default false}))
               (.epilog (str "[1] TAG may also be a local path to a catalog file. The special value `latest` resolves to the most recent release tag."
-                            "\n[2] To avoid GitHub API rate limits, set the GITHUB_PUBLIC_TOKEN env var (no scopes needed)."))
+                            "\n[2] To avoid GitHub API rate limits, set the GITHUB_PUBLIC_TOKEN env var (no scopes needed)."
+                            "\n[3] Set the HTTP_PROXY, HTTPS_PROXY, or NO_PROXY environment variables to use a proxy."))
               (.middleware (fn [argv] (when (.-verbose argv)
                                         (reset! v? true))))
               (.help)))
@@ -101,9 +106,9 @@
 (def releases-url "https://api.github.com/repos/ikappaki/scittlets/releases") 
 (def catalog-download-url "https://github.com/ikappaki/scittlets/releases/download/")
 (def gh-token (.-GITHUB_PUBLIC_TOKEN js/process.env))
-(def headers (clj->js (cond-> {:headers {"User-Agent" "scittlets"}}
-                        gh-token
-                        (assoc :headers {"Authorization" (str "Bearer " gh-token)}))))
+(def fetch-opts (clj->js (cond-> {:headers {"User-Agent" "scittlets"}}
+                           gh-token
+                           (assoc :headers {"Authorization" (str "Bearer " gh-token)}))))
 
 (def scittlets-jsdelivr-url "https://cdn.jsdelivr.net/gh/ikappaki/scittlets")
 
@@ -225,28 +230,34 @@ scittlets new <template-name> [output-dir]"))
 
 (defn ^:async data-fetch [url]
   (try
-    (let [res (js/await (js/fetch url headers))]
-      (if-not (.-ok res)
-        (let [text (js/await (.text res))]
-          (println :data-fetch/error url text)
-          {:error [:data-fetch/error url text]})
+    (let [proxy-url (getProxyForUrl url)
+          options-up (if (empty? proxy-url)
+                       fetch-opts
+                       (do (debug :data-fetch/proxy-url proxy-url)
+                           (js/Object.assign fetch-opts #js {:agent (HttpsProxyAgent. proxy-url)})))]
 
-        (let [tp (-> res
-                     .-headers
-                     (.get "content-type"))]
-          (debug :fetch/type url tp)
-          (cond
-            (.includes tp "application/json")
-            {:result (js/await (.json res))}
+      (let [res (js/await (fetch url options-up))]
+        (if-not (.-ok res)
+          (let [text (js/await (.text res))]
+            (println :data-fetch/error url text)
+            {:error [:data-fetch/error url text]})
 
-            (.includes tp "application/octet-stream")
-            {:result (js/await (.text res))}
+          (let [tp (-> res
+                       .-headers
+                       (.get "content-type"))]
+            (debug :fetch/type url tp)
+            (cond
+              (.includes tp "application/json")
+              {:result (js/await (.json res))}
 
-            (.includes tp "text/plain")
-            {:result (js/await (.text res))}
+              (.includes tp "application/octet-stream")
+              {:result (js/await (.text res))}
 
-            :else
-            {:error [:data-fetch/error :unknown-content-type tp]}))))
+              (.includes tp "text/plain")
+              {:result (js/await (.text res))}
+
+              :else
+              {:error [:data-fetch/error :unknown-content-type tp]})))))
     (catch :default e
       (println :data-fetch/exception e)
       {:error (str e)})))
