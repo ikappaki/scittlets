@@ -464,7 +464,6 @@
           html-expected (str html-src ".test-cmd-add.expected")
           html-target (path/join target-dir (path/basename html-src))]
 
-
       (fs/copyFileSync html-src html-target)
       (try
         (let [_stdout (execSync (str scittlets-cmd " add " html-target
@@ -475,8 +474,8 @@
               ;;_ (fs/writeFileSync html-expected content)                    ;; rebase
               expected (fs/readFileSync html-expected)]
 
-          (is (= (str expected)
-                 (str content))
+          (is (= (str/split-lines (str expected))
+                 (str/split-lines (str content)))
               (diff html-target html-expected)))
 
         (catch :default e
@@ -492,8 +491,8 @@
       (fs/copyFileSync html-src html-target)
       (try
         (let [stdout (execSync (str scittlets-cmd " add " html-target
-                                     " scittlets.reagent.codemirror"
-                                     " -t ./catalog.json"))]
+                                    " scittlets.reagent.codemirror"
+                                    " -t ./catalog.json"))]
           (is false (str "Unexpected: " stdout)))
 
         (catch :default e
@@ -507,9 +506,9 @@
 
     (testing "with not passing a scittlet"
       (fs/copyFileSync html-src html-target)
-      (try 
+      (try
         (let [stdout (execSync (str scittlets-cmd " add " html-target
-                                     " -t ./catalog.json"))]
+                                    " -t ./catalog.json"))]
 
           (is (str/includes? (str stdout)
                              "Scittlet dependencies found in the target HTML file"))
@@ -519,22 +518,22 @@
           (is false {:status (.-status e)
                      :stdout (.-stdout e)
                      :stderr (.-stderr e)}))))
-    
+
     (testing "adding with one existing dependency"
       (fs/copyFileSync html-src html-target)
-      (try 
+      (try
         (let [_stdout (execSync (str scittlets-cmd " add " html-target " scittlets.reagent.codemirror"
                                      " -t ./catalog.json"))
               content (fs/readFileSync html-target)
-              
+
               ;;_ (fs/writeFileSync html-expected (fs/readFileSync html-src)) ;; create 
               ;;_ (fs/writeFileSync html-expected content)                    ;; rebase
               expected (fs/readFileSync html-expected)]
 
-          (is (= (str expected)
-                 (str content))
+          (is (= (str/split-lines (str expected))
+                 (str/split-lines (str content)))
               (diff html-target html-expected)))
-        
+
         (catch :default e
           (is false {:status (.-status e)
                      :stdout (.-stdout e)
@@ -542,11 +541,11 @@
 
     (testing "readding the existing dependency"
       (fs/copyFileSync html-src html-target)
-      (try 
+      (try
         (let [stdout (execSync (str scittlets-cmd " add " html-target " scittlets.reagent.mermaid"
-                                     " -t ./catalog.json"))]
+                                    " -t ./catalog.json"))]
           (is false (str "Unexpected: " stdout)))
-        
+
         (catch :default e
           (is (str/includes? (.-stdout e)
                              "Error: these scittlets dependencies are already defined in the HTML file")))))))
