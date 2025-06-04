@@ -96,11 +96,19 @@
                                            :description "Enable verbose logging"
                                            :global true
                                            :default false}))
+              (.option "sec-win-ca" (clj->js {:alias "W",
+                                              :type "boolean"
+                                              :description "Load Windows system root certificates"
+                                              :global true
+                                              :default false}))
               (.epilog (str "[1] TAG may also be a local path to a catalog file. The special value `latest` resolves to the most recent release tag."
                             "\n[2] To avoid GitHub API rate limits, set the GITHUB_PUBLIC_TOKEN env var (no scopes needed)."
-                            "\n[3] Set the HTTP_PROXY, HTTPS_PROXY, or NO_PROXY environment variables to use a proxy."))
-              (.middleware (fn [argv] (when (.-verbose argv)
-                                        (reset! v? true))))
+                            "\n[3] Set the HTTP_PROXY, HTTPS_PROXY, or NO_PROXY environment variables to use a proxy."
+                            "\n[4] Use NODE_EXTRA_CA_CERTS env variable to add custom CA certificates for HTTPS."))
+
+              (.middleware (fn [argv]
+                             (when (.-verbose argv)
+                               (reset! v? true))))
               (.help)))
 
 (def releases-url "https://api.github.com/repos/ikappaki/scittlets/releases") 
@@ -128,7 +136,12 @@
   (debug :catalog/url catalog-download-url)
   (debug :env/GITHUB_PUBLIC_TOKEN (if gh-token :set :not-set) "\n")
 
-  (let [cmd (get (.-_ argv) 0)]
+  (let [cmd (get (.-_ argv) 0)
+        arg-sec-win-ca (.-secWinCa argv)]
+
+    (when arg-sec-win-ca
+      (debug :dispatch/win-ca "loading...")
+      (js/await (js/import "win-ca")))
     (case cmd
       "tags"
       (let [tags (js/await (tags-get))
