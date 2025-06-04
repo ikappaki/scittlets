@@ -14,6 +14,10 @@
   },
   "dependencies": {
     "cherry-cljs": "^0.4.28",
+    "https-proxy-agent": "^7.0.6",
+    "node-fetch": "^3.3.2",
+    "proxy-from-env": "^1.1.0",
+    "win-ca": "^3.5.1",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
@@ -33,8 +37,5 @@
     "gh-action-pages": "act --eventpath ./test/corpus/gh-deploy-release.json -j deploy --bind \"${PWD}/scittlets:/github/workspace/scittlets\" -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest",
     "prepublishOnly": "npx cherry compile scripts/scittlets.cljs && awk 'BEGIN{print \"#!/usr/bin/env node\"}1' scripts/scittlets.mjs > sctemp && mv sctemp scripts/scittlets.mjs",
     "publishTest": "npm publish --tag test"
-  },
-  "engines": {
-    "node": ">=18"
   }
 }
