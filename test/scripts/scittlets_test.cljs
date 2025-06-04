@@ -569,7 +569,9 @@
                                         #js {:HTTPS_PROXY "https://127.0.0.1:0"})})]
         (is false stdout))
       (catch :default e
-        (is (str/includes? (str (.-stdout e)) "connect EADDRNOTAVAIL 127.0.0.1"))))))
+        (is (or (str/includes? (str (.-stdout e)) "connect EADDRNOTAVAIL 127.0.0.1") ;; win
+                (str/includes? (str (.-stdout e)) "connect ECONNREFUSED 127.0.0.1")  ;; ubuntu
+                ))))))
 
 
 (run-tests)
