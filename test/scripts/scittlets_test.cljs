@@ -1,16 +1,20 @@
 (ns scripts.scittlets-test
-  (:require ["child_process" :refer [exec]]
+  (:require ["child_process" :refer [exec execSync]]
             ["fs" :as fs]
             ["os" :as os]
             ["path" :as path]
-            [cljs.test :refer [deftest is async run-tests use-fixtures]]
+            [cljs.test :refer [deftest is async run-tests testing use-fixtures]]
             [clojure.string :as str]))
 
 (def scittlets-cmd "npx cherry run scripts/scittlets.cljs")
 
 (def corpus {:catalog-main "test/corpus/catalog-main.json"
              :markers "test/corpus/markers.html"
+
+             :no-scittle-dep "test/corpus/no-scittle-dep.html"
              :no-deps "test/corpus/no-deps.html"
+             :one-dep "test/corpus/one-dep.html"
+
              :to-pack-html "test/corpus/topack.html"})
 
 #_(defn compile []
@@ -33,6 +37,17 @@
    :after #(when-let [base @temp-dir-base*]
              ;;(println :cleaning base)
              (fs/rmSync base #js {"recursive" true "force" true}))})
+
+(defn diff [file1 file2]
+  (try
+    (execSync (str "diff " file1 " " file2))
+    "No diffs."
+    (catch :default e
+      (str "\nDiffs between " file1 " and " file2 ":"
+           "\n--stderr--\n"
+           (.-stderr e)
+           "\n--stdout--\n\n"
+           (.-stdout e)))))
 
 (deftest test-cmd-tags
   (async done
@@ -441,4 +456,102 @@
                              "</html>"]
                             (str/split-lines content))))
                    (done))))))
+
+(deftest test-cmd-add
+  (testing "no existing dependencies"
+    (let [target-dir (transient-dir-make!)
+          html-src (:no-deps corpus)
+          html-expected (str html-src ".test-cmd-add.expected")
+          html-target (path/join target-dir (path/basename html-src))]
+
+      (fs/copyFileSync html-src html-target)
+      (try
+        (let [_stdout (execSync (str scittlets-cmd " add " html-target
+                                     " scittlets.reagent.codemirror scittlets.reagent.mermaid"
+                                     " -t ./catalog.json"))
+              content (fs/readFileSync html-target)
+              ;;_ (fs/writeFileSync html-expected (fs/readFileSync html-src)) ;; create 
+              ;;_ (fs/writeFileSync html-expected content)                    ;; rebase
+              expected (fs/readFileSync html-expected)]
+
+          (is (= (str/split-lines (str expected))
+                 (str/split-lines (str content)))
+              (diff html-target html-expected)))
+
+        (catch :default e
+          (is false {:status (.-status e)
+                     :stdout (.-stdout e)
+                     :stderr (.-stderr e)})))))
+
+  (testing "no main scittle dependency"
+    (let [target-dir (transient-dir-make!)
+          html-src (:no-scittle-dep corpus)
+          html-target (path/join target-dir (path/basename html-src))]
+
+      (fs/copyFileSync html-src html-target)
+      (try
+        (let [stdout (execSync (str scittlets-cmd " add " html-target
+                                    " scittlets.reagent.codemirror"
+                                    " -t ./catalog.json"))]
+          (is false (str "Unexpected: " stdout)))
+
+        (catch :default e
+          (is (str/includes? (str (.-stdout e)) "Error: Missing required main Scittle <script> tag in the target HTML")))))))
+
+(deftest test-cmd-add-to-one-dep
+  (let [target-dir (transient-dir-make!)
+        html-src (:one-dep  corpus)
+        html-expected (str html-src ".test-add-to-one-dep.expected")
+        html-target (path/join target-dir (path/basename html-src))]
+
+    (testing "with not passing a scittlet"
+      (fs/copyFileSync html-src html-target)
+      (try
+        (let [stdout (execSync (str scittlets-cmd " add " html-target
+                                    " -t ./catalog.json"))]
+
+          (is (str/includes? (str stdout)
+                             "Scittlet dependencies found in the target HTML file"))
+          (is (str/includes? (str stdout)
+                             "• scittlets.reagent.mermaid")))
+        (catch :default e
+          (is false {:status (.-status e)
+                     :stdout (.-stdout e)
+                     :stderr (.-stderr e)}))))
+
+    (testing "adding with one existing dependency"
+      (fs/copyFileSync html-src html-target)
+      (try
+        (let [_stdout (execSync (str scittlets-cmd " add " html-target " scittlets.reagent.codemirror"
+                                     " -t ./catalog.json"))
+              content (fs/readFileSync html-target)
+
+              ;;_ (fs/writeFileSync html-expected (fs/readFileSync html-src)) ;; create 
+              ;;_ (fs/writeFileSync html-expected content)                    ;; rebase
+              expected (fs/readFileSync html-expected)]
+
+          (is (= (str/split-lines (str expected))
+                 (str/split-lines (str content)))
+              (diff html-target html-expected)))
+
+        (catch :default e
+          (is false {:status (.-status e)
+                     :stdout (.-stdout e)
+                     :stderr (.-stderr e)}))))
+
+    (testing "readding the existing dependency"
+      (fs/copyFileSync html-src html-target)
+      (try
+        (let [stdout (execSync (str scittlets-cmd " add " html-target " scittlets.reagent.mermaid"
+                                    " -t ./catalog.json"))]
+          (is false (str "Unexpected: " stdout)))
+
+        (catch :default e
+          (is (str/includes? (.-stdout e)
+                             "Error: these scittlets dependencies are already defined in the HTML file")))))))
+
+
+
+
+
 (run-tests)

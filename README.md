@@ -43,6 +43,10 @@ npx scittlets <command> [options]
 
   Use `--list` (or `-l`) to list available templates instead of creating an app.
 
+- `add <html> [scittlets..]`
+
+  Add SCITTLETS dependencies to the target HTML file, or list them if none are provided.
+
 - `update <path> [scittlet..]`
 
   Update all scittlet dependencies in the HTML file at PATH using the latest catalog, or only those SCITTLETS if specified.
@@ -70,6 +74,13 @@ Create a new app with a specific template:
 
 ```bash
 npx scittlets new --template reagent/codemirror
+```
+
+Add scittlet dependencies to HTML file:
+
+```bash
+npx scittlets add ./index.html scittlets.reagent.codemirror
+
 ```
 
 List tags:
