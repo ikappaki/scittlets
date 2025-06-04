@@ -204,8 +204,7 @@
 (defn namespace+ [ns-kw version home see]
   (let [my-ns (the-ns (symbol ns-kw))
         ns-var (first (vals (ns-publics my-ns)))
-        {:keys [file] :as m
-         nmspace :ns} (meta ns-var)]
+        {:keys [file] nmspace :ns} (meta ns-var)]
     [:h2 {:style {:color "#2c3e50"}} (into [:span (str nmspace)
                                             "  " [:code {:style {:padding-right "5px"
                                                                 :font-size "0.6em"}}
@@ -220,8 +219,29 @@
                                                                                        :font-size "0.6em"}}
                                                                            (str "[" (name label) "]"))) see))]))
 
-(defn info+ [ns-kw vars]
-  (let [{catalog :result
+(defn api-external+ [ns-kw api-url version home see]
+  [:<>
+   [:h2 {:style {:color "#2c3e50"}}
+    (into [:span (name ns-kw)
+           "  " [:code {:style {:padding-right "5px"
+                                :font-size "0.6em"}}
+                 version] " "
+           [:a {:href home :target "_blank"
+                :style {:padding-right "5px"
+                        :font-size "0.6em"}}
+            "🏠"]]
+          (concat
+           [[:a {:href api-url :target "_blank"
+                 :style {:padding-right "5px"
+                         :font-size "0.6em"}}
+             "external API"]]
+           (map (fn [[label url]] (vector  :a {:href url :target "_blank"
+                                               :style {:padding-right "5px"
+                                                       :font-size "0.6em"}}
+                                           (str "[" (name label) "]"))) see)))]])
+(defn info+ [ns-kw opts]
+  (let [{:keys [vars namespace? api-url] :or {namespace? true}} opts
+        {catalog :result
          :keys [error] :as _catalog} @catalog*]
     (if-not catalog
       [:div "Loading scittlets catalog ..."]
@@ -231,6 +251,8 @@
         (let [{:keys [version]} catalog
               {:keys [deps home see]} (get catalog ns-kw)]
           [:<>
-           [namespace+ ns-kw version home see]
+           (if namespace?
+             [namespace+ ns-kw version home see]
+             [api-external+ ns-kw api-url version home see opts])
            [API+ vars]
            [dependencies+ deps]])))))

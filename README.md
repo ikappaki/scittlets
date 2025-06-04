@@ -115,6 +115,10 @@ npx scittlets pack ./index.html output.html
 
 ## Scittlets
 
+### [scittlets.reagent](https://ikappaki.github.io/scittlets/test/scittlets/reagent/basic.html)
+
+Provides dependencies for [reagent](https://reagent-project.github.io/), a simple ClojureScript interface to [React](https://react.dev/).
+
 ### [scittlets.reagent.codemirror](https://ikappaki.github.io/scittlets/test/scittlets/reagent/codemirror.html)
 
 A [reagent](https://reagent-project.github.io/) component around [CodeMirror](https://codemirror.net/), a code editor component for the web.

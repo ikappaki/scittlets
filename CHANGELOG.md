@@ -4,6 +4,8 @@
 
 ## Unreleased Catalog
 
+* Added `scittlets.reagent` scittlet (#10)
+
 ## Unreleased CLI
 
 ## cli-v0.4.0

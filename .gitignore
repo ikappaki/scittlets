@@ -3,6 +3,7 @@
 /.clj-kondo
 /.lsp
 /dist
+/scittlets/
 
 scripts/scittlets.mjs
 
