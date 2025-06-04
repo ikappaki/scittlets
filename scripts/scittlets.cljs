@@ -49,6 +49,20 @@
                                                  :description "Catalog version tag to use"
                                                  :default "latest"
                                                  :type "string"})))))
+              (.command "add <html> [scittlets..]" "Add SCITTLETS dependencies to the target HTML file, or list them if none are provided."
+                        (fn [y]
+                          (-> y
+                              (.positional "html"
+                                           (clj->js {:describe "Path to the target HTML file to update."
+                                                     :type "string"}))
+                              (.positional "scittlets"
+                                           (clj->js {:describe "Scittlets to add to the target HTML file"
+                                                     :type "string"}))
+                              (.option "tag"
+                                       (clj->js {:alias "t"
+                                                 :description "Catalog version tag to use"
+                                                 :default "latest"
+                                                 :type "string"})))))
               (.command "update <path> [scittlets..]" "Update all scittlet dependencies in the HTML file at PATH from the Catalog. If SCITTLETS are specified, update only those."
                         (fn [y]
                           (-> y
@@ -63,7 +77,7 @@
                                                  :description "Catalog tag to use"
                                                  :default "latest"
                                                  :type "string"})))))
-              (.command "pack <path> [target]" "Pack HTML file by inlining script elements"
+              (.command "pack <path> [target]" "Pack HTML file at PATH by inlining script elements."
                         (fn [y]
                           (-> y
                               (.positional "path"
@@ -100,6 +114,7 @@
 (declare scittlets-get)
 (declare catalog-rewrite)
 (declare template-new)
+(declare scittlets-add!)
 (declare pack)
 (declare exit)
 
@@ -140,6 +155,16 @@
             (println "\nCatalog scittlets:")
             (println (str/join "\n" scittlet-names))
             (exit 0))))
+
+      "add"
+      (let [arg-html (.-html argv)
+            arg-scittlets (.-scittlets argv)
+            arg-tag (.-tag argv)]
+        (if-not (readable? arg-html)
+          (exit 1 "❌ Error: Can't find, or read, file:" arg-html)
+
+          (let [{:keys [catalog tag]} (js/await (catalog-get arg-tag))]
+            (scittlets-add! catalog tag arg-html arg-scittlets))))
 
       "update"
       (let [target (.-path argv)
@@ -360,6 +385,101 @@ scittlets new <template-name> [output-dir]"))
 
 Happy hacking! 🚀")))))
 
+(defn insert-at [v idx items]
+  (into (into (subvec v 0 idx) items) (subvec v idx)))
+
+(defn scittlet-add [lines insert-pos catalog scittlet prout]
+  (let [version (get catalog "version")
+        deps (get-in catalog [scittlet "deps"])]
+
+    (if-not (seq deps)
+      (throw  (js/Error. (str "❌ Error: can't find dependency: " scittlet)))
+
+      (let [lw (get-leading-whitespace (get lines insert-pos))
+            deps-meta (concat [(str "<meta name=\"" scittlet ".version\" content=\"" version "\">")] deps)
+            deps-up (map #(str lw %) deps-meta)
+            lines-up (insert-at lines (inc insert-pos)
+                                (-> (into ["" (str lw "<!-- Scittlet dependencies: " scittlet " -->")]
+                                     deps-up)
+                                    (conj (str lw "<!-- Scittlet dependencies: end -->"))))]
+        (prout "📦 Dependencies: ")
+        (prout (str/join "\n" (map #(str "  🔹 " %) deps-up)))
+        lines-up))))
+
+(defn scittlets-add! [catalog tag html-path scittlets]
+  (let [html (.toString (fs/readFileSync html-path))
+        scittlets-cat (scittlets-get catalog)
+        catalog-scitts (keys scittlets-cat)
+        file-scitts (->> (re-seq #"<!-- Scittlet dependencies: ((?!end)[^ ]+) -->" html)
+                         (map second))
+        catalog-missing (remove (set catalog-scitts) scittlets)
+        file-existing (filter (set file-scitts) scittlets)]
+    (println "📄 Target HTML:" (path/resolve html-path))
+    (println "📚 Using Catalog:" tag)
+    (cond
+      (not (seq scittlets))
+      (do
+        (println)
+        (if (seq file-scitts)
+          (do 
+            (println "ℹ️ Scittlet dependencies found in the target HTML file:")
+            (println (str/join "\n" (map #(str "  • " %) file-scitts))))
+          (println "ℹ️ No scittlet dependencies found in target HTML file.")))
+
+      (seq catalog-missing)
+      (exit 1 "❌ Error: these scittlets dependencies are missing from the catalog:\n"
+            (str/join "\n" (map #(str "  • " %) catalog-missing))
+
+            "\n📦 Available catalog entries:\n"
+            (str/join "\n" (map #(str "  • " %) catalog-scitts)))
+
+      (seq file-existing)
+      (exit 1 "❌ Error: these scittlets dependencies are already defined in the HTML file:\n"
+            (str/join "\n" (map #(str "  • " %) file-existing)))
+
+      :else
+      (do
+        (debug :scittlets-add!/scittlets scittlets)
+        (println)
+        (println "🔎 Existing scittlets in file:")
+        (println  (str/join "\n" (map #(str "  • " %) scittlets)))
+        (let [lines (str/split-lines html)
+              lines-indexed (map-indexed vector lines)
+              scittle-pos (->> lines-indexed
+                               (some (fn [[i l]] (when (re-find #"scittle\.min\.js" l) i))))
+              deps-last-pos (->> lines-indexed
+                                 (filter (fn [[_ l]] (re-find #"<!-- Scittlet dependencies: end -->" l)))
+                                 last
+                                 first)
+              insert-pos (or deps-last-pos scittle-pos)]
+          (debug :scittle-add!/positions :scittle scittle-pos :dep-last deps-last-pos)
+          (if-not insert-pos
+            (do
+              (println)
+              (exit 1 "❌ Error: Missing required main Scittle <script> tag in the target HTML."
+                    "\n  ➕ Please add the following to the <head> of your HTML file:\n\n"
+                    "  <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.min.js\" type=\"application/javascript\" deref></script>"
+                    "\n"))
+
+            (do
+              (debug :scittle-add!/inserting-at insert-pos)
+              (loop [remaining  (reverse scittlets)
+                     lines-up lines]
+                (if-let [scitt (first remaining)]
+                  (do (println "\n🔧 Inserting scittlet:" scitt)
+                      (let [deps (get-in scittlets-cat [scitt "deps"])
+                            lines-up (scittlet-add lines-up insert-pos catalog scitt println)]
+                        (debug :add/updating scitt)
+                        (recur (rest remaining)
+                               lines-up)))
+
+                  (let [updated (str/join "\n" lines-up)]
+                    (fs/writeFileSync html-path updated)
+                    (println)
+                    (println "✅ Scittlets added:")
+                    (println  (str/join "\n" (map #(str "  • " %) scittlets))))
+                  )))))))))
+
 (defn readable? [path]
   (try
     (.accessSync fs path (.-R_OK fs/constants))
@@ -373,7 +493,7 @@ Happy hacking! 🚀")))))
   (let [match (re-find #"^[ \t]+" line)]
     (or match "")))
 
-(defn dep-update! [lines catalog scittlet prout]
+(defn dep-update [lines catalog scittlet prout]
   (let [version (get catalog "version")
         deps (get-in catalog [scittlet "deps"])]
 
@@ -450,7 +570,7 @@ Happy hacking! 🚀")))))
                   lines (str/split-lines html)]
              (if-let [scitt (first remaining)]
                (do (prout "\nUpdating scittlet:" scitt)
-                   (let [lines-up (dep-update! lines catalog scitt prout)]
+                   (let [lines-up (dep-update lines catalog scitt prout)]
                      (debug :deps/updating scitt)
                      (recur (rest remaining)
                             lines-up)))
