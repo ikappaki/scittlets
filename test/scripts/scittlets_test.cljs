@@ -565,6 +565,7 @@
     (try
       (let [stdout (execSync (str scittlets-cmd " tags ")
                              #js {:env (js/Object.assign
+                                        #js {}
                                         (.-env js/process)
                                         #js {:HTTPS_PROXY "https://127.0.0.1:0"})})]
         (is false stdout))
@@ -573,5 +574,15 @@
                 (str/includes? (str (.-stdout e)) "connect ECONNREFUSED 127.0.0.1")  ;; ubuntu
                 ))))))
 
+
+(deftest test-win-ca
+  (testing "it does not fail."
+    (try
+      (let [stdout (execSync (str scittlets-cmd " tags -W"))]
+        (is (str/includes? stdout "Release tags: latest")))
+      (catch :default e
+        (is false {:status (.-status e)
+                   :stdout (.-stdout e)
+                   :stderr (.-stderr e)})))))
 
 (run-tests)
