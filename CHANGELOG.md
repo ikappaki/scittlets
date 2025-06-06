@@ -6,6 +6,8 @@
 
 ## Unreleased CLI
 
+## cli-v0.5.1
+
 * Fixed `win-ca` config to load root CAs correctly (#13)
 
 ## v0.4.0
