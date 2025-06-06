@@ -1,6 +1,5 @@
 (ns scittlets
   (:require ["fs" :as fs]
-            ["https" :as https]
             ["https-proxy-agent" :refer [HttpsProxyAgent]]
             ["node-fetch$default" :as fetch]
             ["path" :as path]
@@ -130,6 +129,7 @@
 (declare scittlets-add!)
 (declare pack)
 (declare exit)
+(declare win-ca-load!)
 
 (defn ^:async dispatch [argv]
   (debug :releases/url releases-url)
@@ -140,8 +140,8 @@
         arg-sec-win-ca (.-secWinCa argv)]
 
     (when arg-sec-win-ca
-      (debug :dispatch/win-ca "loading...")
-      (js/await (js/import "win-ca")))
+      (win-ca-load!))
+
     (case cmd
       "tags"
       (let [tags (js/await (tags-get))
@@ -240,6 +240,13 @@ scittlets new <template-name> [output-dir]"))
       (do (println "Unknown command:" cmd "\n")
           (.showHelp spec)
           (exit 1)))))
+
+(defn ^:async win-ca-load! []
+  (when (= js/process.platform "win32")
+    (debug :win-ca-load!/loading)
+    (let [win-ca (js/await (js/import "win-ca"))
+          default (aget win-ca "default")]
+      (default #js {:inject "+"}))))
 
 (defn ^:async data-fetch [url]
   (try

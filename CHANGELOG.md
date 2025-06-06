@@ -6,6 +6,8 @@
 
 ## Unreleased CLI
 
+* Fixed `win-ca` config to load root CAs correctly (#13)
+
 ## v0.4.0
 
 * Added `scittlets.reagent` scittlet (#10)
