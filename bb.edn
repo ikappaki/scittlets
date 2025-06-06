@@ -1,0 +1,30 @@
+{:deps {org.babashka/http-server {:mvn/version "0.1.13"}
+        org.babashka/cli {:mvn/version "0.2.23"}
+
+        etaoin/etaoin {:mvn/version "1.1.43"}}
+
+ :tasks
+ {:requires ([babashka.cli :as cli]
+             [taoensso.timbre :as timbre])
+
+  ;; babashka http
+  :init (def cli-opts (cli/parse-opts *command-line-args* {:coerce {:port :int :headers :edn}}))
+  serve {:doc "Serve static assets"
+         :requires ([babashka.http-server :as server])
+         :task (server/exec (merge {:port 8001
+                                    :dir "."}
+                                   cli-opts))}
+  prn {:task (clojure "-X clojure.core/prn" cli-opts)}
+  -dev {:depends [serve prn]}
+  test-server {:task (run '-dev {:parallel true})}
+
+
+  ;; bb test:bb --vars my-test/my-second-test
+  test:bb {:extra-paths ["test"]
+           :extra-deps {io.github.cognitect-labs/test-runner
+                        {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+           :task (do (timbre/set-level! :info)
+                     (exec 'cognitect.test-runner.api/test))
+           :exec-args {:dirs ["test/scittlets"]}
+           :org.babashka/cli {:coerce {:nses [:symbol]
+                                       :vars [:symbol]}}}}}
