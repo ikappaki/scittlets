@@ -85,11 +85,11 @@ jobs:
     # - uses: browser-actions/setup-firefox@v1
     # - run: firefox --version
 
-    - name: Install gecko
-      uses: browser-actions/setup-geckodriver@latest
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-    - run: geckodriver --version
+    # - name: Install gecko
+    #   uses: browser-actions/setup-geckodriver@latest
+    #   with:
+    #     token: ${{ secrets.GITHUB_TOKEN }}
+    # - run: geckodriver --version
 
     - name: Restore Clojure deps from cache
       uses: actions/cache/restore@v4
