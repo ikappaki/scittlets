@@ -1,22 +1,11 @@
 {:deps {org.babashka/http-server {:mvn/version "0.1.13"}
         org.babashka/cli {:mvn/version "0.2.23"}
 
-        org.clj-commons/pretty {:mvn/version "3.3.2"}
-        dev.nubank/docopt {:mvn/version "0.6.1-fix7"}
-        lread/status-line {:git/url "https://github.com/lread/status-line.git"
-                           :sha "cf44c15f30ea3867227fa61ceb823e5e942c707f"}
-
         etaoin/etaoin {:mvn/version "1.1.43"}}
-
- :paths ["scripts/etaoin"]
 
  :tasks
  {:requires ([babashka.cli :as cli]
              [taoensso.timbre :as timbre])
-
-  tools-versions {:doc "report on tools versions"
-                  :task tools-versions/-main}
-
 
   ;; babashka http
   :init (def cli-opts (cli/parse-opts *command-line-args* {:coerce {:port :int :headers :edn}}))
