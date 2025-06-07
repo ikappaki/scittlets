@@ -1,14 +1,15 @@
-(ns scittlets.reagent.mermaid-test
+(ns scittlets.reagent.mermaid-card
   (:require [reagent.core :as r]
             [reagent.dom :as rdom]
-            [scittlets.reagent.mermaid :refer [mermaid+]]))
+            [scittlets.reagent.mermaid :refer [mermaid+]]
+            [scittlets.reagent.test-utils :refer [info+ file-open+ demo+]]))
 
-(def info+ (or (requiring-resolve 'scittlets.reagent.test-utils/info+)
-               (fn [ns-kw] (r/as-element [:div (str ns-kw)]))))
-(def file-open+ (or (requiring-resolve 'scittlets.reagent.test-utils/file-open+)
-                    (fn [label url] (r/as-element [:a {:href url} (str label)]))))
-(def demo+ (or (requiring-resolve 'scittlets.reagent.test-utils/demo+)
-               (fn [html-url cljs-url] (r/as-element [:a {:href html-url} (str html-url)]))))
+;; (def info+ (or (requiring-resolve 'scittlets.reagent.test-utils/info+)
+;;                (fn [ns-kw] (r/as-element [:div (str ns-kw)]))))
+;; (def file-open+ (or (requiring-resolve 'scittlets.reagent.test-utils/file-open+)
+;;                     (fn [label url] (r/as-element [:a {:href url} (str label)]))))
+;; (def demo+ (or (requiring-resolve 'scittlets.reagent.test-utils/demo+)
+;;                (fn [html-url cljs-url] (r/as-element [:a {:href html-url} (str html-url)]))))
 
 (defn text-input+ [input*]
   [:div
