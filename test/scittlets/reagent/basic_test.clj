@@ -15,7 +15,7 @@
   "Executes a test running a driver. Bounds a driver
    with the global *driver* variable."
   [f]
-  (e/with-firefox driver
+  (e/with-firefox-headless driver
     (binding [*driver* driver]
       (f))
     ))
