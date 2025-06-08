@@ -6,6 +6,8 @@
 
 ## Unreleased CLI
 
+## cli-v0.5.2
+
 * Fixed incorrect reporting of existing scittlets in target HTML file (#16)
 
 ## v0.4.1
