@@ -3,6 +3,8 @@
 
         etaoin/etaoin {:mvn/version "1.1.43"}}
 
+ :paths ["test"]
+
  :tasks
  {:requires ([babashka.cli :as cli]
              [taoensso.timbre :as timbre])
@@ -19,12 +21,11 @@
   test-server {:task (run '-dev {:parallel true})}
 
 
-  ;; bb test:bb --vars my-test/my-second-test
-  test:bb {:extra-paths ["test"]
+  ;; bb test-ui --vars my-test/my-second-test
+  test-ui {:extra-paths ["test"]
            :extra-deps {io.github.cognitect-labs/test-runner
                         {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
-           :task (do (timbre/set-level! :info)
-                     (exec 'cognitect.test-runner.api/test))
+           :task (exec 'cognitect.test-runner.api/test)
            :exec-args {:dirs ["test/scittlets"]}
            :org.babashka/cli {:coerce {:nses [:symbol]
                                        :vars [:symbol]}}}}}

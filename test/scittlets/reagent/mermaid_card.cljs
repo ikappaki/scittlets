@@ -15,14 +15,15 @@
   [:div
    [:div {:style {:margin-bottom "1rem"}}
     "- Update test: Modify text; the diagram updates."]
-   [:textarea {:value @input*
-               :rows 6
-               :on-change #(reset! input* (-> % .-target .-value))
-               :style {:width "calc(100% - 10px)"
-                       :padding "2px"}}]])
+   [:textarea#text-input {:value @input*
+                          :rows 6
+                          :on-change #(reset! input* (-> % .-target .-value))
+                          :style {:width "calc(100% - 10px)"
+                                  :padding "2px"}}]])
 
 (defn diagram+ [diagram*]
-  [mermaid+ @diagram*])
+  [:div#diagram
+   [mermaid+ @diagram*]])
 
 (def diagram "%%{init: {'themeVariables': {'fontSize': '30px'}}}%%
 

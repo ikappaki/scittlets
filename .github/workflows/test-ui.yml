@@ -76,5 +76,5 @@ jobs:
 
     - name: Run Tests
       run: |
-        bb test:bb
+        bb test-ui
 
