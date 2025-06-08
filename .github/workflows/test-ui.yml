@@ -1,3 +1,5 @@
+# Adapted from
+# https://github.com/clj-commons/etaoin/blob/2d0a4feac0fbcc67157194b4c4d95fc320121640/.github/workflows/test.yml
 name: Test UI
 
 on:

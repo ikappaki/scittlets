@@ -1,3 +1,5 @@
+;; Adapted in part from
+;; https://github.com/clj-commons/etaoin/blob/2d0a4feac0fbcc67157194b4c4d95fc320121640/test/etaoin/api_test.clj
 (ns scittlets.ui-test-utils
   (:require [babashka.process :as p]
             [etaoin.api :as e]
@@ -5,7 +7,7 @@
   (:import [java.net ServerSocket]
            [java.net Socket]))
 
-;; etaoin/test/etaoin/api_test.clj
+
 
 (timbre/set-level! :info)
 
@@ -58,7 +60,7 @@
               (Thread/sleep 1000)
               (recur))
             (throw (ex-info "Timed out waiting for ready test server" {}))))))
-    (println "Test server ready")
+    (println "Test server ready at " host ":" port)
     {:proc proc
      :port port}))
 
@@ -96,11 +98,3 @@
         (catch Exception e
           (println :on-repl/error (str e)))))))
 #_(repl-test-run! #(println :driver *driver* :port *test-server-port*))
-
-
-
-
-
-
-
-
