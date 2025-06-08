@@ -35,6 +35,8 @@ jobs:
       uses: DeLaGuardo/setup-clojure@13.2
       with:
         bb: 'latest'
+
+    - name: Download bb deps
       run: bb download-deps
 
     - name: Install Ubuntu X11 Utils
