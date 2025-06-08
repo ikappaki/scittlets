@@ -522,13 +522,18 @@
     (testing "adding with one existing dependency"
       (fs/copyFileSync html-src html-target)
       (try
-        (let [_stdout (execSync (str scittlets-cmd " add " html-target " scittlets.reagent.codemirror"
+        (let [stdout (execSync (str scittlets-cmd " add " html-target " scittlets.reagent.codemirror"
                                      " -t ./catalog.json"))
               content (fs/readFileSync html-target)
-
+              ;;_ (println :stdout \n stdout)
               ;;_ (fs/writeFileSync html-expected (fs/readFileSync html-src)) ;; create 
               ;;_ (fs/writeFileSync html-expected content)                    ;; rebase
               expected (fs/readFileSync html-expected)]
+
+          (is (str/includes? (str stdout)
+                             "Existing scittlets in file:"))
+          (is (str/includes? (str stdout)
+                             "• scittlets.reagent.mermaid"))
 
           (is (= (str/split-lines (str expected))
                  (str/split-lines (str content)))

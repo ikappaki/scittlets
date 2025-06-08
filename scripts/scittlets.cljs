@@ -472,7 +472,7 @@ Happy hacking! 🚀")))))
         (debug :scittlets-add!/scittlets scittlets)
         (println)
         (println "🔎 Existing scittlets in file:")
-        (println  (str/join "\n" (map #(str "  • " %) scittlets)))
+        (println  (str/join "\n" (map #(str "  • " %) file-scitts)))
         (let [lines (str/split-lines html)
               lines-indexed (map-indexed vector lines)
               scittle-pos (->> lines-indexed

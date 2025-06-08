@@ -6,6 +6,8 @@
 
 ## Unreleased CLI
 
+* Fixed incorrect reporting of existing scittlets in target HTML file (#16)
+
 ## v0.4.1
 
 * Added UI tests for all scittlets in the catalog using [Etaoin](https://github.com/clj-commons/etaoin) via Babashka (#14)
