@@ -9,6 +9,8 @@
  {:requires ([babashka.cli :as cli]
              [taoensso.timbre :as timbre])
 
+  deps-download (println :downloading-deps...)
+
   ;; babashka http
   :init (def cli-opts (cli/parse-opts *command-line-args* {:coerce {:port :int :headers :edn}}))
   serve {:doc "Serve static assets"
