@@ -161,7 +161,8 @@ Scittlets are listed in [catalog.json](catalog.json), the metadata registry.
 Use this scittlet as a starting point for development:
 * Code: [src/scittlets/reagent/mermaid.cljs](src/scittlets/reagent/mermaid.cljs)
 * Metadata: [catalog.json](catalog.json)
-* Test: [test/scittlets/reagent/mermaid_test.cljs](test/scittlets/reagent/mermaid_test.cljs)
+* Card: [test/scittlets/reagent/mermaid_card.cljs](test/scittlets/reagent/mermaid_card.cljs)
+* UI Test: [test/scittlets/reagent/mermaid_test.cljs](test/scittlets/reagent/mermaid_test.cljs)
 * Test page: [test/scittlets/reagent/mermaid.html](test/scittlets/reagent/mermaid.html)
 * Demo code: [examples/mermaid/mermaid_demo.cljs](examples/mermaid/mermaid_demo.cljs)
 * Demo page: [examples/mermaid/mermaid_demo.html](examples/mermaid/mermaid_demo.html)

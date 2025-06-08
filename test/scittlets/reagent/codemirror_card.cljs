@@ -1,16 +1,10 @@
-(ns scittlets.reagent.mermaid-test
+(ns scittlets.reagent.codemirror-card
   (:require [reagent.core :as r]
             [reagent.dom :as rdom]
             [scittlets.reagent.codemirror :refer [EditorView+
                                                   esm-import when-esm-modules-ready+
-                                                  esm-codemirror* esm-codemirror-view*]]))
-
-(def info+ (or (requiring-resolve 'scittlets.reagent.test-utils/info+)
-               (fn [ns-kw] (r/as-element [:div (str ns-kw)]))))
-(def file-open+ (or (requiring-resolve 'scittlets.reagent.test-utils/file-open+)
-                    (fn [label url] (r/as-element [:a {:href url} (str label)]))))
-(def demo+ (or (requiring-resolve 'scittlets.reagent.test-utils/demo+)
-               (fn [html-url cljs-url] (r/as-element [:a {:href html-url} (str html-url)]))))
+                                                  esm-codemirror* esm-codemirror-view*]]
+            [scittlets.reagent.test-utils :refer [info+ file-open+ demo+]]))
 
 (def esm-lang-clojure* (esm-import "https://esm.sh/@nextjournal/lang-clojure" clojure))
 
@@ -32,8 +26,8 @@
         [:div
          [:div {:style {:margin-bottom "1rem"}}
           "- Listener test: Introduce a CLJS reader error (e.g., insert a stray #); the border turns red."]
-         [:div {:style {:border (str "2px solid " (if syntax-error? "red" "green"))
-                        :padding "8px"}}
+         [:div#codemirror-editor {:style {:border (str "2px solid " (if syntax-error? "red" "green"))
+                                          :padding "8px"}}
           [EditorView+ {:doc TEXT
                         :extensions [basicSetup (clojure) listener]}]]]))))
 

@@ -1,0 +1,85 @@
+# Adapted from
+# https://github.com/clj-commons/etaoin/blob/2d0a4feac0fbcc67157194b4c4d95fc320121640/.github/workflows/test.yml
+name: Test UI
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+  push:
+    branches: [ main ]
+
+jobs:
+  test-ui:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Clojure deps cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gitlibs
+        enableCrossOsArchive: true
+        key: cljdeps-${{ hashFiles('deps.edn', 'bb.edn') }}
+        restore-keys: cljdeps-
+
+    - name: "Setup Java"
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+
+    - name: Install Clojure Tools
+      uses: DeLaGuardo/setup-clojure@13.2
+      with:
+        bb: 'latest'
+
+    - name: Download bb deps
+      run: bb deps-download
+
+    - name: Install Ubuntu X11 Utils
+      if: "startsWith (matrix.os, 'ubuntu')"
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install x11-utils
+
+    - name: Install Linux Windows Manager
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: sudo apt-get -y install fluxbox
+
+    # No longer pre-installed on macOS github action runners
+    - name: Install Firefox on macOS
+      if: ${{ matrix.os == 'macos' && contains(matrix.needs, 'firefox') }}
+      run: |
+        brew install --cask firefox
+        brew install geckodriver
+
+    - name: Restore Clojure deps from cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          ~/.m2/repository
+          ~/.deps.clj
+          ~/.gitlibs
+        enableCrossOsArchive: true
+        key: cljdeps-${{ hashFiles('deps.edn', 'bb.edn') }}
+        restore-keys: cljdeps-
+
+    - name: Cache fixup for Windows
+      # cache is restored using relative paths from Linux, this is not appropriate for Windows
+      # this is admitedly fragile/hackey, will revisit if it cracks
+      if: ${{ matrix.os == 'windows' }}
+      run: |
+        mv ../../../.m2 ${USERPROFILE}
+        mv ../../../.deps.clj ${USERPROFILE}
+        mv ../../../.gitlibs ${USERPROFILE}
+      shell: bash
+
+    - name: Run Tests
+      run: |
+        bb test-ui
+

@@ -1,4 +1,4 @@
-(ns scittlets.reagent.basic-test
+(ns scittlets.reagent.basic-card
   (:require [reagent.core :as r]
             [reagent.dom :as rdom]
             [scittlets.reagent.test-utils :refer [info+ file-open+ demo+]]))
@@ -7,19 +7,23 @@
                         {:id 2 :text "Build something cool" :done false}]))
 
 (defn todo-item [todo]
-  [:li {:key (:id todo)}
-   [:label
-    [:input {:type "checkbox"
-             :checked (:done todo)
-             :on-change #(swap! todos
-                               (fn [todos]
-                                 (map (fn [t]
-                                        (if (= (:id t) (:id todo))
-                                          (assoc t :done (not (:done t)))
-                                          t))
-                                      todos)))}]
-    [:span {:style {:text-decoration (when (:done todo) "line-through")}}
-     (:text todo)]]])
+  (let [{:keys [id]} todo]
+    [:li {:key id
+          :id (str "todo-" id)}
+     [:label
+      [:input {:id (str "todo-cb-" id)
+               :type "checkbox"
+               :checked (:done todo)
+               :on-change #(swap! todos
+                                  (fn [todos]
+                                    (map (fn [t]
+                                           (if (= (:id t) (:id todo))
+                                             (assoc t :done (not (:done t)))
+                                             t))
+                                         todos)))}]
+      [:span {:id (str "todo-text-" id)
+              :style {:text-decoration (when (:done todo) "line-through")}}
+       (:text todo)]]]))
 
 (defn todo-list+ []
   [:div
