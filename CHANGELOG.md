@@ -5,6 +5,7 @@
 ## Unreleased Catalog
 
 * Added UI tests for all scittlets in the catalog using [Etaoin](https://github.com/clj-commons/etaoin) via Babashka (#14)
+* Added missing `scittlet.reagent` template dependency markers (#15)
 
 ## Unreleased CLI
 
