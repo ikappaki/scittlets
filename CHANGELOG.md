@@ -6,7 +6,6 @@
 
 * Added UI tests for all scittlets in the catalog using [Etaoin](https://github.com/clj-commons/etaoin) via Babashka (#14)
 
-
 ## Unreleased CLI
 
 ## cli-v0.5.1
