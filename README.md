@@ -126,6 +126,10 @@ npx scittlets pack ./index.html output.html
 
 ## Scittlets
 
+### [scittlets.dev.nrepl](https://ikappaki.github.io/scittlets/test/scittlets/dev/nrepl.html)
+
+Provides dependencies and a babashka script for opening up an nREPL connection to the Scittle app.
+
 ### [scittlets.reagent](https://ikappaki.github.io/scittlets/test/scittlets/reagent/basic.html)
 
 Provides dependencies for [reagent](https://reagent-project.github.io/), a simple ClojureScript interface to [React](https://react.dev/).

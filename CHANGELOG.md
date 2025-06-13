@@ -4,9 +4,11 @@
 
 ## Unreleased Catalog
 
-* Added `scittlets.dev.nrepl` scittlet (#17)
-
 ## Unreleased CLI
+
+## v0.5.0
+
+* Added `scittlets.dev.nrepl` scittlet (#17)
 
 ## cli-v0.6.0
 
