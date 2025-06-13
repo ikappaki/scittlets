@@ -6,6 +6,8 @@
 
 ## Unreleased CLI
 
+* Added catalog scittlets 'files` support (#18)
+
 ## cli-v0.5.2
 
 * Fixed incorrect reporting of existing scittlets in target HTML file (#16)
