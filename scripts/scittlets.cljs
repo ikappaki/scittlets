@@ -196,7 +196,7 @@
           (let [{:keys [catalog tag]} (js/await (catalog-get arg-tag))
                 scittlets (scittlets-get catalog)]
             (debug :catalog/scittlets (str/join " " (keys scittlets)))
-            (js/await (deps-update! tag target catalog arg-scittlets)))))
+            (js/await (deps-update! tag target catalog arg-scittlets {})))))
 
       "new"
       (let [arg-list     (.-list argv)
@@ -633,13 +633,13 @@ Happy hacking! 🚀")))))
                     (debug :deps-update!/files files)
 
                     (when (seq files)
-                      (println)
-                      (println "📁 Copying scittlet files:")
+                      (prout)
+                      (prout "📁 Copying scittlet files:")
                       (doseq [entry files]
                         (debug :deps-update/file entry)
                         (let [{:keys [src-path content dest-path error]} (js/await (catalog-file-content-get entry ""))
                               dest-path (path/join (path/dirname html-path) dest-path)]
-                          (println "  →"  dest-path)
+                          (prout "  →"  dest-path)
                           (debug :scittlet-add/copy src-path :to dest-path)
                           (when error
                             (exit 1 "❌ Error: can't retrieve file from" src-path ":" error))
