@@ -182,7 +182,7 @@
           (exit 1 "❌ Error: Can't find, or read, file:" arg-html)
 
           (let [{:keys [catalog tag]} (js/await (catalog-get arg-tag))]
-            (scittlets-add! catalog tag arg-html arg-scittlets))))
+            (js/await (scittlets-add! catalog tag arg-html arg-scittlets)))))
 
       "update"
       (let [target (.-path argv)
@@ -196,7 +196,7 @@
           (let [{:keys [catalog tag]} (js/await (catalog-get arg-tag))
                 scittlets (scittlets-get catalog)]
             (debug :catalog/scittlets (str/join " " (keys scittlets)))
-            (deps-update! tag target catalog arg-scittlets))))
+            (js/await (deps-update! tag target catalog arg-scittlets)))))
 
       "new"
       (let [arg-list     (.-list argv)
@@ -313,34 +313,36 @@ scittlets new <template-name> [output-dir]"))
 
           {:tag tag :catalog (js->clj (.parse js/JSON asset))})))))
 
+(defn vals-with-files-rewrite [templates base]
+  (reduce (fn [acc [k v]]
+            (if (contains? v "files")
+              (let [src (v "src")]
+                (->> (update v "files"
+                             (fn [files]
+                               (for [file files]
+                                 (if (map? file)
+                                   (update file "src"
+                                           (fn [src-path]
+                                             (str/join "/" (remove nil? [base src src-path]))))
+                                   {"src" (str/join "/" (remove nil? [base src file])) "dest" file}))))
+                     (assoc acc k)))
+              (assoc acc k v)))
+          {} templates))
+
 (defn catalog-rewrite [catalog rewrite-tag]
-  (let [cat-up (reduce (fn [acc [k v]]
-                         (if (and (map? v) (contains? v "deps"))
-                           (let [base (cond-> scittlets-jsdelivr-url
+  (let [base (cond-> scittlets-jsdelivr-url
                                         (not (= rewrite-tag "main"))
                                         (str "@" (js/encodeURIComponent rewrite-tag)))
-                                 deps (get v "deps")
+        cat-up (reduce (fn [acc [k v]]
+                         (if (and (map? v) (contains? v "deps"))
+                           (let [deps (get v "deps")
                                  deps-up (map #(str/replace % #"\"src/scittlets" (str \" base "/src/scittlets"))
                                               deps)]
                              (assoc acc k (assoc v "deps" deps-up)))
                            (assoc acc k v)))
                        {} catalog)
-        cat-up (update cat-up "templates"
-                       #(reduce (fn [acc [k v]]
-                                  (let [src (v "src")
-                                        base (cond-> scittlets-jsdelivr-url
-                                               (not (= rewrite-tag "main"))
-                                               (str "@" (js/encodeURIComponent rewrite-tag)))]
-                                    (->> (update v "files"
-                                                 (fn [files]
-                                                   (for [file files]
-                                                     (if (map? file)
-                                                       (update file "src"
-                                                               (fn [src-path]
-                                                                 (str base "/" src "/" src-path)))
-                                                       {"src" (str base "/" src "/" file) "dest" file}))))
-                                         (assoc acc k))))
-                                {} %))
+        cat-up (vals-with-files-rewrite cat-up base)
+        cat-up (update cat-up "templates" vals-with-files-rewrite base)
         cat-up (assoc cat-up "version" rewrite-tag)]
     cat-up))
 
@@ -399,7 +401,7 @@ scittlets new <template-name> [output-dir]"))
 
                             data)]
               (fs/writeFileSync dest-path data-up "utf8")
-              (when html? (deps-update! tag dest-path catalog nil {:silent? true})))))
+              (when html? (js/await (deps-update! tag dest-path catalog nil {:silent? true}))))))
         (println "
 ✅ Your app is ready!
 
@@ -414,6 +416,10 @@ scittlets new <template-name> [output-dir]"))
    npx josh
 
 Happy hacking! 🚀")))))
+
+(defn get-leading-whitespace [line]
+  (let [match (re-find #"^[ \t]+" line)]
+    (or match "")))
 
 (defn insert-at [v idx items]
   (into (into (subvec v 0 idx) items) (subvec v idx)))
@@ -436,7 +442,20 @@ Happy hacking! 🚀")))))
         (prout (str/join "\n" (map #(str "  🔹 " %) deps-up)))
         lines-up))))
 
-(defn scittlets-add! [catalog tag html-path scittlets]
+(defn ^:async catalog-file-content-get [file-entry src]
+  (let [{src-path "src" dest-path "dest"} (if (map? file-entry)
+                                            file-entry
+                                            {"src" file-entry "dest" file-entry})
+        ret {:src-path src-path :dest-path dest-path}]
+    (if (url-valid? src-path)
+      (let [{:keys [result error]} (js/await (data-fetch src-path))]
+        (if error
+          (assoc ret :error error)
+          (assoc ret :content result)))
+      (let [src-path (path/join src src-path)]
+        (assoc ret :content (fs/readFileSync src-path "utf-8"))))))
+
+(defn ^:async scittlets-add! [catalog tag html-path scittlets]
   (let [html (.toString (fs/readFileSync html-path))
         scittlets-cat (scittlets-get catalog)
         catalog-scitts (keys scittlets-cat)
@@ -451,7 +470,7 @@ Happy hacking! 🚀")))))
       (do
         (println)
         (if (seq file-scitts)
-          (do 
+          (do
             (println "ℹ️ Scittlet dependencies found in the target HTML file:")
             (println (str/join "\n" (map #(str "  • " %) file-scitts))))
           (println "ℹ️ No scittlet dependencies found in target HTML file.")))
@@ -497,9 +516,24 @@ Happy hacking! 🚀")))))
                      lines-up lines]
                 (if-let [scitt (first remaining)]
                   (do (println "\n🔧 Inserting scittlet:" scitt)
-                      (let [deps (get-in scittlets-cat [scitt "deps"])
+                      (let [files (get-in scittlets-cat [scitt "files"])
                             lines-up (scittlet-add lines-up insert-pos catalog scitt println)]
-                        (debug :add/updating scitt)
+                        (debug :scittle-add!/updating scitt)
+                        (debug :scittle-add!/files files)
+                        (when (seq files)
+                          (println)
+                          (println "📁 Copying scittlet files:")
+                          (doseq [entry files]
+                            (debug :scittlet-add/file entry)
+                            (let [{:keys [src-path content dest-path error]} (js/await (catalog-file-content-get entry ""))
+                                  dest-path (path/join (path/dirname html-path) dest-path)]
+                              (println "  →"  dest-path)
+                              (debug :scittlet-add/copy src-path :to dest-path)
+                              (when error
+                                (exit 1 "❌ Error: can't retrieve file from" src-path ":" error))
+                              (when (fs/existsSync dest-path)
+                                (exit 1 "❌ Error: destination file" dest-path "already exists. Please remove to continue."))
+                              (fs/writeFileSync dest-path content))))
                         (recur (rest remaining)
                                lines-up)))
 
@@ -507,8 +541,7 @@ Happy hacking! 🚀")))))
                     (fs/writeFileSync html-path updated)
                     (println)
                     (println "✅ Scittlets added:")
-                    (println  (str/join "\n" (map #(str "  • " %) scittlets))))
-                  )))))))))
+                    (println  (str/join "\n" (map #(str "  • " %) scittlets)))))))))))))
 
 (defn readable? [path]
   (try
@@ -518,10 +551,6 @@ Happy hacking! 🚀")))))
 
 (defn replace-subvector [v start end replacement]
   (vec (concat (subvec v 0 start) replacement (subvec v end))))
-
-(defn get-leading-whitespace [line]
-  (let [match (re-find #"^[ \t]+" line)]
-    (or match "")))
 
 (defn dep-update [lines catalog scittlet prout]
   (let [version (get catalog "version")
@@ -558,56 +587,74 @@ Happy hacking! 🚀")))))
           (prout (str/join "\n" deps-up))
           lines-up)))))
 
-(defn deps-update!
-  ([tag html-path catalog scittlets]
-   (deps-update! tag html-path catalog scittlets {}))
-  ([tag html-path catalog scittlets opts]
-   (let [{:keys [silent?]} opts
-         prout (if silent? (fn [& _]) println)
-         html    (.toString (fs/readFileSync html-path))
-         catalog-scitts (keys catalog)
-         file-scitts (->> (re-seq #"<!-- Scittlet dependencies: ((?!end)[^ ]+) -->" html)
-                          (map second))
-         update-scitts (if (seq scittlets)
-                         scittlets
-                         file-scitts)
-         catalog-missing (remove (set catalog-scitts) update-scitts)]
+(defn ^:async deps-update!
+  [tag html-path catalog scittlets opts]
+  (let [{:keys [silent?]} opts
+        prout (if silent? (fn [& _]) println)
+        html    (.toString (fs/readFileSync html-path))
+        catalog-scitts (keys catalog)
+        file-scitts (->> (re-seq #"<!-- Scittlet dependencies: ((?!end)[^ ]+) -->" html)
+                         (map second))
+        update-scitts (if (seq scittlets)
+                        scittlets
+                        file-scitts)
+        catalog-missing (remove (set catalog-scitts) update-scitts)]
 
-     (prout "Catalog:" tag "\n")
-     (if (seq catalog-missing)
-       (exit 1 "Error: these scittlets dependencies are missing from the catalog:"
-             (str/join ", " catalog-missing)
+    (prout "Catalog:" tag "\n")
+    (if (seq catalog-missing)
+      (exit 1 "Error: these scittlets dependencies are missing from the catalog:"
+            (str/join ", " catalog-missing)
 
-             "\nAvailable catalog entries:" (str/join ", " catalog-scitts))
+            "\nAvailable catalog entries:" (str/join ", " catalog-scitts))
 
-       (let [file-missing (remove (set file-scitts) update-scitts)]
-         (prout "Scittlets in file  :" (str/join ", " file-scitts))
-         (prout "Scittlets to update:" (str/join ", " update-scitts))
-         (if (seq file-missing)
-           (do (prout "Scittlet markers not found in HTML file for:" (str/join ", " file-missing))
-               (prout)
-               (prout "Please place the following empty markers inside the <HEAD> of the HTML file, then rerun the script:")
-               (prout)
-               (doseq [key file-missing]
-                 (let [start-marker (str "<!-- Scittlet dependencies: " key " -->")
-                       end-marker "<!-- Scittlet dependencies: end -->"]
-                   (prout (str " " start-marker))
-                   (prout (str " " end-marker "\n"))))
-               (prout "Ensure this block appears after the scittle script tag, which typically looks like:\n"
-                        "  <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.min.js\" type=\"application/javascript\" deref></script>\n"))
+      (let [file-missing (remove (set file-scitts) update-scitts)]
+        (prout "Scittlets in file  :" (str/join ", " file-scitts))
+        (prout "Scittlets to update:" (str/join ", " update-scitts))
+        (if (seq file-missing)
+          (do (prout "Scittlet markers not found in HTML file for:" (str/join ", " file-missing))
+              (prout)
+              (prout "Please place the following empty markers inside the <HEAD> of the HTML file, then rerun the script:")
+              (prout)
+              (doseq [key file-missing]
+                (let [start-marker (str "<!-- Scittlet dependencies: " key " -->")
+                      end-marker "<!-- Scittlet dependencies: end -->"]
+                  (prout (str " " start-marker))
+                  (prout (str " " end-marker "\n"))))
+              (prout "Ensure this block appears after the scittle script tag, which typically looks like:\n"
+                     "  <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.min.js\" type=\"application/javascript\" deref></script>\n"))
 
-           (loop [remaining  update-scitts
-                  lines (str/split-lines html)]
-             (if-let [scitt (first remaining)]
-               (do (prout "\nUpdating scittlet:" scitt)
-                   (let [lines-up (dep-update lines catalog scitt prout)]
-                     (debug :deps/updating scitt)
-                     (recur (rest remaining)
-                            lines-up)))
+          (loop [remaining  update-scitts
+                 lines (str/split-lines html)]
+            (if-let [scitt (first remaining)]
+              (do (prout "\nUpdating scittlet:" scitt)
+                  (let [files (get-in catalog [scitt "files"])
+                        lines-up (dep-update lines catalog scitt prout)]
+                    (debug :deps-udpate!/updating scitt)
+                    (debug :deps-update!/files files)
 
-               (let [updated (str/join "\n" lines)]
-                 (fs/writeFileSync html-path updated)
-                 (prout "\nScittlets updated:" (str/join ", " update-scitts)))))))))))
+                    (when (seq files)
+                      (println)
+                      (println "📁 Copying scittlet files:")
+                      (doseq [entry files]
+                        (debug :deps-update/file entry)
+                        (let [{:keys [src-path content dest-path error]} (js/await (catalog-file-content-get entry ""))
+                              dest-path (path/join (path/dirname html-path) dest-path)]
+                          (println "  →"  dest-path)
+                          (debug :scittlet-add/copy src-path :to dest-path)
+                          (when error
+                            (exit 1 "❌ Error: can't retrieve file from" src-path ":" error))
+                          (when (fs/existsSync dest-path)
+                            (let [backup-path (str dest-path "." (str (js/Math.floor (/ (.now js/Date) 1000))))]
+                              (prout "    Destination file exists, renaming to:" backup-path)
+                              (fs/renameSync dest-path backup-path)))
+                          (fs/writeFileSync dest-path content))))
+
+                    (recur (rest remaining)
+                           lines-up)))
+
+              (let [updated (str/join "\n" lines)]
+                (fs/writeFileSync html-path updated)
+                (prout "\nScittlets updated:" (str/join ", " update-scitts))))))))))
 
 (defn html-attrs-parse [tag-str]
   (let [[_ attrs-str] (re-find #"<\s*\w+\s*([^>]*)>" tag-str)

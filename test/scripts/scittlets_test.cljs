@@ -9,6 +9,8 @@
 (def scittlets-cmd "npx cherry run scripts/scittlets.cljs")
 
 (def corpus {:catalog-main "test/corpus/catalog-main.json"
+             :catalog-v1 "test/corpus/catalog-v1.json"
+
              :markers "test/corpus/markers.html"
 
              :no-scittle-dep "test/corpus/no-scittle-dep.html"
@@ -106,35 +108,41 @@
      (re-seq re text))))
 
 (deftest test-cmd-update-single-dep
-  (async done
-         (let [src (:markers corpus)
-               target (path/join (transient-dir-make!) (path/basename src))]
-           (fs/copyFileSync src target)
-           (exec (str scittlets-cmd " update " target " scittlets.reagent.mermaid" " -t v0.1.0")
-                 (fn [error _stdout stderr]
-                   (is (nil? error))
-                   (is (empty? stderr))
-                   (let [content (fs/readFileSync target "utf8")
-                         matches (find-scittlet-info-lines content)]
-                     ;;(prn matches)
-                     (is (= {"scittlets.reagent.core"
-                             {:start-line 10, :end-line 11,
-                              :text
-                              ["<!-- Scittlet dependencies: scittlets.reagent.core -->"
-                               "    <!-- Scittlet dependencies: end -->"]},
-                             "scittlets.reagent.mermaid"
-                             {:start-line 13, :end-line 20,
-                              :text
-                              ["<!-- Scittlet dependencies: scittlets.reagent.mermaid -->"
-                               "    <meta name=\"scittlets.reagent.mermaid.version\" content=\"v0.1.0\">"
-                               "    <script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>"
-                               "    <script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>"
-                               "    <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>"
-                               "    <script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\"></script>"
-                               "    <script src=\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.1.0/src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>"
-                               "    <!-- Scittlet dependencies: end -->"]}}
-                            matches)))
-                   (done))))))
+  (let [src (:markers corpus)
+        target-dir (transient-dir-make!)
+        target (path/join target-dir (path/basename src))
+        catalog-v1 (:catalog-v1 corpus)
+        copy-file-target-path (path/join target-dir "mermaid.copied.file")]
+    (fs/copyFileSync src target)
+    (try
+      (let [_stdout (execSync (str scittlets-cmd " update " target " scittlets.reagent.mermaid" " -t " catalog-v1))
+            content (fs/readFileSync target "utf8")
+            matches (find-scittlet-info-lines content)]
+            ;;(prn matches)
+
+        (is (fs/existsSync copy-file-target-path) copy-file-target-path)
+
+        (is (= {"scittlets.reagent.core"
+                {:start-line 10, :end-line 11,
+                 :text
+                 ["<!-- Scittlet dependencies: scittlets.reagent.core -->"
+                  "    <!-- Scittlet dependencies: end -->"]},
+                "scittlets.reagent.mermaid"
+                {:start-line 13, :end-line 20,
+                 :text
+                 ["<!-- Scittlet dependencies: scittlets.reagent.mermaid -->"
+                  "    <meta name=\"scittlets.reagent.mermaid.version\" content=\"v0.1.0\">"
+                  "    <script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>"
+                  "    <script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>"
+                  "    <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>"
+                  "    <script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\"></script>"
+                  "    <script src=\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.1.0/src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>"
+                  "    <!-- Scittlet dependencies: end -->"]}}
+               matches)))
+      (catch :default e
+        (is false {:status (.-status e)
+                   :stdout (.-stdout e)
+                   :stderr (.-stderr e)})))))
 
 (deftest test-cmd-update-two-deps
   (async done
@@ -172,124 +180,53 @@
                    (done))))))
 
 (deftest test-cmd-catalog-rewrite
-  (async done
-         (let [src (:catalog-main corpus)]
-           (exec (str scittlets-cmd " catalog " src " -r")
-                 (fn [error stdout stderr]
-                   (is (nil? error))
-                   (is (empty? stderr))
-                   (let [lines (-> (str/split-lines stdout)
-                                   (rest))]
-                     (is (.parse js/JSON (str/join "\n" lines)))
-                     #_(prn lines)
-                     (is (= ["{"
-                             "  \"version\": \"main\","
-                             "  \"scittlets.reagent.core\": {"
-                             "    \"home\": \"https://github.com/ikappaki/scittlets\","
-                             "    \"deps\": ["
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\\\"></script>\""
-                             "    ],"
-                             "    \"see\": {"
-                             "      \"reagent\": \"https://reagent-project.github.io/\","
-                             "      \"scittle\": \"https://github.com/babashka/scittle\""
-                             "    }"
-                             "  },"
-                             "  \"scittlets.reagent.mermaid\": {"
-                             "    \"home\": \"https://github.com/ikappaki/scittlets\","
-                             "    \"deps\": ["
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets/src/scittlets/reagent/mermaid.cljs\\\" type=\\\"application/x-scittle\\\"></script>\""
-                             "    ],"
-                             "    \"see\": {"
-                             "      \"mermaid\": \"https://mermaid.js.org/\","
-                             "      \"reagent\": \"https://reagent-project.github.io/\""
-                             "    }"
-                             "  },"
-                             "  \"templates\": {"
-                             "    \"scittle/basic\": {"
-                             "      \"src\": \"examples/scittle\","
-                             "      \"descr\": \"A minimal Scittle template with zero dependencies\","
-                             "      \"files\": ["
-                             "        {"
-                             "          \"src\": \"https://cdn.jsdelivr.net/gh/ikappaki/scittlets/examples/scittle/scittle_basic.html\","
-                             "          \"dest\": \"index.html\""
-                             "        },"
-                             "        {"
-                             "          \"src\": \"https://cdn.jsdelivr.net/gh/ikappaki/scittlets/examples/scittle/scittle_basic.cljs\","
-                             "          \"dest\": \"scittle_basic.cljs\""
-                             "        }"
-                             "      ],"
-                             "      \"target\": \"scittle_basic\""
-                             "    }"
-                             "  }"
-                             "}"]
-                            lines)))
-                   (done))))))
+  (testing "rewrite"
+    (let [catalog-src (:catalog-main corpus)
+          target-dir (transient-dir-make!)
+          catalog-expected (str catalog-src ".test-cmd-catalog-rewrite.rewrite.expected")
+          catalog-target (path/join target-dir (path/basename catalog-src))]
+      (try
+        (let [stdout (execSync (str scittlets-cmd " catalog " catalog-src " -r"))
+              lines (-> (str/split-lines stdout)
+                        (rest))
+              output (str/join "\n" lines)]
+          (is (.parse js/JSON output))
+          (fs/writeFileSync catalog-target output)
+;;         (fs/writeFileSync catalog-expected output) ;; rebase
 
-(deftest test-cmd-catalog-rewrite-tag
-  (async done
-         (let [src (:catalog-main corpus)]
-           (exec (str scittlets-cmd " catalog " src " -r v99.99.99")
-                 (fn [error stdout stderr]
-                   (is (nil? error))
-                   (is (empty? stderr))
-                   (let [lines (-> (str/split-lines stdout)
-                                   (rest))]
-                     (is (.parse js/JSON (str/join "\n" lines)))
-                     #_(prn lines)
-                     (is (= ["{"
-                             "  \"version\": \"v99.99.99\","
-                             "  \"scittlets.reagent.core\": {"
-                             "    \"home\": \"https://github.com/ikappaki/scittlets\","
-                             "    \"deps\": ["
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\\\"></script>\""
-                             "    ],"
-                             "    \"see\": {"
-                             "      \"reagent\": \"https://reagent-project.github.io/\","
-                             "      \"scittle\": \"https://github.com/babashka/scittle\""
-                             "    }"
-                             "  },"
-                             "  \"scittlets.reagent.mermaid\": {"
-                             "    \"home\": \"https://github.com/ikappaki/scittlets\","
-                             "    \"deps\": ["
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\\\"></script>\","
-                             "      \"<script src=\\\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v99.99.99/src/scittlets/reagent/mermaid.cljs\\\" type=\\\"application/x-scittle\\\"></script>\""
-                             "    ],"
-                             "    \"see\": {"
-                             "      \"mermaid\": \"https://mermaid.js.org/\","
-                             "      \"reagent\": \"https://reagent-project.github.io/\""
-                             "    }"
-                             "  },"
-                             "  \"templates\": {"
-                             "    \"scittle/basic\": {"
-                             "      \"src\": \"examples/scittle\","
-                             "      \"descr\": \"A minimal Scittle template with zero dependencies\","
-                             "      \"files\": ["
-                             "        {"
-                             "          \"src\": \"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v99.99.99/examples/scittle/scittle_basic.html\","
-                             "          \"dest\": \"index.html\""
-                             "        },"
-                             "        {"
-                             "          \"src\": \"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v99.99.99/examples/scittle/scittle_basic.cljs\","
-                             "          \"dest\": \"scittle_basic.cljs\""
-                             "        }"
-                             "      ],"
-                             "      \"target\": \"scittle_basic\""
-                             "    }"
-                             "  }"
-                             "}"]
-                            lines)))
-                   (done))))))
+          (let [content (fs/readFileSync catalog-target)
+                expected (fs/readFileSync catalog-expected)]
+            (is (= (str/split-lines (str expected))
+                   (str/split-lines (str content)))
+                (diff catalog-expected catalog-target))))
+        (catch :default e
+          (is false {:status (.-status e)
+                     :stdout (.-stdout e)
+                     :stderr (.-stderr e)})))))
+
+  (testing "rewrite tag"
+    (let [catalog-src (:catalog-main corpus)
+          target-dir (transient-dir-make!)
+          catalog-expected (str catalog-src ".test-cmd-catalog-rewrite.tag.expected")
+          catalog-target (path/join target-dir (path/basename catalog-src))]
+      (try
+        (let [stdout (execSync (str scittlets-cmd " catalog " catalog-src " -r v99.99.99"))
+              lines (-> (str/split-lines stdout)
+                        (rest))
+              output (str/join "\n" lines)]
+          (is (.parse js/JSON output))
+          (fs/writeFileSync catalog-target output)
+;;          (fs/writeFileSync catalog-expected output) ;; rebase
+
+          (let [content (fs/readFileSync catalog-target)
+                expected (fs/readFileSync catalog-expected)]
+            (is (= (str/split-lines (str expected))
+                   (str/split-lines (str content)))
+                (diff catalog-expected catalog-target))))
+        (catch :default e
+          (is false {:status (.-status e)
+                     :stdout (.-stdout e)
+                     :stderr (.-stderr e)})))))  )
 
 (deftest test-cmd-new
   (async done
@@ -522,22 +459,26 @@
     (testing "adding with one existing dependency"
       (fs/copyFileSync html-src html-target)
       (try
-        (let [stdout (execSync (str scittlets-cmd " add " html-target " scittlets.reagent.codemirror"
-                                     " -t ./catalog.json"))
+        (let [catalog-path (:catalog-main corpus)
+              stdout (execSync (str scittlets-cmd " add " html-target " scittlets.reagent.codemirror"
+                                    " -t " catalog-path))
               content (fs/readFileSync html-target)
               ;;_ (println :stdout \n stdout)
               ;;_ (fs/writeFileSync html-expected (fs/readFileSync html-src)) ;; create 
               ;;_ (fs/writeFileSync html-expected content)                    ;; rebase
-              expected (fs/readFileSync html-expected)]
+              expected (fs/readFileSync html-expected)
+              copy-file-target-path (path/join target-dir "codemirror.copied.file")]
 
           (is (str/includes? (str stdout)
                              "Existing scittlets in file:"))
           (is (str/includes? (str stdout)
                              "• scittlets.reagent.mermaid"))
 
+          (is (fs/existsSync copy-file-target-path) copy-file-target-path)
+
           (is (= (str/split-lines (str expected))
                  (str/split-lines (str content)))
-              (diff html-target html-expected)))
+              (diff html-expected html-target)))
 
         (catch :default e
           (is false {:status (.-status e)
