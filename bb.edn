@@ -1,12 +1,13 @@
-{:deps {org.babashka/http-server {:mvn/version "0.1.13"}
+{:deps {io.github.babashka/sci.nrepl {:mvn/version "0.0.2"}
+        org.babashka/http-server {:mvn/version "0.1.13"}
         org.babashka/cli {:mvn/version "0.2.23"}
-
         etaoin/etaoin {:mvn/version "1.1.43"}}
 
  :paths ["test"]
 
  :tasks
  {:requires ([babashka.cli :as cli]
+             [sci.nrepl.browser-server :as nrepl]
              [taoensso.timbre :as timbre])
 
   deps-download (println :downloading-deps...)
@@ -22,6 +23,11 @@
   -dev {:depends [serve prn]}
   test-server {:task (run '-dev {:parallel true})}
 
+  nrepl {:task (let [nrepl-port 1339
+                     websocket-port 1340
+                     nrepl-server (nrepl/start-nrepl-server! {:port nrepl-port})
+                     ws-server (nrepl/start-websocket-server! {:port websocket-port})]
+                 (deref nrepl-server))}
 
   ;; bb test-ui --vars my-test/my-second-test
   test-ui {:extra-paths ["test"]

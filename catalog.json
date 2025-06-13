@@ -1,5 +1,13 @@
 {"version" : "main",
 
+"scittlets.dev.nrepl" :
+ {"home": "https://github.com/ikappaki/scittlets",
+  "deps": ["<script>var SCITTLE_NREPL_WEBSOCKET_PORT = 1340;</script>",
+           "<script src=\"https://cdn.jsdelivr.net/npm/scittle@0.6.22/dist/scittle.nrepl.js\" type=\"application/javascript\"></script>"],
+  "files": [{"src": "examples/dev/nrepl-server.clj", "dest": "nrepl-server.clj"}],
+  "see" : {"Scittle nREPL" : "https://github.com/babashka/scittle/tree/main/doc/nrepl"
+          }},
+
  "scittlets.reagent" :
  {"home": "https://github.com/ikappaki/scittlets",
   "deps": ["<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",
@@ -30,7 +38,13 @@
           }},
 
  "templates" :
- {"reagent/basic":
+ {"dev/nrepl":
+  {"src": "examples/dev",
+   "descr": "A minimal nREPL capable scittlet template",
+   "files": [{"src": "nrepl.html", "dest": "index.html"},
+             "nrepl.cljs"],
+   "target": "scits_nrepl"},
+  "reagent/basic":
   {"src": "examples/reagent",
    "descr": "A minimal Reagent template",
    "files": [{"src": "reagent_basic.html", "dest": "index.html"},
