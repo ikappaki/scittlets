@@ -6,6 +6,8 @@
 
 ## Unreleased CLI
 
+## cli-v0.6.0
+
 * Added catalog scittlets 'files` support (#18)
 
 ## cli-v0.5.2

@@ -3,7 +3,8 @@
   "description": "CLI tool to help manage scittlet dependencies",
   "homepage": "https://github.com/ikappaki/scittlets",
   "author": "ikappaki",
-  "version": "0.5.2",
+  "version": "0.6.0",
+  "license": "EPL-1.0",
   "keywords": [
     "cljs",
     "scittle"
