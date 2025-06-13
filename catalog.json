@@ -40,10 +40,9 @@
  "templates" :
  {"dev/nrepl":
   {"src": "examples/dev",
-   "descr": "A minimal nREPL template",
+   "descr": "A minimal nREPL capable scittlet template",
    "files": [{"src": "nrepl.html", "dest": "index.html"},
-             "nrepl.cljs",
-             "nrepl-server.clj"],
+             "nrepl.cljs"],
    "target": "scits_nrepl"},
   "reagent/basic":
   {"src": "examples/reagent",
