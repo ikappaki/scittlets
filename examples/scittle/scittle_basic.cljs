@@ -5,6 +5,7 @@
 
   ;; Style the box
   (set! (.-textContent box) "✨ Welcome to Scittle! ✨ Click me!")
+  (set! (.-id box) "welcome")
   (doto (.-style box)
     (.setProperty "padding" "20px")
     (.setProperty "margin" "40px auto")

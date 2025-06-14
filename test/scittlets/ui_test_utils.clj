@@ -13,7 +13,7 @@
 
 (def ^:dynamic *driver* nil)
 (def ^:dynamic *test-server-port* nil)
-
+(def ^:dynamic *test-server-dir* ".")
 (defonce repl-test-state* (atom {:init false
                                  :browser nil
                                  :server nil}))
@@ -45,7 +45,7 @@
 (defn test-server-get! []
   (let [port (available-port-find)
         proc (p/process {:out :inherit :err :inherit}
-                        "bb test-server --port" port)
+                        "bb test-server --port" port "--dir" *test-server-dir*)
         deadline (+ (System/currentTimeMillis) 15000)
         host "localhost"]
     (loop []
@@ -63,6 +63,14 @@
     (println "Test server ready at " host ":" port)
     {:proc proc
      :port port}))
+
+(defmacro with-test-server [dir & body]
+  `(binding [*test-server-dir* ~dir]
+     (let [{proc# :proc port# :port} (test-server-get!)]
+       (binding [*test-server-port* port#]
+         ~@body
+         (p/destroy proc#)
+         @proc#))))
 
 (defn fixture-test-server [f]
   (let [{:keys [proc port]} (test-server-get!)]
