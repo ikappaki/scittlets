@@ -37,43 +37,46 @@ npx scittlets <command> [options]
 ```
 
 #### Commands
-- `new [directory] [--template name] [--list]`
+- `new [template] [--directory path]`
 
-  Create a new app from a template NAME (default: `scittle/basic`) and output it to DIRECTORY if provided, or use the template's default directory.
+  Create a new app from the specified TEMPLATE. If no template is provided, lists available templates.
 
-  Use `--list` (or `-l`) to list available templates instead of creating an app.
+  Output directory defaults to the template's default directory but can be overridden with `--directory`.
 
-- `add <html> [scittlets..]`
+- `add <html> [scittlets..] [--list-scittlets]`
 
   Add SCITTLETS dependencies to the target HTML file, or list them if none are provided.
 
-- `update <path> [scittlet..]`
+  Use `--list-scittlets` (or `-l`) to list available scittlets from the catalog.
+
+- `update <html> [scittlets..]`
 
   Update all scittlet dependencies in the HTML file at PATH using the latest catalog, or only those SCITTLETS if specified.
 
-- `pack <path> [target]`
+- `pack <html> [target]`
 
-  Pack the HTML file at `<path>` by inlining `<script src="">` elements directly into the file.
-  Saves the output to `[target]` (default: `packed.html`).
+  Pack the HTML file by inlining `<script src="">` elements directly into the file.
 
-- `catalog [tag]`
+  Saves the output to `target` (default: `packed.html`).
 
-  List all scittlets for the specified catalog TAG (default: `latest`).
+- `catalog [--release version]`
 
-- `tags`
+  List all scittlets and templates in the catalog for the specified catalog release version (default: `latest`).
 
-  List all release tags available in the scittlet catalog.
+- `releases`
+
+  List all published release versions of the scittlets catalog.
 
 #### Example usage
 List available templates:
 ```bash
-npx scittlets new --list
+npx scittlets new
 ```
 
 Create a new app with a specific template:
 
 ```bash
-npx scittlets new --template reagent/codemirror
+npx scittlets new reagent/codemirror
 ```
 
 Add scittlet dependencies to HTML file:
@@ -83,13 +86,13 @@ npx scittlets add ./index.html scittlets.reagent.codemirror
 
 ```
 
-List tags:
+List catalog release versions:
 
 ```bash
-npx scittlets tags
+npx scittlets releases
 ```
 
-List scittlets for the latest tag:
+List scittlets and templates for the latest release version:
 ```bash
 npx scittlets catalog
 ```
@@ -106,16 +109,6 @@ npx scittlets pack ./index.html output.html
 ```
 
 #### Important
-- When updating dependencies for the first time, insert these markers inside the HTML `<head>`:
-  ```html
-  <!-- Scittlet dependencies: scittlets.reagent.mermaid -->
-  <!-- Scittlet dependencies: end -->
-  ```
-
-- Place this block after the Scittle script tag:
-  ```html
-  <script src="https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.min.js" type="application/javascript"></script>
-  ```
 
 - To avoid GitHub API rate limits, set the environment variable `GITHUB_PUBLIC_TOKEN` (no scopes needed):
   ```bash
