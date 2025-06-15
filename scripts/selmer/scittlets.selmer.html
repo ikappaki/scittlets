@@ -1,116 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Scittlets</title>
-    <base href="/" />
-    <style>
-      body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f0f4f8;
-        margin: 10px 15px;
-        color: #333;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <title>Scittlets Catalog</title>
+  <base href="" />
+  <style>
+    /* Make body fill viewport and flex container */
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: sans-serif;
+      background: #f0f4f8;
+    }
+    body {
+      display: flex;
+      height: 100vh; /* constrain height */
+      overflow: hidden; /* prevent page scrolling */
+    }
 
-      header {
-        text-align: center;
-        margin-bottom: 20px;
-        font-weight: 700;
-        color: #2a6fdb;
-      }
+    nav {
+      width: 250px;
+      background: #ffffff;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+      position: sticky; /* keep header visible on nav scroll */
+      top: 0;
+      height: 100%; /* full height */
+      overflow-y: auto; /* scroll inside nav */
+      box-sizing: border-box;
+    }
 
-      header span[version] {
-        font-weight: 400;
-        font-size: 0.6em;
-        color: #999;
-        margin-left: 8px;
-        vertical-align: middle;
-      }
+    nav h3 {
+      margin-top: 0;
+      color: #2a6fdb;
+    }
 
-      ul {
-        list-style: none;
-        padding: 0;
-        max-width: 1024px;
-        margin: 0 auto;
-      }
+    nav ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
 
-      li {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(42, 111, 219, 0.1);
-        margin-bottom: 15px;
-        padding: 15px;
-        transition: box-shadow 0.3s ease;
-      }
+    nav li {
+      margin: 10px 0;
+    }
 
-      li:hover {
-        box-shadow: 0 8px 20px rgba(42, 111, 219, 0.2);
-      }
+    nav a {
+      color: #2a6fdb;
+      text-decoration: none;
+      cursor: pointer;
+    }
 
-      li h4 {
-        margin: 0 0 10px 0;
-        font-size: 1.1rem;
-      }
+    nav a:hover {
+      text-decoration: underline;
+    }
 
-      li h4 a {
-        color: #2a6fdb;
-        text-decoration: none;
-        transition: color 0.3s ease;
-      }
+    main {
+      flex-grow: 1;
+      padding: 20px;
+      height: 100%; /* full height */
+      overflow-y: auto; /* scroll inside main */
+      box-sizing: border-box;
+      background: #f0f4f8;
+    }
 
-      li h4 a:hover {
-        text-decoration: underline;
-        color: #1948a3;
-      }
+    .scittlet {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(42, 111, 219, 0.1);
+      margin-bottom: 40px;
+      padding: 20px;
+    }
+    /* Remove bottom margin on last scittlet to prevent extra space */
+    .scittlet:last-child {
+      margin-bottom: 0;
+    }
 
-      iframe {
-        width: 100%;
-        height: 50vh;
-        border: 3px solid #2a6fdb;
-        border-radius: 10px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        transition: border-color 0.3s ease;
-      }
+    .scittlet h4 {
+      margin-top: 0;
+    }
 
-      iframe:hover {
-        border-color: #1948a3;
-      }
-    </style>
-  </head>
+    .scittlet iframe {
+      width: 100%;
+      height: 50vh;
+      border: 2px solid #2a6fdb;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
 
-  <body>
-    <div class="github-badge" style="position: absolute; right: 0; top: 5; margin-right: 10px">
-      <a href="https://github.com/ikappaki/scittlets" target="_blank" aria-label="GitHub Scittlets">
-        <img
-          src="https://img.shields.io/badge/GitHub-Scittlets-blue?style=flat-square&logo=github&logoColor=white"
-          alt="GitHub Scittlets"
-        />
-      </a>
-    </div>
-
-    <header>
-      <h2>
-        Scittlets Web Catalog
-        <span version>main</span>
-      </h2>
-    </header>
-
-    <p style="text-align: center; margin-top: 0.5em;">
-      Detailed documentation and live previews of available Scittlets from the catalog.
-    </p>
-    <p style="text-align: center; margin-top: 1em;">
-      Looking for starting points? Visit the <a href="examples/index.html" target="_blank">📦 Scittle templates</a> page.
-    </p>
-
+  <!-- Sidebar Table of Contents -->
+  <nav>
+    <h3>Scittlets TOC</h3>
     <ul>
       {% for s in scittlets %}
-      <li>
-        <h4>
-          <a href="{{ s.url }}" target="_blank">{{ s.name }}</a>
-        </h4>
-        <iframe name="{{ s.name }}" src="{{ s.url }}" loading="lazy"></iframe>
-      </li>
+      <li><a href="#{{ s.id }}">{{ s.name }}</a></li>
       {% endfor %}
     </ul>
-  </body>
+  </nav>
+
+  <!-- Main display area -->
+  <main>
+    {% for s in scittlets %}
+    <div class="scittlet" id="{{ s.id }}">
+      <h4><a href="{{ s.url }}" target="_blank">{{ s.name }}</a></h4>
+      <iframe src="{{ s.url }}" loading="lazy"></iframe>
+    </div>
+    {% endfor %}
+  </main>
+
+</body>
 </html>

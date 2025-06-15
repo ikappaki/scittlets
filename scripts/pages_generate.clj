@@ -41,16 +41,21 @@
                      "scittlets.reagent.codemirror" "test/scittlets/reagent/codemirror.html"
                      "scittlets.reagent.mermaid" "test/scittlets/reagent/mermaid.html"
                      })
+(defn safe-id [s]
+  (let [s (str/replace s #"[^a-zA-Z0-9-_:.]" "-")
+        s (str/replace s #"^[^a-zA-Z]+" "id-")]
+    s))
+
 (defn catalog->selmer-scittlets
   [catalog]
   (let [scittlets (filter (fn [[_ v]]
                             (and (map? v) (contains? v "deps")))
                           catalog)]
     (for [[scittlet _] scittlets]
-      (do (println :scittlet scittlet (scittlets-urls scittlet))
-        (let [url (scittlets-urls scittlet)]
-          {:name scittlet
-           :url url})))))
+      (let [url (scittlets-urls scittlet)]
+        {:name scittlet
+         :id (safe-id scittlet)
+         :url url}))))
 
 (defn html-scittlets-generate [catalog selmer-path output-path]
   (let [scittlets (catalog->selmer-scittlets catalog)
