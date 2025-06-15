@@ -19,14 +19,6 @@
 
              :to-pack-html "test/corpus/topack.html"})
 
-#_(defn compile []
-  ;; Setup code before tests
-  (let [path "scripts/scittlets.mjs"]
-    (when (fs/existsSync path)
-      (fs/unlinkSync path)))
-  (println ":compiling")
-  (is (exec "npx cherry compile scripts/scittlets.cljs")))
-
 (def temp-dir-base* (atom nil))
 
 (defn transient-dir-make! []
@@ -51,43 +43,47 @@
            "\n--stdout--\n\n"
            (.-stdout e)))))
 
-(deftest test-cmd-tags
-  (async done
-         (exec (str scittlets-cmd " tags")
-               (fn [error stdout stderr]
-                 (is (nil? error))
-                 (is (empty? stderr))
-                 (let [tags (-> (re-find #"(?s)Release tags:\s+(.*)" stdout)
-                                second
-                                (str/split #"\s+"))]
-                   (is (some #{"v0.1.0"} tags))
-                   (is (every? #(or (str/starts-with? % "v")
-                                    (some #{%} ["latest"])) tags)))
-                 (done)))))
+(deftest test-cmd-releases
+  (try
+    (let [stdout (execSync (str scittlets-cmd " releases"))]
+      (let [tags (-> (re-find #"(?s)Available catalog releases:\s+(.*)" (str stdout))
+                     second
+                     (str/split #"\s+"))]
+        (is (some #{"v0.1.0"} tags))
+        (is (every? #(or (str/starts-with? % "v")
+                         (some #{%} ["latest"])) tags)))
+      )
+    (catch :default e
+      (is false {:status (.-status e)
+                 :stdout (.-stdout e)
+                 :stderr (.-stderr e)}))))
 
 (deftest test-cmd-catalog
-  (async done
-         (exec (str scittlets-cmd " catalog")
-               (fn [error stdout stderr]
-                 (is (nil? error))
-                 (is (empty? stderr))
-                 (let [tag (-> (re-find #"Catalog tag    : (.*?) \(latest\)" stdout)
-                               second)]
-                   (is (str/starts-with? tag "v")))
-                 (let [lines (str/split-lines stdout)
-                       idx (.indexOf lines "Catalog scittlets:")
-                       scittlets (subvec (vec lines) (inc idx))]
-                   (is (some #{"scittlets.reagent.mermaid"} scittlets)))
-                 (done)))))
+  (try
+    (let [stdout (execSync (str scittlets-cmd " catalog"))
+          stdout (str stdout)]
+      (let [tag (-> (re-find #"Using Catalog: (.*?) \(latest\)" stdout)
+                    second)]
+        (is (str/starts-with? tag "v")))
+      (let [start-idx (.indexOf (str stdout) "📦 Available scittlets:")
+            after-text (subs stdout start-idx)
+            scittlets (->> (re-seq #"•\s+([^\s]+)" after-text)
+                           (map second))]
+        (is (some #{"scittlets.reagent.mermaid"} scittlets) scittlets)))
+    (catch :default e
+      (is false {:status (.-status e)
+                 :stdout (.-stdout e)
+                 :stderr (.-stderr e)}))))
 
 (deftest test-cmd-update-nodeps
-  (async done
-         (exec (str scittlets-cmd " update " (:no-deps corpus) " scittlets.reagent.mermaid")
-               (fn [error stdout stderr]
-                 (is (nil? error))
-                 (is (empty? stderr))
-                 (is (str/includes? stdout "Scittlet markers not found in HTML file for: scittlets.reagent.mermaid"))
-                 (done)))))
+  (try
+    (let [stdout (execSync (str scittlets-cmd " update " (:no-deps corpus) " scittlets.reagent.mermaid"))]
+      (is (re-find #"(?s)❌ Error: Missing scittlet markers in HTML for:\s+• scittlets\.reagent\.mermaid"
+                   (str stdout))))
+    (catch :default e
+        (is false {:status (.-status e)
+                   :stdout (.-stdout e)
+                   :stderr (.-stderr e)}))))
 
 (defn find-scittlet-info-lines [text]
   (let [lines (str/split-lines text)
@@ -115,7 +111,7 @@
         copy-file-target-path (path/join target-dir "mermaid.copied.file")]
     (fs/copyFileSync src target)
     (try
-      (let [_stdout (execSync (str scittlets-cmd " update " target " scittlets.reagent.mermaid" " -t " catalog-v1))
+      (let [_stdout (execSync (str scittlets-cmd " update " target " scittlets.reagent.mermaid" " -r " catalog-v1))
             content (fs/readFileSync target "utf8")
             matches (find-scittlet-info-lines content)]
             ;;(prn matches)
@@ -150,7 +146,7 @@
                catalog-src (:catalog-main corpus)
                html-target (path/join (transient-dir-make!) (path/basename html-src))]
            (fs/copyFileSync html-src html-target)
-           (exec (str scittlets-cmd " update " html-target " -t " catalog-src)
+           (exec (str scittlets-cmd " update " html-target " -r " catalog-src)
                  (fn [error _stdout stderr]
                    (is (nil? error))
                    (is (empty? stderr))
@@ -186,7 +182,7 @@
           catalog-expected (str catalog-src ".test-cmd-catalog-rewrite.rewrite.expected")
           catalog-target (path/join target-dir (path/basename catalog-src))]
       (try
-        (let [stdout (execSync (str scittlets-cmd " catalog " catalog-src " -r"))
+        (let [stdout (execSync (str scittlets-cmd " catalog -r " catalog-src " --rewrite"))
               lines (-> (str/split-lines stdout)
                         (rest))
               output (str/join "\n" lines)]
@@ -210,7 +206,7 @@
           catalog-expected (str catalog-src ".test-cmd-catalog-rewrite.tag.expected")
           catalog-target (path/join target-dir (path/basename catalog-src))]
       (try
-        (let [stdout (execSync (str scittlets-cmd " catalog " catalog-src " -r v99.99.99"))
+        (let [stdout (execSync (str scittlets-cmd " catalog -r " catalog-src " --rewrite v99.99.99"))
               lines (-> (str/split-lines stdout)
                         (rest))
               output (str/join "\n" lines)]
@@ -226,12 +222,12 @@
         (catch :default e
           (is false {:status (.-status e)
                      :stdout (.-stdout e)
-                     :stderr (.-stderr e)})))))  )
+                     :stderr (.-stderr e)}))))))
 
 (deftest test-cmd-new
   (async done
          (let [target (path/join (transient-dir-make!) "test-cmd-new")]
-           (exec (str scittlets-cmd " new " target " -t ./catalog.json")
+           (exec (str scittlets-cmd " new scittle/basic -d " target " -r ./catalog.json")
                  (fn [error stdout stderr]
                    (is (nil? error) (str "stdout: " stdout
                                          "\n\nstderr: " stderr))
@@ -261,7 +257,7 @@
 (deftest test-cmd-new-other
   (async done
          (let [target (path/join (transient-dir-make!) "test-cmd-new-other")]
-           (exec (str scittlets-cmd " new " target " --template reagent/mermaid -t ./catalog.json")
+           (exec (str scittlets-cmd " new reagent/mermaid -d " target " -r ./catalog.json")
                  (fn [error stdout stderr]
                    (is (nil? error) (str "stdout: " stdout
                                          "\n\nstderr: " stderr))
@@ -272,7 +268,7 @@
 
 (deftest test-cmd-new-list
   (async done
-         (exec (str scittlets-cmd " new " "--list -t ./catalog.json")
+         (exec (str scittlets-cmd " new " " -r ./catalog.json")
                (fn [error stdout stderr]
                  (is (nil? error) (str "stdout: " stdout
                                        "\n\nstderr: " stderr))
@@ -405,7 +401,7 @@
       (try
         (let [_stdout (execSync (str scittlets-cmd " add " html-target
                                      " scittlets.reagent.codemirror scittlets.reagent.mermaid"
-                                     " -t ./catalog.json"))
+                                     " -r ./catalog.json"))
               content (fs/readFileSync html-target)
               ;;_ (fs/writeFileSync html-expected (fs/readFileSync html-src)) ;; create 
               ;;_ (fs/writeFileSync html-expected content)                    ;; rebase
@@ -429,7 +425,7 @@
       (try
         (let [stdout (execSync (str scittlets-cmd " add " html-target
                                     " scittlets.reagent.codemirror"
-                                    " -t ./catalog.json"))]
+                                    " -r ./catalog.json"))]
           (is false (str "Unexpected: " stdout)))
 
         (catch :default e
@@ -445,7 +441,7 @@
       (fs/copyFileSync html-src html-target)
       (try
         (let [stdout (execSync (str scittlets-cmd " add " html-target
-                                    " -t ./catalog.json"))]
+                                    " -r ./catalog.json"))]
 
           (is (str/includes? (str stdout)
                              "Scittlet dependencies found in the target HTML file"))
@@ -461,7 +457,7 @@
       (try
         (let [catalog-path (:catalog-main corpus)
               stdout (execSync (str scittlets-cmd " add " html-target " scittlets.reagent.codemirror"
-                                    " -t " catalog-path))
+                                    " -r " catalog-path))
               content (fs/readFileSync html-target)
               ;;_ (println :stdout \n stdout)
               ;;_ (fs/writeFileSync html-expected (fs/readFileSync html-src)) ;; create 
@@ -489,7 +485,7 @@
       (fs/copyFileSync html-src html-target)
       (try
         (let [stdout (execSync (str scittlets-cmd " add " html-target " scittlets.reagent.mermaid"
-                                    " -t ./catalog.json"))]
+                                    " -r ./catalog.json"))]
           (is false (str "Unexpected: " stdout)))
 
         (catch :default e
@@ -500,7 +496,7 @@
 (deftest test-proxy
   (testing "wihtout proxy"
     (try
-      (let [stdout (execSync (str scittlets-cmd " tags "))]
+      (let [stdout (execSync (str scittlets-cmd " releases "))]
         (is (str/includes? stdout "v0.3.0")))
       (catch :default e
         (is false {:status (.-status e)
@@ -509,7 +505,7 @@
 
   (testing "with invalid proxy"
     (try
-      (let [stdout (execSync (str scittlets-cmd " tags ")
+      (let [stdout (execSync (str scittlets-cmd " releases ")
                              #js {:env (js/Object.assign
                                         #js {}
                                         (.-env js/process)
@@ -524,8 +520,8 @@
 (deftest test-win-ca
   (testing "it does not fail."
     (try
-      (let [stdout (execSync (str scittlets-cmd " tags -W"))]
-        (is (str/includes? stdout "Release tags: latest")))
+      (let [stdout (execSync (str scittlets-cmd " releases -W"))]
+        (is (str/includes? stdout "Available catalog releases: latest")) stdout)
       (catch :default e
         (is false {:status (.-status e)
                    :stdout (.-stdout e)

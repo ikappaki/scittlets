@@ -6,6 +6,11 @@
 
 ## Unreleased CLI
 
+* Renamed the `scittlets tag` command to `scittlets releases`, and renamed the `--tag` option to `--release` across all commands. (#19)
+* Changed `scittlets new` to require a template name as the first argument and added `--list-templates` option (#19)
+* Added `--list-scittlets` option to `scittlets add` (#19)
+* Modified `scittlets catalog` to also display available templates (#19)
+
 ## v0.5.0
 
 * Added `scittlets.dev.nrepl` scittlet (#17)

@@ -16,43 +16,45 @@
 (def script-filename "scittlets")
 
 (def spec (-> (yargs)
+              (.strict)
               (.wrap 120)
               (.showHelpOnFail true)
               (.scriptName script-filename)
               (.usage (str "Usage: scittlets <command> [options]"
                            "\n\nRun `scittlets <command> --help` for detailed usage of a specific command."))
-              (.command "tags" "List all release TAGS of the scittlets Catalog.")
-              (.command "catalog [tag]" "List all scittlets in the catalog for the specified TAG."
+              (.command "releases" "List all published versions of the scittlets Catalog.")
+              (.command "catalog" "List all scittlets in the catalog."
                         (fn [y]
                           (-> y
-                              (.positional "tag"
-                                           (clj->js {:description "Catalog tag to use"
-                                                     :default "latest"
-                                                     :type "string"}))
-                              (.option "rewrite"
+                              (.option "release"
                                        (clj->js {:alias "r"
-                                                 :description "Rewrite source URLs to this tag (may not exist) and print the result"
+                                                 :description "Catalog release version to use"
+                                                 :default "latest"
+                                                 :type "string"}))
+                              (.option "rewrite"
+                                       (clj->js {:description "Rewrite source URLs to this version (may not exist) and print the result"
                                                  :type "string"})))))
-              (.command "new [directory] [--template name] [--list]" "Create a new app from a template NAME, or list available templates. Outputs to DIRECTORY if provided, or uses the template’s default."
+              (.command "new [template]" "Create a new app from TEMPLATE. If no template is provided, lists available templates."
                         (fn [y]
                           (-> y
-                              (.positional "directory"
-                                           (clj->js {:describe "Directory to output the new app"
-                                                     :type "string"}))
-                              (.option "list"
+                               (.positional "template"
+                                            (clj->js {:describe "Template name"
+                                                      :type "string"}))
+                               (.option "directory"
+                                        (clj->js {:alias "d"
+                                                  :describe "Override the default output directory for the template"
+                                                  :type "string"}))
+                               (.option "list-templates"
                                        (clj->js {:alias "l"
-                                                 :describe "List available templates instead of creating a new app"
+                                                 :description "List catalog templates"
+                                                 :default false
                                                  :type "boolean"}))
-                              (.option "template"
-                                       (clj->js {:describe "Template name"
-                                                 :default "scittle/basic"
-                                                 :type "string"}))
-                              (.option "tag"
-                                       (clj->js {:alias "t"
-                                                 :description "Catalog version tag to use"
-                                                 :default "latest"
-                                                 :type "string"})))))
-              (.command "add <html> [scittlets..]" "Add SCITTLETS dependencies to the target HTML file, or list them if none are provided."
+                               (.option "release"
+                                        (clj->js {:alias "r"
+                                                  :description "Catalog release version to use"
+                                                  :default "latest"
+                                                  :type "string"})))))
+              (.command "add [html] [scittlets..]" "Add SCITTLETS dependencies to the target HTML file, or list them if none are provided. Use --list-scittlets (or -l) to list available scittlets from the catalog."
                         (fn [y]
                           (-> y
                               (.positional "html"
@@ -61,26 +63,31 @@
                               (.positional "scittlets"
                                            (clj->js {:describe "Scittlets to add to the target HTML file"
                                                      :type "string"}))
-                              (.option "tag"
-                                       (clj->js {:alias "t"
-                                                 :description "Catalog version tag to use"
+                              (.option "list-scittlets"
+                                       (clj->js {:alias "l"
+                                                 :description "List catalog scittlets"
+                                                 :default false
+                                                 :type "boolean"}))
+                              (.option "release"
+                                       (clj->js {:alias "r"
+                                                 :description "Catalog release version to use"
                                                  :default "latest"
                                                  :type "string"})))))
-              (.command "update <path> [scittlets..]" "Update all scittlet dependencies in the HTML file at PATH from the Catalog. If SCITTLETS are specified, update only those."
+              (.command "update <html> [scittlets..]" "Update all scittlet dependencies in the HTML file at PATH from the Catalog. If SCITTLETS are specified, update only those."
                         (fn [y]
                           (-> y
-                              (.positional "path"
+                              (.positional "html"
                                            (clj->js {:describe "Path to the HTML file"
                                                      :type "string"}))
                               (.positional "scittlets"
                                            (clj->js {:describe "Limit updates to these scittlets"
                                                      :type "string"}))
-                              (.option "tag"
-                                       (clj->js {:alias "t"
-                                                 :description "Catalog tag to use"
+                              (.option "release"
+                                       (clj->js {:alias "r"
+                                                 :description "Catalog release version to use"
                                                  :default "latest"
                                                  :type "string"})))))
-              (.command "pack <path> [target]" "Pack HTML file at PATH by inlining script elements."
+              (.command "pack <html> [target]" "Pack HTML file by inlining script elements."
                         (fn [y]
                           (-> y
                               (.positional "path"
@@ -100,7 +107,7 @@
                                               :description "Load Windows system root certificates"
                                               :global true
                                               :default false}))
-              (.epilog (str "[1] TAG may also be a local path to a catalog file. The special value `latest` resolves to the most recent release tag."
+              (.epilog (str "[1] RELEASE may also be a local path to a catalog file. The special value `latest` resolves to the most recent release version."
                             "\n[2] To avoid GitHub API rate limits, set the GITHUB_PUBLIC_TOKEN env var (no scopes needed)."
                             "\n[3] Set the HTTP_PROXY, HTTPS_PROXY, or NO_PROXY environment variables to use a proxy."
                             "\n[4] Use NODE_EXTRA_CA_CERTS env variable to add custom CA certificates for HTTPS."))
@@ -126,7 +133,9 @@
 (declare scittlets-get)
 (declare catalog-rewrite)
 (declare template-new)
+(declare templates-print)
 (declare scittlets-add!)
+(declare scittlets-print)
 (declare pack)
 (declare exit)
 (declare win-ca-load!)
@@ -135,7 +144,6 @@
   (debug :releases/url releases-url)
   (debug :catalog/url catalog-download-url)
   (debug :env/GITHUB_PUBLIC_TOKEN (if gh-token :set :not-set) "\n")
-
   (let [cmd (get (.-_ argv) 0)
         arg-sec-win-ca (.-secWinCa argv)]
 
@@ -143,93 +151,112 @@
       (win-ca-load!))
 
     (case cmd
-      "tags"
+      "releases"
       (let [tags (js/await (tags-get))
             tags (concat ["latest"] tags)]
         (println)
-        (println "Release tags:" (str/join " " tags))
-
+        (println "✴️ Running: scittlets releases")
+        (println)
+        (println "🏷️ Available catalog releases:" (str/join " " tags))
         (exit 0))
 
       "catalog"
-      (let [arg-tag (.-tag argv)
-            arg-rewrite (.-rewrite argv)
-            {:keys [catalog tag]} (js/await (catalog-get arg-tag))
-            scittlets (scittlets-get catalog)
-            scittlet-names (keys scittlets)
-            version (get catalog "version")]
-        (cond
-          arg-rewrite
-          (let [rewrite-tag (if (str/blank? arg-rewrite) "main" arg-rewrite)
-                catalog-up (catalog-rewrite catalog rewrite-tag)
-                json (.stringify js/JSON (clj->js catalog-up) nil 2)]
-            (println json)
-            (exit 0))
+      (let [arg-release (.-release argv)
+            arg-rewrite (.-rewrite argv)]
+        (when-not arg-rewrite
+          (println)
+          (println "✴️ Running: scittlets catalog")
+          (println))
+        (let [{:keys [catalog tag]} (js/await (catalog-get arg-release))
+              version-inline (get catalog "version")]
+          (cond
+            arg-rewrite
+            (let [rewrite-tag (if (str/blank? arg-rewrite) "main" arg-rewrite)
+                  catalog-up (catalog-rewrite catalog rewrite-tag)
+                  json (.stringify js/JSON (clj->js catalog-up) nil 2)]
+              (println json)
+              (exit 0))
 
-          :else
-          (do
-            (println "Catalog tag    :" tag (if (= arg-tag tag) "" (str "(" arg-tag ")")))
-            (println "Catalog version:" version)
-            (println "\nCatalog scittlets:")
-            (println (str/join "\n" scittlet-names))
-            (exit 0))))
+            :else
+            (do
+              (println "📚 Using Catalog:" tag (if (= arg-release tag) "" (str "(" arg-release ")")))
+              (println)
+              (println "🏷️ Catalog inline version:" version-inline)
+              (println)
+              (scittlets-print catalog)
+              (println)
+              (templates-print catalog)
+              (exit 0)))))
 
       "add"
       (let [arg-html (.-html argv)
+            arg-list-scittlets (.-listScittlets argv)
             arg-scittlets (.-scittlets argv)
-            arg-tag (.-tag argv)]
+            arg-release (.-release argv)
+            {:keys [catalog tag]} (js/await (catalog-get arg-release))]
+        (println)
+        (println "✴️ Running: scittlets add")
+        (println)
+
+        (when arg-list-scittlets
+          (scittlets-print catalog)
+          (exit 0))
+
         (if-not (readable? arg-html)
           (exit 1 "❌ Error: Can't find, or read, file:" arg-html)
-
-          (let [{:keys [catalog tag]} (js/await (catalog-get arg-tag))]
-            (js/await (scittlets-add! catalog tag arg-html arg-scittlets)))))
+          (js/await (scittlets-add! catalog tag arg-html arg-scittlets))))
 
       "update"
-      (let [target (.-path argv)
+      (let [target (.-html argv)
             arg-scittlets (.-scittlets argv)
-            arg-tag (.-tag argv)]
-        (println "\nFile to update:" target "\n")
+            arg-release (.-release argv)]
+        (println)
+        (println "✴️ Running: scittlets update")
+        (println)
+        (println "📄 Target HTML:" target "\n")
 
         (if-not (readable? target)
           (exit 1 :update/error "Can't find, or read, file:" target)
 
-          (let [{:keys [catalog tag]} (js/await (catalog-get arg-tag))
+          (let [{:keys [catalog tag]} (js/await (catalog-get arg-release))
                 scittlets (scittlets-get catalog)]
             (debug :catalog/scittlets (str/join " " (keys scittlets)))
             (js/await (deps-update! tag target catalog arg-scittlets {})))))
 
       "new"
-      (let [arg-list     (.-list argv)
-            arg-template (.-template argv)
+      (let [arg-template (.-template argv)
             arg-directory (.-directory argv)
-            arg-tag (.-tag argv)
-            {:keys [catalog tag]} (js/await (catalog-get arg-tag))
-            templates (catalog "templates")]
+            arg-release (.-release argv)
+            arg-list-templates (.-listTemplates argv)
+            {:keys [catalog tag]} (js/await (catalog-get arg-release))]
+        (println)
+        (println "✴️ Running: scittlets new")
+        (println)
+        (when arg-list-templates
+          (templates-print catalog)
+          (exit 0))
 
         (println "📚 Using Catalog:" tag)
-        (debug :new/args :template arg-template :directory arg-directory :tag arg-tag)
+        (println)
+        (debug :new/args :template arg-template :directory arg-directory :tag arg-release)
 
-        (if arg-list
+        (if-not arg-template
           (do
+            (println "⚠️ Please specify a template name.")
             (println)
-            (println "📦 Available app templates in the catalog:")
-            (println)
-            (doseq [[template props] (sort-by first templates)]
-              (let [{:strs [descr]} props]
-                (println " - " template "\t" descr)))
-            (println)
-            (println "📝 Use one of these with:
-
-scittlets new <template-name> [output-dir]"))
-
+            (templates-print catalog))
           (js/await (template-new tag catalog arg-template arg-directory)))
         (exit 0))
 
       "pack"
-      (let [arg-path (.-path argv)
+      (let [arg-path (.-html argv)
             arg-target (.-target argv)]
+        (println)
+        (println "✴️ Running: scittlets pack")
+        (println)
+
         (if-not (readable? arg-path)
-          (exit 1 :pack/error "Can't find, or read, file:" arg-path)
+          (exit 1 "❌ Error: Can't find, or read, file:" arg-path)
 
           (js/await (pack arg-path arg-target))))
 
@@ -295,6 +322,17 @@ scittlets new <template-name> [output-dir]"))
                                ;; only the catalog releases
                                (filter #(str/starts-with? % "v"))))]
         tags))))
+
+(defn templates-print [catalog]
+  (let [templates (catalog "templates")]
+    (println "📦 Available app templates:")
+    (println)
+    (doseq [[template props] (sort-by first templates)]
+      (let [{:strs [descr]} props]
+        (println " - " template "\t" descr)))
+    (println)
+    (println "📝 Create a new app with:
+   scittlets new <template-name> [output-dir]")))
 
 (defn ^:async catalog-get [tag]
   (let [tag (if (= tag "latest")
@@ -371,7 +409,9 @@ scittlets new <template-name> [output-dir]"))
         (debug :template/target target-dir)
 
         (when (fs/existsSync target-dir)
-          (exit 1 "❌ Error: target directory already exists:" target-dir))
+          (exit 1 "❌ Error: target directory already exists:" target-dir
+                "\n\n"
+                "💡 Use --directory to specify a different output folder or remove the existing one."))
         (println "📁 Creating app directory:" (path/resolve target-dir))
         (fs/mkdirSync target-dir)
 
@@ -455,6 +495,14 @@ Happy hacking! 🚀")))))
       (let [src-path (path/join src src-path)]
         (assoc ret :content (fs/readFileSync src-path "utf-8"))))))
 
+(defn  scittlets-print [catalog]
+  (let [scittlets (scittlets-get catalog)
+        scittlet-names (keys scittlets)]
+    (println "📦 Available scittlets:")
+    (println (str/join "\n" (map #(str "  • " %) scittlet-names)))
+    (println)
+    (println "📝 Add scittlets to an HTML file with:
+   scittlets add <html-file> [scittlets..]")))
 (defn ^:async scittlets-add! [catalog tag html-path scittlets]
   (let [html (.toString (fs/readFileSync html-path))
         scittlets-cat (scittlets-get catalog)
@@ -464,6 +512,7 @@ Happy hacking! 🚀")))))
         catalog-missing (remove (set catalog-scitts) scittlets)
         file-existing (filter (set file-scitts) scittlets)]
     (println "📄 Target HTML:" (path/resolve html-path))
+    (println)
     (println "📚 Using Catalog:" tag)
     (cond
       (not (seq scittlets))
@@ -472,7 +521,8 @@ Happy hacking! 🚀")))))
         (if (seq file-scitts)
           (do
             (println "ℹ️ Scittlet dependencies found in the target HTML file:")
-            (println (str/join "\n" (map #(str "  • " %) file-scitts))))
+            (println (str/join "\n" (map #(str "  • " %) file-scitts)))
+            (println))
           (println "ℹ️ No scittlet dependencies found in target HTML file.")))
 
       (seq catalog-missing)
@@ -583,8 +633,8 @@ Happy hacking! 🚀")))))
               deps-meta (concat [(str "<meta name=\"" scittlet ".version\" content=\"" version "\">")] deps)
               deps-up (map #(str lw %) deps-meta)
               lines-up (replace-subvector lines (inc start-i) end-i deps-up)]
-          (prout "Scittlet deps:")
-          (prout (str/join "\n" deps-up))
+          (prout "📦 Dependencies:")
+          (prout (str/join "\n" (map #(str "  🔹 " %) deps-up)))
           lines-up)))))
 
 (defn ^:async deps-update!
@@ -592,7 +642,7 @@ Happy hacking! 🚀")))))
   (let [{:keys [silent?]} opts
         prout (if silent? (fn [& _]) println)
         html    (.toString (fs/readFileSync html-path))
-        catalog-scitts (keys catalog)
+        catalog-scitts (filter #(and (map? (catalog %)) (contains? (catalog %) "deps")) (keys catalog))
         file-scitts (->> (re-seq #"<!-- Scittlet dependencies: ((?!end)[^ ]+) -->" html)
                          (map second))
         update-scitts (if (seq scittlets)
@@ -600,33 +650,41 @@ Happy hacking! 🚀")))))
                         file-scitts)
         catalog-missing (remove (set catalog-scitts) update-scitts)]
 
-    (prout "Catalog:" tag "\n")
+    (prout "📚 Using Catalog:" tag "\n")
     (if (seq catalog-missing)
-      (exit 1 "Error: these scittlets dependencies are missing from the catalog:"
-            (str/join ", " catalog-missing)
+      (exit 1 "❌ Error: these scittlets dependencies are missing from the catalog:\n"
+            (str/join "\n" (map #(str "  • " %) catalog-missing))
 
-            "\nAvailable catalog entries:" (str/join ", " catalog-scitts))
+            "\n\n📖 Available catalog entries:\n" (str/join "\n" (map #(str "  • " %) catalog-scitts)))
 
       (let [file-missing (remove (set file-scitts) update-scitts)]
-        (prout "Scittlets in file  :" (str/join ", " file-scitts))
-        (prout "Scittlets to update:" (str/join ", " update-scitts))
+        (prout "🔎 Existing scittlets in file:")
+        (prout  (str/join "\n" (map #(str "  • " %) file-scitts)))
+
         (if (seq file-missing)
-          (do (prout "Scittlet markers not found in HTML file for:" (str/join ", " file-missing))
+          (do (prout)
+              (prout "❌ Error: Missing scittlet markers in HTML for:")
+              (prout (str/join "\n" (map #(str "  • " %) file-missing)))
               (prout)
-              (prout "Please place the following empty markers inside the <HEAD> of the HTML file, then rerun the script:")
+              (prout "💡 To automatically insert the missing markers, run:")
+              (prout)
+              (prout " npx scittlets add" html-path (str/join " " file-missing))
+              (prout)
+              (prout "📌 Or, manually insert the following empty markers inside the <HEAD> of the HTML file, then rerun the script:")
               (prout)
               (doseq [key file-missing]
                 (let [start-marker (str "<!-- Scittlet dependencies: " key " -->")
                       end-marker "<!-- Scittlet dependencies: end -->"]
                   (prout (str " " start-marker))
                   (prout (str " " end-marker "\n"))))
-              (prout "Ensure this block appears after the scittle script tag, which typically looks like:\n"
+              (prout "🔍 Ensure this block appears after the Scittle script tag, which typically looks like:\n"
                      "  <script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.min.js\" type=\"application/javascript\" deref></script>\n"))
 
           (loop [remaining  update-scitts
                  lines (str/split-lines html)]
             (if-let [scitt (first remaining)]
-              (do (prout "\nUpdating scittlet:" scitt)
+              (do (prout)
+                  (prout "♻️ Updating scittlet:" scitt)
                   (let [files (get-in catalog [scitt "files"])
                         lines-up (dep-update lines catalog scitt prout)]
                     (debug :deps-udpate!/updating scitt)
@@ -654,7 +712,9 @@ Happy hacking! 🚀")))))
 
               (let [updated (str/join "\n" lines)]
                 (fs/writeFileSync html-path updated)
-                (prout "\nScittlets updated:" (str/join ", " update-scitts))))))))))
+                (prout)
+                (prout "✅ Scittlets updated:")
+                (prout  (str/join "\n" (map #(str "  • " %) update-scitts)))))))))))
 
 (defn html-attrs-parse [tag-str]
   (let [[_ attrs-str] (re-find #"<\s*\w+\s*([^>]*)>" tag-str)

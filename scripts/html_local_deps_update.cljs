@@ -29,7 +29,7 @@
                    [p])))))))
 
 (defn exec-cmd [file]
-  (let [cmd (str "npm run scittlets -- update" " \"" file "\" -t " catalog-path)]
+  (let [cmd (str "npm run scittlets -- update" " \"" file "\" -r " catalog-path)]
     (println)
     (prn :html-local-deps-update/info :file file :cmd cmd)
     (println)
