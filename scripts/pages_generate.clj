@@ -7,8 +7,10 @@
 (def catalog-path "catalog.json")
 (def catalog (-> catalog-path slurp (json/parse-string)))
 
-(defn template-make-id [template-id]
-  (str/replace template-id #"/" "-"))
+(defn safe-id [s]
+  (let [s (str/replace s #"[^a-zA-Z0-9-_:.]" "-")
+        s (str/replace s #"^[^a-zA-Z]+" "id-")]
+    s))
 
 (defn template-demo-url [template-info]
   (let [src-dir (template-info "src")
@@ -22,10 +24,11 @@
   [catalog]
   (let [templates (catalog "templates")]
     (for [[template info] templates]
-      (let [{nm "name"} info]
+      (let [{nm "name" :strs [descr]} info]
         {:name nm
+         :descr descr
          :template template
-         :id (template-make-id nm)
+         :id (safe-id nm)
          :demo-url (template-demo-url info)}))))
 
 (defn html-template-generate [catalog selmer-path output-path]
@@ -36,11 +39,6 @@
 
 (html-template-generate catalog "scripts/selmer/templates.selmer.html" "templates.html")
 
-(def scittlets-urls {"scittlets.dev.nrepl" "test/scittlets/dev/nrepl.html"
-                     "scittlets.reagent" "test/scittlets/reagent/basic.html"
-                     "scittlets.reagent.codemirror" "test/scittlets/reagent/codemirror.html"
-                     "scittlets.reagent.mermaid" "test/scittlets/reagent/mermaid.html"
-                     })
 (defn safe-id [s]
   (let [s (str/replace s #"[^a-zA-Z0-9-_:.]" "-")
         s (str/replace s #"^[^a-zA-Z]+" "id-")]
@@ -51,8 +49,8 @@
   (let [scittlets (filter (fn [[_ v]]
                             (and (map? v) (contains? v "deps")))
                           catalog)]
-    (for [[scittlet _] scittlets]
-      (let [url (scittlets-urls scittlet)]
+    (for [[scittlet info] scittlets]
+      (let [url (info "api")]
         {:name scittlet
          :id (safe-id scittlet)
          :url url}))))

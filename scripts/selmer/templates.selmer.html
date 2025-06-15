@@ -14,9 +14,38 @@
       font-family: sans-serif;
       background-color: #fafafa;
     }
-    h1 { text-align: center; }
 
-    .grid {
+    header {
+      position: sticky;
+      top: 0;
+      background: #ffffff;
+      padding: 10px 20px;
+      border-bottom: 1px solid #ccc;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative; /* for positioning */
+    }
+
+    header a.back-home {
+      position: absolute;
+      left: 20px;  /* same as header padding */
+      color: #2a6fdb;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+header h1 {
+  margin: 0 auto;
+  font-weight: 700;    /* semi-bold, less than 800 */
+  font-size: 1.4rem;   /* medium size */
+  color: #2a6fdb;      /* blue accent */
+  text-align: center;
+}
+
+   .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
       gap: 20px;
@@ -32,13 +61,43 @@
       overflow: hidden;
     }
 
-    .example-title {
-      padding: 10px;
-      font-weight: bold;
-      background-color: #f3f3f3;
-      border-bottom: 1px solid #ddd;
-    }
+.example-title {
+  padding: 10px;
+  background-color: #f3f3f3;
+  border-bottom: 1px solid #ddd;
 
+  display: flex;
+  align-items: center;
+  gap: 10px;  /* space between title and description */
+  font-weight: bold;
+}
+
+.example-title a {
+  color: #2a6fdb;  /* keep title blue */
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.example-title a:hover {
+  text-decoration: underline;
+}
+
+.example-descr {
+  font-weight: normal;
+  font-size: 0.9rem;
+  color: #555;  /* dark gray */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1; /* allow description to shrink if needed */
+}
+
+.example-descr::before {
+  content: " — ";  /* dash with spaces */
+  color: #999;
+  font-weight: normal;
+}
     .example-command {
       display: flex;
       align-items: center;
@@ -89,16 +148,22 @@
   </script>
 </head>
 <body>
+<header>
+  <a href="/main.html" class="back-home">← Back to Home</a>
   <h1>Scittlets Template Gallery</h1>
+</header>
+
+
 
   <div class="grid">
     {% for t in templates %}
       <div class="example">
         <div class="example-title">
           <a href="{{t.demo-url}}" target="_blank">{{t.name}}</a>
+          <span class="example-descr">{{t.descr}}</span>
         </div>
         <div class="example-command">
-          <code id="cmd-{{t.id}}">npx scittlets new --template {{t.template}}</code>
+          <code id="cmd-{{t.id}}">npx scittlets new {{t.template}}</code>
           <button class="copy-btn" onclick="copyToClipboard('cmd-{{t.id}}', this)">📋</button>
         </div>
         <iframe src="{{t.demo-url}}" loading="lazy"></iframe>

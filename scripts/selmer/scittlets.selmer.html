@@ -5,28 +5,49 @@
   <title>Scittlets Catalog</title>
   <base href="" />
   <style>
-    /* Make body fill viewport and flex container */
     html, body {
       height: 100%;
       margin: 0;
       font-family: sans-serif;
       background: #f0f4f8;
     }
+
     body {
       display: flex;
-      height: 100vh; /* constrain height */
-      overflow: hidden; /* prevent page scrolling */
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: #ffffff;
+      padding: 10px 20px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    header a {
+      text-decoration: none;
+      color: #2a6fdb;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .content {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
     }
 
     nav {
-      width: 250px;
+      min-width: 250px;
+      width: max-content;
+      max-width: 100%; /* prevent overflow issues */
       background: #ffffff;
       padding: 20px;
       border-right: 1px solid #ccc;
-      position: sticky; /* keep header visible on nav scroll */
-      top: 0;
-      height: 100%; /* full height */
-      overflow-y: auto; /* scroll inside nav */
+      overflow-y: auto;
       box-sizing: border-box;
     }
 
@@ -58,10 +79,9 @@
     main {
       flex-grow: 1;
       padding: 20px;
-      height: 100%; /* full height */
-      overflow-y: auto; /* scroll inside main */
-      box-sizing: border-box;
+      overflow-y: auto;
       background: #f0f4f8;
+      box-sizing: border-box;
     }
 
     .scittlet {
@@ -71,7 +91,7 @@
       margin-bottom: 40px;
       padding: 20px;
     }
-    /* Remove bottom margin on last scittlet to prevent extra space */
+
     .scittlet:last-child {
       margin-bottom: 0;
     }
@@ -91,25 +111,45 @@
 </head>
 <body>
 
-  <!-- Sidebar Table of Contents -->
-  <nav>
-    <h3>Scittlets TOC</h3>
-    <ul>
-      {% for s in scittlets %}
-      <li><a href="#{{ s.id }}">{{ s.name }}</a></li>
-      {% endfor %}
-    </ul>
-  </nav>
+  <!-- Top header with link to home -->
+  <header>
+    <a href="/main.html">← Back to Home</a>
+  </header>
 
-  <!-- Main display area -->
-  <main>
-    {% for s in scittlets %}
-    <div class="scittlet" id="{{ s.id }}">
-      <h4><a href="{{ s.url }}" target="_blank">{{ s.name }}</a></h4>
-      <iframe src="{{ s.url }}" loading="lazy"></iframe>
-    </div>
-    {% endfor %}
-  </main>
+  <!-- Main content split: nav + main -->
+  <div class="content">
+    <!-- Sidebar Table of Contents -->
+    <nav>
+      <h3>Scittlets TOC</h3>
+      <ul>
+        {% for s in scittlets %}
+      <li>
+        <a href="#{{ s.id }}">{{ s.name }}</a>
+        <a href="{{ s.url }}" target="_blank" rel="noopener noreferrer" title="Open in new tab">
+
+          <svg xmlns="http://www.w3.org/2000/svg" 
+               viewBox="0 0 512 512" 
+               width="12" height="12"
+               style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
+            <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
+          </svg>
+          
+        </a>
+      </li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <!-- Main display area -->
+    <main>
+      {% for s in scittlets %}
+      <div class="scittlet" id="{{ s.id }}">
+        <h4><a href="{{ s.url }}" target="_blank">{{ s.name }}</a></h4>
+        <iframe src="{{ s.url }}" loading="lazy"></iframe>
+      </div>
+      {% endfor %}
+    </main>
+  </div>
 
 </body>
 </html>
