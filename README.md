@@ -41,7 +41,7 @@ npx scittlets <command> [options]
 
   Create a new app from the specified TEMPLATE. If no template is provided, lists available templates.
 
-  Output directory defaults to the template's default directory but can be overridden with `--directory`.
+  Output directory defaults to the template's default directory but can be overridden with `--directory` (or `-d`).
 
 - `add <html> [scittlets..] [--list-scittlets]`
 
@@ -61,7 +61,7 @@ npx scittlets <command> [options]
 
 - `catalog [--release version]`
 
-  List all scittlets and templates in the catalog for the specified catalog release version (default: `latest`).
+  List all scittlets and templates in the catalog for the specified catalog release VERSION (default: `latest`).
 
 - `releases`
 
@@ -97,7 +97,7 @@ List scittlets and templates for the latest release version:
 npx scittlets catalog
 ```
 
-Update dependencies in an HTML file:
+Update all scittlets dependencies in an HTML file to their latest versions:
 
 ```bash
 npx scittlets update ./index.html
