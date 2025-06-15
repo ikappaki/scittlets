@@ -81,5 +81,6 @@ jobs:
 
     - name: Run Tests
       run: |
+        npm i # for access to npx scittlets
         bb test-ui
 
