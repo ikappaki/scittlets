@@ -332,7 +332,6 @@
         (println " - " template "\t" descr)))
     (println)
     (println "📝 Create a new app with:
-
    scittlets new <template-name> [output-dir]")))
 
 (defn ^:async catalog-get [tag]
