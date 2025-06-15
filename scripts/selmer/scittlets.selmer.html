@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Scittlets</title>
+    <base href="/" />
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f0f4f8;
+        margin: 10px 15px;
+        color: #333;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 700;
+        color: #2a6fdb;
+      }
+
+      header span[version] {
+        font-weight: 400;
+        font-size: 0.6em;
+        color: #999;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        max-width: 1024px;
+        margin: 0 auto;
+      }
+
+      li {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(42, 111, 219, 0.1);
+        margin-bottom: 15px;
+        padding: 15px;
+        transition: box-shadow 0.3s ease;
+      }
+
+      li:hover {
+        box-shadow: 0 8px 20px rgba(42, 111, 219, 0.2);
+      }
+
+      li h4 {
+        margin: 0 0 10px 0;
+        font-size: 1.1rem;
+      }
+
+      li h4 a {
+        color: #2a6fdb;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      li h4 a:hover {
+        text-decoration: underline;
+        color: #1948a3;
+      }
+
+      iframe {
+        width: 100%;
+        height: 50vh;
+        border: 3px solid #2a6fdb;
+        border-radius: 10px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        transition: border-color 0.3s ease;
+      }
+
+      iframe:hover {
+        border-color: #1948a3;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="github-badge" style="position: absolute; right: 0; top: 5; margin-right: 10px">
+      <a href="https://github.com/ikappaki/scittlets" target="_blank" aria-label="GitHub Scittlets">
+        <img
+          src="https://img.shields.io/badge/GitHub-Scittlets-blue?style=flat-square&logo=github&logoColor=white"
+          alt="GitHub Scittlets"
+        />
+      </a>
+    </div>
+
+    <header>
+      <h2>
+        Scittlets Web Catalog
+        <span version>main</span>
+      </h2>
+    </header>
+
+    <p style="text-align: center; margin-top: 0.5em;">
+      Detailed documentation and live previews of available Scittlets from the catalog.
+    </p>
+    <p style="text-align: center; margin-top: 1em;">
+      Looking for starting points? Visit the <a href="examples/index.html" target="_blank">📦 Scittle templates</a> page.
+    </p>
+
+    <ul>
+      {% for s in scittlets %}
+      <li>
+        <h4>
+          <a href="{{ s.url }}" target="_blank">{{ s.name }}</a>
+        </h4>
+        <iframe name="{{ s.name }}" src="{{ s.url }}" loading="lazy"></iframe>
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

@@ -39,34 +39,39 @@
 
  "templates" :
  {"dev/nrepl":
-  {"src": "examples/dev",
+  {"name": "Scittle nREPL",
+   "src": "examples/dev",
    "descr": "A minimal nREPL capable scittlet template",
    "files": [{"src": "nrepl.html", "dest": "index.html"},
              "nrepl.cljs"],
    "target": "scits_nrepl"},
   "reagent/basic":
-  {"src": "examples/reagent",
+  {"name": "Reagent Basic",
+   "src": "examples/reagent",
    "descr": "A minimal Reagent template",
    "files": [{"src": "reagent_basic.html", "dest": "index.html"},
              "reagent_basic.cljs"],
    "target": "scits_reagent"},
   "reagent/codemirror":
-  {"src": "examples/codemirror",
+  {"name": "CodeMirror Reagent",
+   "src": "examples/codemirror",
    "descr": "A Reagent template around CodeMirror, a code editor component for the web",
    "files": [{"src": "codemirror_demo.html", "dest": "index.html"},
              "codemirror_demo.cljs"],
    "target": "scits_reagent_codemirror"},
   "reagent/mermaid":
-  {"src": "examples/mermaid",
+  {"name": "Mermaid Reagent",
+   "src": "examples/mermaid",
    "descr": "A Reagent template around Mermaid, the diagramming and charting tool",
    "files": [{"src": "mermaid_demo.html", "dest": "index.html"},
              "mermaid_demo.cljs"],
    "target": "scits_reagent_mermaid"},
   "scittle/basic":
-  {"src": "examples/scittle",
+  {"name": "Scittle Basic",
+   "src": "examples/scittle",
    "descr": "A minimal Scittle template with zero dependencies",
    "files": [{"src": "scittle_basic.html", "dest": "index.html"},
-              "scittle_basic.cljs"],
+             "scittle_basic.cljs"],
    "target": "scittle_basic"}
  }
 }
