@@ -12,7 +12,7 @@
 
       body {
           margin: 0;
-          padding: 0 20px 80px 20px;  /* was: padding-top: 80px; padding-left: 20px; etc. */
+          padding: 0 20px 80px 20px;
           font-family: sans-serif;
           background-color: #fafafa;
       }
@@ -29,7 +29,7 @@
           flex-direction: row;
           align-items: center;
 
-          position: relative; /* for absolute positioning children */
+          position: relative;
       }
 
       header a.back-home {
@@ -58,7 +58,6 @@
           gap: 12px;
       }
 
-      /* Docs badge style */
       header a.docs-badge {
           background: #2a6fdb;
           color: white;
@@ -75,6 +74,15 @@
           background: #1d4fbb;
       }
 
+      .introduction {
+          font-size: 1.05rem;
+          color: #444;
+          font-style: italic;
+          line-height: 1.6;
+          margin: 16px auto 32px;
+          max-width: 800px;
+      }
+
       .instructions-wrapper {
           background: #f0f4ff;
           position: fixed;
@@ -88,12 +96,12 @@
       }
 
       .instructions-wrapper .copy-btn {
-          background: #2a6fdb;  /* Match brand color */
+          background: #2a6fdb;
           color: white;
       }
 
       .instructions-wrapper .copy-btn:hover {
-          background: #1d4fbb;  /* Darker blue for hover */
+          background: #1d4fbb;
       }
 
       .instructions {
@@ -104,8 +112,8 @@
           font-size: 0.95rem;
           color: black;
 
-          max-width: 1200px;   /* Keep content centered */
-          margin: 0 auto;      /* Center horizontally */
+          max-width: 1200px;
+          margin: 0 auto;
           padding: 2px;
       }
       .instruction-item {
@@ -116,7 +124,7 @@
           margin: 0; 
           width: 100%;
       }
-      /* Remove code background for instructions */
+
       .instructions .instruction-item code {
           background: transparent;
           color: inherit;
@@ -153,7 +161,7 @@
           justify-content: center;
           min-width: 1.5em;
           min-height: 1.5em;
-          margin-left: auto;  /* pushes the button to the right */
+          margin-left: auto;
           color: #0033a0;
           transition: background-color 0.2s ease;
       }
@@ -215,7 +223,7 @@
           gap: 10px;
           background: #f5f5f5;
           font-family: monospace;
-          font-size: 0.9em;
+          font-size: 1em;
           padding: 6px 10px;
           border-top: 1px solid #ddd;
           border-bottom: 1px solid #ddd;
@@ -255,15 +263,19 @@
   </head>
   <body>
     <header>
-      <a href="/main.html" class="back-home">← Back to Home</a>
+      <a href="/main.html" class="back-home">Home</a>
       <h1>Scittlets Template Gallery</h1>
       <div class="right-links">
 
-        <a href="scittlets.html" target="_blank" rel="noopener" class="docs-badge" title="Scittlets">scittlets</a>
+        <a href="scittlets.html" rel="noopener" class="docs-badge" title="Scittlets">scittlets</a>
         <a href="https://github.com/ikappaki/scittlets?tab=readme-ov-file#cli-scittlets" target="_blank" rel="noopener" class="docs-badge" title="Scittlets Documentation">CLI docs</a>
       </div>
     </header>
 
+
+        <div class="introduction">
+Browse and interact with the available Scittle templates below. You can open each one in full-page view or copy the command to create an app from the template.
+        </div>
 
     <div class="grid">
       {% for t in templates %}
@@ -273,7 +285,7 @@
           <span class="example-descr">{{t.descr}}</span>
         </div>
         <div class="example-command">
-          <span class="shell-label">Shell</span>
+          <span class="shell-label">New</span>
           <code id="cmd-{{t.id}}">npx scittlets new {{t.template}}</code>
           <button class="copy-btn" onclick="copyToClipboard('cmd-{{t.id}}', this)">📋</button>
         </div>

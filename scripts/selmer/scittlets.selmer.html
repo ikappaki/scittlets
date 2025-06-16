@@ -31,7 +31,7 @@
           flex-direction: row;
           align-items: center;
 
-          position: relative; /* for absolute positioning children */
+          position: relative;
       }
 
       header a.back-home {
@@ -60,7 +60,6 @@
           gap: 12px;
       }
 
-      /* Docs badge style */
       header a.docs-badge {
           background: #2a6fdb;
           color: white;
@@ -77,8 +76,6 @@
           background: #1d4fbb;
       }
 
-      /* ... rest of your CSS unchanged ... */
-
       .content {
           display: flex;
           flex: 1;
@@ -88,7 +85,7 @@
       nav {
           min-width: 250px;
           width: max-content;
-          max-width: 100%; /* prevent overflow issues */
+          max-width: 100%;
           background: #ffffff;
           padding: 20px;
           border-right: 1px solid #ccc;
@@ -129,6 +126,15 @@
           box-sizing: border-box;
       }
 
+      .introduction {
+          font-size: 1.05rem;
+          color: #444;
+          font-style: italic;
+          line-height: 1.6;
+          margin: 16px auto 32px;
+          max-width: 800px;
+      }
+
       .scittlet {
           background: #fff;
           border-radius: 10px;
@@ -166,12 +172,12 @@
       }
 
       .instructions-wrapper .copy-btn {
-          background: #2a6fdb;  /* Match brand color */
+          background: #2a6fdb;
           color: white;
       }
 
       .instructions-wrapper .copy-btn:hover {
-          background: #1d4fbb;  /* Darker blue for hover */
+          background: #1d4fbb;
       }
 
       .instructions {
@@ -182,8 +188,8 @@
           font-size: 0.95rem;
           color: black;
 
-          max-width: 1200px;   /* Keep content centered */
-          margin: 0 auto;      /* Center horizontally */
+          max-width: 1200px;
+          margin: 0 auto;
           padding: 2px;
       }
       .instruction-item {
@@ -194,7 +200,7 @@
           margin: 0; 
           width: 100%;
       }
-      /* Remove code background for instructions */
+
       .instructions .instruction-item code {
           background: transparent;
           color: inherit;
@@ -231,7 +237,7 @@
           justify-content: center;
           min-width: 1.5em;
           min-height: 1.5em;
-          margin-left: auto;  /* pushes the button to the right */
+          margin-left: auto;
           color: #0033a0;
           transition: background-color 0.2s ease;
       }
@@ -244,17 +250,17 @@
       .header-with-command {
           display: flex;
           align-items: center;
-          gap: 16px; /* space between h4 and example command */
-          flex-wrap: wrap; /* wrap on small screens */
+          gap: 16px;
+          flex-wrap: wrap;
       }
 
       .header-with-command h4 {
           margin: 0;
-          flex-shrink: 0; /* prevent shrinking */
+          flex-shrink: 0;
       }
 
       .example-command {
-          margin: 0; /* remove top/bottom margin if any */
+          margin: 0;
           background: #f5f5f5;
           font-family: monospace;
           font-size: 1em;
@@ -264,8 +270,8 @@
           display: flex;
           align-items: center;
           gap: 10px;
-          flex-grow: 1; /* let it take remaining space */
-          min-width: 200px; /* optional, keep it from shrinking too much */
+          flex-grow: 1;
+          min-width: 200px;
       }
 
     </style>
@@ -291,10 +297,10 @@
   <body>
 
     <header>
-      <a href="/main.html" class="back-home">← Back to Home</a>
+      <a href="/main.html" class="back-home">Home</a>
       <h1>Scittlets Catalog</h1>
       <div class="right-links">
-        <a href="templates.html" target="_blank" rel="noopener" class="docs-badge" title="Templates">templates</a>
+        <a href="templates.html" rel="noopener" class="docs-badge" title="Templates">templates</a>
         <a href="https://github.com/ikappaki/scittlets?tab=readme-ov-file#cli-scittlets" target="_blank" rel="noopener" class="docs-badge" title="Scittlets Documentation">CLI docs</a>
       </div>
     </header>
@@ -322,10 +328,14 @@
       </nav>
 
       <main>
+
+        <div class="introduction">
+Browse the available Scittlets below, along with related information such as API details, interactive tests, and demonstrations. Click the arrow icon to view a Scittlet in full page, or copy the command to add it to your HTML file.
+        </div>
+
         {% for s in scittlets %}
         <div class="scittlet" id="{{ s.id }}">
           <div class="header-with-command">
-
             <a href="{{ s.url }}" target="_blank" rel="noopener noreferrer" title="Open in new tab">
               <svg xmlns="http://www.w3.org/2000/svg" 
                    viewBox="0 0 512 512" 
@@ -335,8 +345,6 @@
               </svg>
               
             </a>
-
-            <!-- <h4><a href="{{ s.url }}" target="_blank">{{ s.name }}</a></h4> -->
 
             <div class="example-command">
               <span class="shell-label">ADD</span>
@@ -351,7 +359,6 @@
       </main>
 
     </div>
-
 
     <div class="instructions-wrapper">
       <div class="instructions">
