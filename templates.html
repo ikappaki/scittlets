@@ -249,21 +249,26 @@
     </style>
 
     <script>
-      function copyToClipboard(id, btn) {
-        const text = document.getElementById(id).textContent;
+      function copyToClipboard(codeId, btn) {
+        const codeElem = document.getElementById(codeId);
+        if (!codeElem) return;
+
+        const text = codeElem.textContent || codeElem.innerText;
+
         navigator.clipboard.writeText(text).then(() => {
-          const tooltip = document.createElement("span");
-          tooltip.textContent = "✔️";
-          tooltip.className = "copy-tooltip";
-          btn.parentElement.appendChild(tooltip);
-          setTimeout(() => tooltip.remove(), 1500);
+          // Optional: show feedback on button
+          const original = btn.textContent;
+          btn.textContent = '✔️';
+          setTimeout(() => (btn.textContent = original), 1500);
+        }).catch(() => {
+          alert('Failed to copy!');
         });
       }
     </script>
   </head>
   <body>
     <header>
-      <a href="/main.html" class="back-home">Home</a>
+      <a href="/index.html" class="back-home">Home</a>
       <h1>Scittlets Template Gallery</h1>
       <div class="right-links">
 
