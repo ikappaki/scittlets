@@ -2,155 +2,435 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Scittlets</title>
-    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Scittlets - Modular ClojureScript Components</title>
     <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
       body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
         background: #f0f4f8;
-        margin: 10px 15px;
-        color: #333;
+        color: #222;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .links-below-title {
+        margin: 12px 0 20px 0;
+        text-align: center;
+      }
+
+      .links-below-title a {
+        margin: 0 8px;
+        display: inline-block;
+      }
+
+      .wrapper {
+        flex: 1 0 auto;
+        padding: 15px 2px 2px;
+        max-width: 900px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
       header {
         text-align: center;
-        margin-bottom: 20px;
-        font-weight: 700;
+        max-width: 700px;
+      }
+
+      h1 {
+        font-weight: 800;
+        font-size: 2.8rem;
+        margin-bottom: 0.2em;
         color: #2a6fdb;
       }
 
-      header span[version] {
-        font-weight: 400;
-        font-size: 0.6em;
-        color: #999;
-        margin-left: 8px;
-        vertical-align: middle;
+      p.intro {
+        font-size: 1.15rem;
+        line-height: 1.5;
+        max-width: 600px;
+        color: #444;
       }
 
-      ul {
-        list-style: none;
-        padding: 0;
-        max-width: 1024px;
-        margin: 0 auto;
+      main {
+        display: flex;
+        column-gap: 40px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
       }
 
-      li {
+      .card {
         background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(42, 111, 219, 0.1);
-        margin-bottom: 15px;
-        padding: 15px;
+        box-shadow: 0 4px 15px rgba(42, 111, 219, 0.15);
+        border-radius: 12px;
+        padding: 30px 25px;
+        flex: 1 1 300px;
+        max-width: 400px;
+        text-align: center;
+        color: #2a6fdb;
         transition: box-shadow 0.3s ease;
       }
-      li:hover {
-        box-shadow: 0 8px 20px rgba(42, 111, 219, 0.2);
+
+      .card:hover,
+      .card:focus-within {
+        box-shadow: 0 6px 20px rgba(42, 111, 219, 0.3);
+        outline: none;
       }
 
-      li h4 {
-        margin: 0 0 10px 0;
-        font-size: 1.1rem;
+      .card h2 {
+        margin-top: 0;
+        font-weight: 700;
+        font-size: 1.8rem;
       }
-      li h4 a {
-        color: #2a6fdb;
+
+      .card p {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 1.5em;
+        min-height: 5em;
+      }
+
+      .btn {
+        background-color: #2a6fdb;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 1rem;
+        display: inline-block;
         text-decoration: none;
-        transition: color 0.3s ease;
-      }
-      li h4 a:hover {
-        text-decoration: underline;
-        color: #1948a3;
+        cursor: pointer;
+        user-select: none;
       }
 
-      iframe {
-        width: 100%;
-        height: 50vh;
-        border: 3px solid #2a6fdb;
-        border-radius: 10px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        transition: border-color 0.3s ease;
+      .btn:hover,
+      .btn:focus {
+        background-color: #1950b5;
       }
-      iframe:hover {
-        border-color: #1948a3;
+
+      iframe.preview {
+        margin-top: 25px;
+        width: 100%;
+        height: 250px;
+        border: 2px solid #2a6fdb;
+        border-radius: 10px;
+      }
+
+      .instructions-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 10px;
+      }
+
+      .instructions {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        font-family: monospace;
+        font-size: 0.9rem;
+        color: black;
+        width: max-content;
+        min-width: 33vw;
+      }
+
+      .instruction-item {
+        padding: 8px 12px;
+        background: #fff;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 40px;
+        box-sizing: border-box;
+        width: 100%;
+      }
+      .shell-label {
+        background-color: #0d265e;
+        color: #a9c4ff;
+        font-size: 0.9em;
+        padding: 3px 6px;
+        border-radius: 4px;
+        user-select: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        flex-shrink: 0;
+        min-width: 100px;
+        text-align: center;
+      }
+
+      .instructions .instruction-item code {
+        font-size: 1.0rem;
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+
+      .instruction-descr {
+        font-size: 0.9rem;
+        color: #666;
+        flex-shrink: 0;
+        white-space: nowrap;
+        text-align: right;
+        flex-grow: 1;
+      }
+
+      .copy-btn {
+        background: #a6c1ff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        padding: 4px 6px;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 24px;
+        min-height: 24px;
+        color: #0033a0;
+        transition: background-color 0.2s ease;
+        flex-shrink: 0;
+        margin-left: auto;
+      }
+
+      .copy-btn:hover {
+        background: #84aaff;
+      }
+
+      .instructions-header {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2a6fdb;
+        margin: 0 0 16px 0;
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        .instructions {
+          grid-template-columns: 1fr;
+        }
+
+        .instruction-item {
+          width: 100%;
+        }
+
+        .instructions-wrapper {
+          padding: 20px 5px;
+        }
       }
     </style>
+
+    <script>
+      function copyToClipboard(codeId, btn) {
+        const codeElem = document.getElementById(codeId);
+        if (!codeElem) return;
+
+        const text = codeElem.textContent || codeElem.innerText;
+
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            // Optional: show feedback on button
+            const original = btn.textContent;
+            btn.textContent = "✔️";
+            setTimeout(() => (btn.textContent = original), 1500);
+          })
+          .catch(() => {
+            alert("Failed to copy!");
+          });
+      }
+    </script>
   </head>
-
   <body>
-    <div class="github-badge" style="position: absolute; right: 0; top: 5; margin-right: 10px" stylex="float: right">
-      <a href="https://github.com/ikappaki/scittlets" target="_blank" aria-label="GitHub Scittlets">
-        <img
-          src="https://img.shields.io/badge/GitHub-Scittlets-blue?style=flat-square&logo=github&logoColor=white"
-          alt="GitHub Scittlets"
-        />
-      </a>
+    <div class="wrapper">
+      <header>
+        <h1>Scittlets</h1>
+
+        <div class="links-below-title">
+          <a
+            href="https://github.com/ikappaki/scittlets"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><img
+              src="https://img.shields.io/badge/scittlets-181717?style=flat-square&logo=github&logoColor=white"
+              alt="GitHub"
+          /></a>
+          <a
+            href="https://github.com/ikappaki/scittlets/releases/latest"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><img
+              src="https://img.shields.io/github/v/release/ikappaki/scittlets?style=flat-square"
+              alt="GitHub latest release"
+          /></a>
+          <a
+            href="https://www.npmjs.com/package/scittlets"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><img
+              src="https://img.shields.io/npm/v/scittlets?color=cb3837&label=npm&style=flat-square"
+              alt="npm version"
+          /></a>
+        </div>
+
+        <p class="intro">
+Scittlets is a catalog of modular ClojureScript components (scittlets) for use with <a href="https://github.com/babashka/scittle" target="_blank">Scittle</a>, offering app templates to scaffold projects and a CLI tool to facilitate creating, adding, updating, and packaging scittlet apps.
+        </p>
+      </header>
+
+      <main>
+        <div class="card">
+          <h2>Scittlets Catalog</h2>
+          <p>
+            View components with usage instructions and live demos.
+          </p>
+          <a class="btn" href="scittlets.html">Explore Scittlets</a>
+          <iframe
+            class="preview"
+            src="test/scittlets/reagent/mermaid.html"
+            title="Scittlet Demo"
+            loading="lazy"
+          ></iframe>
+        </div>
+
+        <div class="card">
+          <h2>Templates Gallery</h2>
+          <p>
+            Browse Scittle app templates to quickly start building your scittlet apps.
+          </p>
+          <a class="btn" href="templates.html">View Templates</a>
+          <iframe
+            class="preview"
+            src="examples/mermaid/mermaid_demo.html"
+            title="Template Demo"
+            loading="lazy"
+          ></iframe>
+        </div>
+
+        <div class="instructions-wrapper">
+          <h2 class="instructions-header">
+            <a
+              href="https://github.com/ikappaki/scittlets?tab=readme-ov-file#cli-scittlets"
+              target="_blank"
+              >Scittlets CLI</a
+            >
+          </h2>
+          <div class="instructions">
+            
+            <div class="instruction-item">
+              <span class="shell-label">install</span>
+              <code id="id-install">npm install -g scittlets</code>
+              <span class="instruction-descr">Install the scittlets CLI globally</span>
+              <button
+                class="copy-btn"
+                onclick="copyToClipboard('id-install', this)"
+                >📋</button
+              >
+            </div>
+            
+            <div class="instruction-item">
+              <span class="shell-label">usage</span>
+              <code id="id-usage">npx scittlets</code>
+              <span class="instruction-descr">Show general usage and help</span>
+              <button
+                class="copy-btn"
+                onclick="copyToClipboard('id-usage', this)"
+                >📋</button
+              >
+            </div>
+            
+            <div class="instruction-item">
+              <span class="shell-label">help</span>
+              <code id="id-help">npx scittlets CMD --help</code>
+              <span class="instruction-descr">Get help for a specific command (CMD)</span>
+              <button
+                class="copy-btn"
+                onclick="copyToClipboard('id-help', this)"
+                >📋</button
+              >
+            </div>
+            
+            <div class="instruction-item">
+              <span class="shell-label">catalog</span>
+              <code id="id-catalog">npx scittlets catalog</code>
+              <span class="instruction-descr">List all scittlets and templates in the catalog</span>
+              <button
+                class="copy-btn"
+                onclick="copyToClipboard('id-catalog', this)"
+                >📋</button
+              >
+            </div>
+            
+            <div class="instruction-item">
+              <span class="shell-label">new</span>
+              <code id="id-new">npx scittlets new</code>
+              <span class="instruction-descr">Create a Scittle app from a template</span>
+              <button
+                class="copy-btn"
+                onclick="copyToClipboard('id-new', this)"
+                >📋</button
+              >
+            </div>
+            
+            <div class="instruction-item">
+              <span class="shell-label">add</span>
+              <code id="id-add">npx scittlets add</code>
+              <span class="instruction-descr">Add scittlets dependencies to an HTML file</span>
+              <button
+                class="copy-btn"
+                onclick="copyToClipboard('id-add', this)"
+                >📋</button
+              >
+            </div>
+            
+            <div class="instruction-item">
+              <span class="shell-label">update</span>
+              <code id="id-update">npx scittlets update</code>
+              <span class="instruction-descr">Update scittlet dependencies in an HTML file</span>
+              <button
+                class="copy-btn"
+                onclick="copyToClipboard('id-update', this)"
+                >📋</button
+              >
+            </div>
+            
+            <div class="instruction-item">
+              <span class="shell-label">pack</span>
+              <code id="id-pack">npx scittlets pack</code>
+              <span class="instruction-descr">Pack an HTML file by inlining scripts</span>
+              <button
+                class="copy-btn"
+                onclick="copyToClipboard('id-pack', this)"
+                >📋</button
+              >
+            </div>
+            
+            <div class="instruction-item">
+              <span class="shell-label">releases</span>
+              <code id="id-releases">npx scittlets releases</code>
+              <span class="instruction-descr">List all published versions of the scittlets Catalog</span>
+              <button
+                class="copy-btn"
+                onclick="copyToClipboard('id-releases', this)"
+                >📋</button
+              >
+            </div>
+            
+          </div>
+        </div>
+      </main>
     </div>
-
-    <header>
-      <h2>
-        Scittlets Web Catalog
-        <span version>main</span>
-      </h2>
-    </header>
-
-    <p style="text-align: center; margin-top: 0.5em;"> Detailed documentation and live previews of available Scittlets from the catalog. </p>
-    <p style="text-align: center; margin-top: 1em;">
-      Looking for starting points? Visit the <a href="examples/index.html" target="_blank">📦 Scittle templates</a> page.
-    </p>
-
-
-    <ul>
-
-      <li>
-        <h4>
-          <a href="test/scittlets/dev/nrepl.html" target="_blank"
-            >scittlets.dev.nrepl</a
-          >
-        </h4>
-        <iframe
-          name="scittlets.dev.nrepl"
-          src="test/scittlets/dev/nrepl.html"
-          loading="lazy"
-        ></iframe>
-      </li>
-
-      <li>
-        <h4>
-          <a href="test/scittlets/reagent/basic.html" target="_blank"
-            >scittlets.reagent</a
-          >
-        </h4>
-        <iframe
-          name="scittlets.reagent"
-          src="test/scittlets/reagent/basic.html"
-          loading="lazy"
-        ></iframe>
-      </li>
-
-      <li>
-        <h4>
-          <a href="test/scittlets/reagent/codemirror.html" target="_blank"
-            >scittlets.reagent.codemirror</a
-          >
-        </h4>
-        <iframe
-          name="scittlets.reagent.codemirror"
-          src="test/scittlets/reagent/codemirror.html"
-          loading="lazy"
-        ></iframe>
-      </li>
-
-      <li>
-        <h4>
-          <a href="test/scittlets/reagent/mermaid.html" target="_blank"
-            >scittlets.reagent.mermaid</a
-          >
-        </h4>
-        <iframe
-          name="scittlets.reagent.mermaid"
-          src="test/scittlets/reagent/mermaid.html"
-          loading="lazy"
-        ></iframe>
-      </li>
-
-    </ul>
   </body>
 </html>

@@ -110,7 +110,7 @@
     (spit output-path (selmer/render (slurp selmer-path) context)))
   (println "✅ " output-path " generated."))
 
-(html-main-generate "scripts/selmer/main.selmer.html" "main.html")
+(html-main-generate "scripts/selmer/main.selmer.html" "index.html")
 (html-scittlets-generate catalog "scripts/selmer/scittlets.selmer.html" "scittlets.html")
 (html-template-generate catalog "scripts/selmer/templates.selmer.html" "templates.html")
 
