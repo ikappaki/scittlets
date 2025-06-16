@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" /> <meta name="viewport"
+                                   content="width=device-width, initial-scale=1" />
+    <title>Scittlets - Modular ClojureScript Components</title>
+    <style>
+      * { box-sizing: border-box; } html, body { margin: 0; padding: 0;
+                                                 height: 100%; font-family: -apple-system, BlinkMacSystemFont,
+                                                                            "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+                                                                            "Helvetica Neue", sans-serif; background: #f0f4f8; color: #222;
+                                                 display: flex; flex-direction: column; min-height: 100vh; }
+
+      .topnav { background: #fff; border-bottom: 1px solid #ddd;
+                text-align: center; padding: 3px 0; font-size: 0.9rem; color:
+                                                                            #666; width: 100%; }
+
+      .topnav a { color: #2a6fdb; text-decoration: none; margin: 0 10px; }
+
+      .topnav a:hover { text-decoration: underline; }
+
+      .wrapper { flex: 1 0 auto; padding: 15px 2px 2px;
+                 max-width: 900px; margin: 0 auto; width: 100%; display: flex;
+                 flex-direction: column; align-items: center; }
+
+      header { text-align: center; max-width: 700px; }
+
+      h1 { font-weight: 800; font-size: 2.8rem; margin-bottom: 0.2em;
+           color: #2a6fdb; }
+
+      p.intro { font-size: 1.15rem; line-height: 1.5; max-width: 600px;
+                color: #444; }
+
+      main { display: flex; column-gap: 40px; flex-wrap: wrap; justify-content:
+                                                            center; width: 100%; }
+
+      .card { background: white; box-shadow: 0 4px 15px
+                                             rgba(42,111,219,0.15); border-radius: 12px; padding: 30px 25px;
+              flex: 1 1 300px; max-width: 400px; text-align: center; color:
+                                                                         #2a6fdb; transition: box-shadow 0.3s ease; }
+
+      .card:hover, .card:focus-within { box-shadow: 0 6px 20px
+                                                    rgba(42,111,219,0.3); outline: none; }
+
+      .card h2 { margin-top: 0; font-weight: 700; font-size: 1.8rem; }
+
+      .card p { font-size: 1rem; color: #555; margin-bottom: 1.5em;
+                min-height: 5em; }
+
+      .btn { background-color: #2a6fdb; color: white;
+             padding: 12px 30px; border-radius: 6px; font-weight: 600; font-size: 1rem;
+             display: inline-block; text-decoration: none; cursor: pointer;
+             user-select: none; }
+
+      .btn:hover, .btn:focus { background-color: #1950b5; }
+
+      iframe.preview { margin-top: 25px; width: 100%; height: 250px;
+                       border: 2px solid #2a6fdb; border-radius: 10px; }
+      
+      .instructions-wrapper {
+          display: flex;
+          flex-direction: column;  /* Stack header and instructions vertically */
+          align-items: center;     /* Center everything horizontally */
+          padding: 20px 10px;
+      }
+
+
+      .instructions {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          font-family: monospace;
+          font-size: 0.9rem;
+          color: black;
+          width: max-content;  /* Set width to size of longest item */
+          min-width: 33vw;  
+      }
+
+      .instruction-item {
+          padding: 8px 12px;
+          background: #fff;
+          border-radius: 6px;
+          border: 1px solid #ddd;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          min-height: 40px;
+          box-sizing: border-box;
+          width: 100%; /* Match the width of the longest instruction */
+      }
+      .shell-label {
+          background-color: #0d265e;
+          color: #a9c4ff;
+          font-size: 0.9em;
+          padding: 3px 6px;
+          border-radius: 4px;
+          user-select: none;
+          font-weight: 700;
+          text-transform: uppercase;
+          flex-shrink: 0;
+          min-width: 100px;
+          text-align: center;
+      }
+
+      .instructions .instruction-item code {
+          font-size: 1.0rem;
+          flex-shrink: 0;
+          white-space: nowrap;
+      }
+
+      .instruction-descr {
+          font-size: 0.9rem;
+          color: #666;
+          flex-shrink: 0;       /* Don't allow shrinking */
+          white-space: nowrap;
+          text-align: right;   /* center the text */
+          flex-grow: 1;         /* let it take available space */
+          }
+
+           .copy-btn {
+               background: #a6c1ff;
+               border: none;
+               border-radius: 4px;
+               cursor: pointer;
+               font-size: 0.9em;
+               padding: 4px 6px;
+               line-height: 1;
+               display: inline-flex;
+               align-items: center;
+               justify-content: center;
+               min-width: 24px;
+               min-height: 24px;
+               color: #0033a0;
+               transition: background-color 0.2s ease;
+               flex-shrink: 0;
+               margin-left: auto; /* Push copy button to the right */
+           }
+
+           .copy-btn:hover {
+               background: #84aaff;
+           }
+
+           .instructions-header { 
+               font-size: 1.2rem; 
+               font-weight: 700; 
+               color: #2a6fdb; 
+               margin: 0 0 16px 0; 
+               text-align: center; 
+           }
+
+           /* Responsive adjustments */
+           @media (max-width: 768px) {
+               .instructions {
+                   grid-template-columns: 1fr;
+               }
+               
+               .instruction-item {
+                   width: 100%;
+               }
+               
+               .instructions-wrapper {
+                   padding: 20px 5px;
+               }
+           }
+
+    </style>
+
+    <script>
+      function copyToClipboard(codeId, btn) {
+        const codeElem = document.getElementById(codeId);
+        if (!codeElem) return;
+
+        const text = codeElem.textContent || codeElem.innerText;
+
+        navigator.clipboard.writeText(text).then(() => {
+          // Optional: show feedback on button
+          const original = btn.textContent;
+          btn.textContent = '✔️';
+          setTimeout(() => (btn.textContent = original), 1500);
+        }).catch(() => {
+          alert('Failed to copy!');
+        });
+      }
+    </script>
+
+  </head>
+  <body>
+
+    <div class="topnav">
+      <a href="https://github.com/ikappaki/scittlets" target="_blank" rel="noopener noreferrer">
+        <img src="https://img.shields.io/badge/scittlets-181717?style=flat-square&logo=github&logoColor=white"
+             alt="GitHub" />
+      </a>
+      <a href="https://github.com/ikappaki/scittlets/releases/latest" target="_blank" rel="noopener noreferrer">
+        <img src="https://img.shields.io/github/v/release/ikappaki/scittlets?style=flat-square"
+             alt="GitHub latest release"/>
+      </a>
+
+      <a href="https://www.npmjs.com/package/scittlets" target="_blank" rel="noopener noreferrer">
+        <img src="https://img.shields.io/npm/v/scittlets?color=cb3837&label=npm&style=flat-square"
+             alt="npm version" />
+      </a>
+    </div>
+
+    <div class="wrapper">
+      <header>
+        <h1>Scittlets</h1>
+        <p class="intro">
+          Scittlets is a catalog of modular ClojureScript components
+          (scittlets) for use with Scittle, along with app
+          templates that scaffold projects combining them.
+        </p>
+      </header>
+
+      <main>
+        <div class="card">
+          <h2>Scittlets Catalog</h2>
+          <p>Browse modular ClojureScript components with usage
+            instructions and live demos.</p>
+          <a class="btn" href="scittlets.html">Explore Scittlets</a>
+          <iframe class="preview"
+                  src="test/scittlets/reagent/mermaid.html" title="Scittlet
+                                                                   Demo" loading="lazy"></iframe>
+        </div>
+
+        <div class="card">
+          <h2>Templates Gallery</h2>
+          <p>View complete app templates demonstrating how to assemble
+            scittlets into projects.</p>
+          <a class="btn" href="templates.html">View Templates</a>
+          <iframe class="preview"
+                  src="examples/mermaid/mermaid_demo.html" title="Template Demo"
+                  loading="lazy"></iframe>
+        </div>
+
+
+        <div class="instructions-wrapper">
+          <h2 class="instructions-header">Scittlets CLI</h2>
+          <div class="instructions">
+            {% for item in instructions %}
+            <div class="instruction-item">
+              <span class="shell-label">{{ item.label }}</span>
+              <code id="{{ item.code_id }}">{{ item.code_text }}</code>
+              <span class="instruction-descr">{{ item.description }}</span>
+              <button class="copy-btn" onclick="copyToClipboard('{{ item.code_id }}', this)">📋</button>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+
+      </main>
+    </div>
+
+
+  </body>
+</html>

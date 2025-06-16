@@ -1,155 +1,373 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Scittlets Catalog</title>
-  <base href="" />
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: sans-serif;
-      background: #f0f4f8;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <title>Scittlets Catalog</title>
+    <base href="/" />
+    <style>
+      html, body {
+          height: 100%;
+          margin: 0;
+          font-family: sans-serif;
+          background: #f0f4f8;
+      }
 
-    body {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
+      body {
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+          overflow: hidden;
+      }
 
-    header {
-      position: sticky;
-      top: 0;
-      background: #ffffff;
-      padding: 10px 20px;
-      border-bottom: 1px solid #ccc;
-    }
+      header {
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          background: #ffffff;
+          padding: 10px 20px;
+          border-bottom: 1px solid #ccc;
 
-    header a {
-      text-decoration: none;
-      color: #2a6fdb;
-      font-weight: bold;
-      font-size: 1rem;
-    }
+          display: flex;
+          flex-direction: row;
+          align-items: center;
 
-    .content {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-    }
+          position: relative; /* for absolute positioning children */
+      }
 
-    nav {
-      min-width: 250px;
-      width: max-content;
-      max-width: 100%; /* prevent overflow issues */
-      background: #ffffff;
-      padding: 20px;
-      border-right: 1px solid #ccc;
-      overflow-y: auto;
-      box-sizing: border-box;
-    }
+      header a.back-home {
+          position: absolute;
+          left: 20px;
+          color: #2a6fdb;
+          text-decoration: none;
+          font-weight: bold;
+          font-size: 1rem;
+      }
 
-    nav h3 {
-      margin-top: 0;
-      color: #2a6fdb;
-    }
+      header h1 {
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          font-weight: 700;
+          font-size: 1.4rem;
+          color: #2a6fdb;
+          margin: 0;
+          white-space: nowrap;
+      }
 
-    nav ul {
-      list-style: none;
-      padding-left: 0;
-      margin: 0;
-    }
+      .right-links {
+          margin-left: auto;
+          display: flex;
+          gap: 12px;
+      }
 
-    nav li {
-      margin: 10px 0;
-    }
+      /* Docs badge style */
+      header a.docs-badge {
+          background: #2a6fdb;
+          color: white;
+          padding: 4px 10px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          border-radius: 4px;
+          text-decoration: none;
+          user-select: none;
+          transition: background-color 0.2s ease;
+      }
 
-    nav a {
-      color: #2a6fdb;
-      text-decoration: none;
-      cursor: pointer;
-    }
+      header a.docs-badge:hover {
+          background: #1d4fbb;
+      }
 
-    nav a:hover {
-      text-decoration: underline;
-    }
+      /* ... rest of your CSS unchanged ... */
 
-    main {
-      flex-grow: 1;
-      padding: 20px;
-      overflow-y: auto;
-      background: #f0f4f8;
-      box-sizing: border-box;
-    }
+      .content {
+          display: flex;
+          flex: 1;
+          overflow: hidden;
+      }
 
-    .scittlet {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(42, 111, 219, 0.1);
-      margin-bottom: 40px;
-      padding: 20px;
-    }
+      nav {
+          min-width: 250px;
+          width: max-content;
+          max-width: 100%; /* prevent overflow issues */
+          background: #ffffff;
+          padding: 20px;
+          border-right: 1px solid #ccc;
+          overflow-y: auto;
+          box-sizing: border-box;
+      }
 
-    .scittlet:last-child {
-      margin-bottom: 0;
-    }
+      nav h3 {
+          margin-top: 0;
+          color: #2a6fdb;
+      }
 
-    .scittlet h4 {
-      margin-top: 0;
-    }
+      nav ul {
+          list-style: none;
+          padding-left: 0;
+          margin: 0;
+      }
 
-    .scittlet iframe {
-      width: 100%;
-      height: 50vh;
-      border: 2px solid #2a6fdb;
-      border-radius: 10px;
-      margin-top: 10px;
-    }
-  </style>
-</head>
-<body>
+      nav li {
+          margin: 10px 0;
+      }
 
-  <!-- Top header with link to home -->
-  <header>
-    <a href="/main.html">← Back to Home</a>
-  </header>
+      nav a {
+          color: #2a6fdb;
+          text-decoration: none;
+          cursor: pointer;
+      }
 
-  <!-- Main content split: nav + main -->
-  <div class="content">
-    <!-- Sidebar Table of Contents -->
-    <nav>
-      <h3>Scittlets TOC</h3>
-      <ul>
-        {% for s in scittlets %}
-      <li>
-        <a href="#{{ s.id }}">{{ s.name }}</a>
-        <a href="{{ s.url }}" target="_blank" rel="noopener noreferrer" title="Open in new tab">
+      nav a:hover {
+          text-decoration: underline;
+      }
 
-          <svg xmlns="http://www.w3.org/2000/svg" 
-               viewBox="0 0 512 512" 
-               width="12" height="12"
-               style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
-            <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
-          </svg>
-          
-        </a>
-      </li>
-        {% endfor %}
-      </ul>
-    </nav>
+      main {
+          flex-grow: 1;
+          padding: 20px;
+          overflow-y: auto;
+          background: #f0f4f8;
+          box-sizing: border-box;
+      }
 
-    <!-- Main display area -->
-    <main>
-      {% for s in scittlets %}
-      <div class="scittlet" id="{{ s.id }}">
-        <h4><a href="{{ s.url }}" target="_blank">{{ s.name }}</a></h4>
-        <iframe src="{{ s.url }}" loading="lazy"></iframe>
+      .scittlet {
+          background: #fff;
+          border-radius: 10px;
+          box-shadow: 0 4px 10px rgba(42, 111, 219, 0.1);
+          margin-bottom: 40px;
+          padding: 20px;
+      }
+
+      .scittlet:last-child {
+          margin-bottom: 0;
+      }
+
+      .scittlet h4 {
+          margin-top: 0;
+      }
+
+      .scittlet iframe {
+          width: 100%;
+          height: 50vh;
+          border: 2px solid #2a6fdb;
+          border-radius: 10px;
+          margin-top: 10px;
+      }
+
+      .instructions-wrapper {
+          background: #f0f4ff;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          width: 100%;
+          z-index: 99;
+          border-top: 1px solid #ccc;
+          box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .instructions-wrapper .copy-btn {
+          background: #2a6fdb;  /* Match brand color */
+          color: white;
+      }
+
+      .instructions-wrapper .copy-btn:hover {
+          background: #1d4fbb;  /* Darker blue for hover */
+      }
+
+      .instructions {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 10px;
+          font-family: monospace;
+          font-size: 0.95rem;
+          color: black;
+
+          max-width: 1200px;   /* Keep content centered */
+          margin: 0 auto;      /* Center horizontally */
+          padding: 2px;
+      }
+      .instruction-item {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 0;
+          margin: 0; 
+          width: 100%;
+      }
+      /* Remove code background for instructions */
+      .instructions .instruction-item code {
+          background: transparent;
+          color: inherit;
+          margin-left: 12px;
+          padding: 0;
+          font-weight: 600;
+          font-family: monospace;
+          user-select: text;
+      }
+
+      .shell-label {
+          background-color: #0d265e;
+          color: #a9c4ff;
+          font-size: 0.75em;
+          padding: 4px 8px;
+          border-radius: 4px;
+          user-select: none;
+          flex-shrink: 0;
+          font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+          font-weight: 700;
+          text-transform: uppercase;
+      }
+
+      .copy-btn {
+          background: #a6c1ff;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 1.2em;
+          padding: 0 6px;
+          line-height: 1;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 1.5em;
+          min-height: 1.5em;
+          margin-left: auto;  /* pushes the button to the right */
+          color: #0033a0;
+          transition: background-color 0.2s ease;
+      }
+
+      .copy-btn:hover {
+          background: #84aaff;
+      }
+
+
+      .header-with-command {
+          display: flex;
+          align-items: center;
+          gap: 16px; /* space between h4 and example command */
+          flex-wrap: wrap; /* wrap on small screens */
+      }
+
+      .header-with-command h4 {
+          margin: 0;
+          flex-shrink: 0; /* prevent shrinking */
+      }
+
+      .example-command {
+          margin: 0; /* remove top/bottom margin if any */
+          background: #f5f5f5;
+          font-family: monospace;
+          font-size: 1em;
+          padding: 6px 10px;
+          border-top: 1px solid #ddd;
+          border-bottom: 1px solid #ddd;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-grow: 1; /* let it take remaining space */
+          min-width: 200px; /* optional, keep it from shrinking too much */
+      }
+
+    </style>
+    <script>
+      function copyToClipboard(codeId, btn) {
+        const codeElem = document.getElementById(codeId);
+        if (!codeElem) return;
+
+        const text = codeElem.textContent || codeElem.innerText;
+
+        navigator.clipboard.writeText(text).then(() => {
+          // Optional: show feedback on button
+          const original = btn.textContent;
+          btn.textContent = '✔️';
+          setTimeout(() => (btn.textContent = original), 1500);
+        }).catch(() => {
+          alert('Failed to copy!');
+        });
+      }
+    </script>
+
+  </head>
+  <body>
+
+    <header>
+      <a href="/main.html" class="back-home">← Back to Home</a>
+      <h1>Scittlets Catalog</h1>
+      <div class="right-links">
+        <a href="templates.html" target="_blank" rel="noopener" class="docs-badge" title="Templates">templates</a>
+        <a href="https://github.com/ikappaki/scittlets?tab=readme-ov-file#cli-scittlets" target="_blank" rel="noopener" class="docs-badge" title="Scittlets Documentation">CLI docs</a>
       </div>
-      {% endfor %}
-    </main>
-  </div>
+    </header>
 
-</body>
+    <div class="content">
+      <nav>
+        <h3>Scittlets</h3>
+        <ul>
+          {% for s in scittlets %}
+          <li>
+            <a href="{{ s.url }}" target="_blank" rel="noopener noreferrer" title="Open in new tab">
+
+              <svg xmlns="http://www.w3.org/2000/svg" 
+                   viewBox="0 0 512 512" 
+                   width="12" height="12"
+                   style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
+                <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
+              </svg>
+              
+            </a>
+            <a href="#{{ s.id }}" onclick="window.location.hash='{{ s.id }}'; return false;">{{ s.name }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </nav>
+
+      <main>
+        {% for s in scittlets %}
+        <div class="scittlet" id="{{ s.id }}">
+          <div class="header-with-command">
+
+            <a href="{{ s.url }}" target="_blank" rel="noopener noreferrer" title="Open in new tab">
+              <svg xmlns="http://www.w3.org/2000/svg" 
+                   viewBox="0 0 512 512" 
+                   width="12" height="12"
+                   style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
+                <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
+              </svg>
+              
+            </a>
+
+            <!-- <h4><a href="{{ s.url }}" target="_blank">{{ s.name }}</a></h4> -->
+
+            <div class="example-command">
+              <span class="shell-label">ADD</span>
+              <code id="cmd-{{ s.id }}">npx scittlets add HTML-FILE {{ s.name }}</code>
+              <button class="copy-btn" onclick="copyToClipboard('cmd-{{ s.id }}', this)">📋</button>
+            </div>
+          </div>
+
+          <iframe src="{{ s.url }}" loading="lazy"></iframe>
+        </div>
+        {% endfor %}
+      </main>
+
+    </div>
+
+
+    <div class="instructions-wrapper">
+      <div class="instructions">
+        <div class="instruction-item">
+          <span class="shell-label">install</span>
+          <code id="install-cmd">npm i -g scittlets</code>
+          <button class="copy-btn" onclick="copyToClipboard('install-cmd', this)">📋</button>
+        </div>
+
+        <div class="instruction-item">
+          <span class="shell-label">help</span>
+          <code id="help-cmd">npx scittlets add --help</code>
+          <button class="copy-btn" onclick="copyToClipboard('help-cmd', this)">📋</button>
+        </div>
+      </div>
+    </div>
+
+  </body>
 </html>

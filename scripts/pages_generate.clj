@@ -1,11 +1,24 @@
 #!/usr/bin/env bb
 
-(require '[clojure.string :as str]
+(require '[babashka.cli :as cli]
+         '[clojure.string :as str]
          '[cheshire.core :as json]
          '[selmer.parser :as selmer]) 
 
 (def catalog-path "catalog.json")
 (def catalog (-> catalog-path slurp (json/parse-string)))
+
+
+(def cli-spec
+  {:base-path {:desc "Base path for generated HTML"
+               :default "/"}})
+
+(def options (cli/parse-opts *command-line-args* {:spec cli-spec}))
+
+;; Add help handling
+(when (:help options)
+  (println (cli/format-opts {:spec cli-spec}))
+  (System/exit 0))
 
 (defn safe-id [s]
   (let [s (str/replace s #"[^a-zA-Z0-9-_:.]" "-")
@@ -62,6 +75,47 @@
   (println "✅ " output-path " generated."))
 
 (html-scittlets-generate catalog "scripts/selmer/scittlets.selmer.html" "scittlets.html")
+
+
+(def cli-cmds [[:install  {:cmd "npm install -g scittlets"
+                           :descr "Install the scittlets CLI globally"}]
+               [:usage    {:cmd "npx scittlets"
+                           :descr "Show general usage and help"}]
+               [:help     {:cmd "npx scittlets CMD --help"
+                           :descr "Get help for a specific command (CMD)"}]
+               [:catalog  {:cmd "npx scittlets catalog"
+                           :descr "List all scittlets and templates in the catalog"}]
+
+               [:new      {:cmd "npx scittlets new"
+                           :descr "Create a Scittle app from a template"}]
+
+               [:add      {:cmd "npx scittlets add"
+                           :descr "Add scittlets dependencies to an HTML file"}]
+
+               [:update   {:cmd "npx scittlets update"
+                           :descr "Update scittlet dependencies in an HTML file"}]
+
+               [:pack     {:cmd "npx scittlets pack"
+                           :descr "Pack an HTML file by inlining scripts"}]
+
+               [:releases {:cmd "npx scittlets releases"
+                           :descr "List all published versions of the scittlets Catalog"}]])
+
+(defn catalog->selmer-cli
+  []
+  (for [[id {:keys [cmd descr]}] cli-cmds]
+    {:label (name id)
+     :code_text cmd
+     :code_id (safe-id id)
+     :description descr}))
+
+(defn html-main-generate [selmer-path output-path]
+  (let [instructions (catalog->selmer-cli)
+        context {:instructions instructions}]
+    (spit output-path (selmer/render (slurp selmer-path) context)))
+  (println "✅ " output-path " generated."))
+
+(html-main-generate "scripts/selmer/main.selmer.html" "main.html")
 
 
 
