@@ -1,6 +1,6 @@
 {
   "release": {
-    "tag_name": "feature/codemirror",
+    "tag_name": "enh/site-update",
     "upload_url": "https://api.github.com/repos/ikappaki/scittlets/releases/1/assets{?name,label}"
   },
   "repository": {

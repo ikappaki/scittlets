@@ -330,106 +330,18 @@ Scittlets is a catalog of modular ClojureScript components (scittlets) for use w
             >
           </h2>
           <div class="instructions">
-            
+            {% for item in instructions %}
             <div class="instruction-item">
-              <span class="shell-label">install</span>
-              <code id="id-install">npm install -g scittlets</code>
-              <span class="instruction-descr">Install the scittlets CLI globally</span>
+              <span class="shell-label">{{ item.label }}</span>
+              <code id="{{ item.code_id }}">{{ item.code_text }}</code>
+              <span class="instruction-descr">{{ item.description }}</span>
               <button
                 class="copy-btn"
-                onclick="copyToClipboard('id-install', this)"
+                onclick="copyToClipboard('{{ item.code_id }}', this)"
                 >📋</button
               >
             </div>
-            
-            <div class="instruction-item">
-              <span class="shell-label">usage</span>
-              <code id="id-usage">npx scittlets</code>
-              <span class="instruction-descr">Show general usage and help</span>
-              <button
-                class="copy-btn"
-                onclick="copyToClipboard('id-usage', this)"
-                >📋</button
-              >
-            </div>
-            
-            <div class="instruction-item">
-              <span class="shell-label">help</span>
-              <code id="id-help">npx scittlets CMD --help</code>
-              <span class="instruction-descr">Get help for a specific command (CMD)</span>
-              <button
-                class="copy-btn"
-                onclick="copyToClipboard('id-help', this)"
-                >📋</button
-              >
-            </div>
-            
-            <div class="instruction-item">
-              <span class="shell-label">catalog</span>
-              <code id="id-catalog">npx scittlets catalog</code>
-              <span class="instruction-descr">List all scittlets and templates in the catalog</span>
-              <button
-                class="copy-btn"
-                onclick="copyToClipboard('id-catalog', this)"
-                >📋</button
-              >
-            </div>
-            
-            <div class="instruction-item">
-              <span class="shell-label">new</span>
-              <code id="id-new">npx scittlets new</code>
-              <span class="instruction-descr">Create a Scittle app from a template</span>
-              <button
-                class="copy-btn"
-                onclick="copyToClipboard('id-new', this)"
-                >📋</button
-              >
-            </div>
-            
-            <div class="instruction-item">
-              <span class="shell-label">add</span>
-              <code id="id-add">npx scittlets add</code>
-              <span class="instruction-descr">Add scittlets dependencies to an HTML file</span>
-              <button
-                class="copy-btn"
-                onclick="copyToClipboard('id-add', this)"
-                >📋</button
-              >
-            </div>
-            
-            <div class="instruction-item">
-              <span class="shell-label">update</span>
-              <code id="id-update">npx scittlets update</code>
-              <span class="instruction-descr">Update scittlet dependencies in an HTML file</span>
-              <button
-                class="copy-btn"
-                onclick="copyToClipboard('id-update', this)"
-                >📋</button
-              >
-            </div>
-            
-            <div class="instruction-item">
-              <span class="shell-label">pack</span>
-              <code id="id-pack">npx scittlets pack</code>
-              <span class="instruction-descr">Pack an HTML file by inlining scripts</span>
-              <button
-                class="copy-btn"
-                onclick="copyToClipboard('id-pack', this)"
-                >📋</button
-              >
-            </div>
-            
-            <div class="instruction-item">
-              <span class="shell-label">releases</span>
-              <code id="id-releases">npx scittlets releases</code>
-              <span class="instruction-descr">List all published versions of the scittlets Catalog</span>
-              <button
-                class="copy-btn"
-                onclick="copyToClipboard('id-releases', this)"
-                >📋</button
-              >
-            </div>
-            
+            {% endfor %}
           </div>
         </div>
       </main>
