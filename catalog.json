@@ -2,15 +2,18 @@
 
 "scittlets.dev.nrepl" :
  {"home": "https://github.com/ikappaki/scittlets",
+  "descr": "Provides dependencies and a babashka script for opening up an nREPL connection to the Scittle app",
   "deps": ["<script>var SCITTLE_NREPL_WEBSOCKET_PORT = 1340;</script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/scittle@0.6.22/dist/scittle.nrepl.js\" type=\"application/javascript\"></script>"],
   "files": [{"src": "examples/dev/nrepl-server.clj", "dest": "nrepl-server.clj"}],
+  "descr": "Provides dependencies for Reagent, a simple ClojureScript interface to React",
   "api" : "test/scittlets/dev/nrepl.html",
   "see" : {"Scittle nREPL" : "https://github.com/babashka/scittle/tree/main/doc/nrepl"
           }},
 
  "scittlets.reagent" :
  {"home": "https://github.com/ikappaki/scittlets",
+  "descr": "Provides dependencies for Reagent, a simple ClojureScript interface to React",
   "deps": ["<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>"],
@@ -20,6 +23,7 @@
 
  "scittlets.reagent.codemirror" :
  {"home": "https://github.com/ikappaki/scittlets",
+  "descr": "A Reagent component around CodeMirror, a code editor component for the web",
   "deps": ["<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>",
@@ -31,6 +35,7 @@
 
  "scittlets.reagent.mermaid" :
  {"home": "https://github.com/ikappaki/scittlets",
+  "descr": "A Reagent component around around Mermaid, the diagramming and charting tool",
   "deps": ["<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>",

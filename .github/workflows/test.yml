@@ -25,6 +25,18 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+
+      - name: "Setup Java"
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Install Clojure Tools
+        uses: DeLaGuardo/setup-clojure@13.2
+        with:
+          bb: 'latest'
+
       - name: Run cli tests
         run: npm run tests
 
@@ -43,3 +55,17 @@ jobs:
               exit 1
             fi
           done
+
+          HTMLS="index.html scittlets.html templates.html"
+          bb scripts/pages_generate.clj
+
+          for html in $HTMLS; do
+            echo -e "\n:test.yml/html-verifying.. $html"
+            if ! git diff --quiet -w HEAD -- $html; then
+              git --no-pager diff -w HEAD -- $html
+              echo -e "\nHTML file $html is out of sync with the selmer templates."
+              echo "Please update them and try again. Exiting.\n"
+              exit 1
+            fi
+          done
+          

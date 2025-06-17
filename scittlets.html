@@ -54,6 +54,13 @@
           white-space: nowrap;
       }
 
+      .version {
+          font-size: 0.9rem;
+          color: #666;
+          margin-left: 8px;
+          vertical-align: middle;
+      }
+
       .right-links {
           margin-left: auto;
           display: flex;
@@ -116,6 +123,13 @@
 
       nav a:hover {
           text-decoration: underline;
+      }
+
+      .nav-link-with-icon {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          flex-wrap: nowrap;
       }
 
       main {
@@ -250,13 +264,15 @@
       .header-with-command {
           display: flex;
           align-items: center;
-          gap: 16px;
           flex-wrap: wrap;
+          gap: 12px;
+          margin-bottom: 10px;
       }
 
-      .header-with-command h4 {
-          margin: 0;
-          flex-shrink: 0;
+      .descr {
+          font-size: 0.95rem;
+          color: #333;
+          font-style: italic;
       }
 
       .example-command {
@@ -297,8 +313,8 @@
   <body>
 
     <header>
-      <a href="/index.html" class="back-home">Home</a>
-      <h1>Scittlets Catalog</h1>
+      <a href="index.html" class="back-home">Home</a>
+      <h1>Scittlets Catalog <span class="version">main</span></h1>
       <div class="right-links">
         <a href="templates.html" rel="noopener" class="docs-badge" title="Templates">templates</a>
         <a href="https://github.com/ikappaki/scittlets?tab=readme-ov-file#cli-scittlets" target="_blank" rel="noopener" class="docs-badge" title="Scittlets Documentation">CLI docs</a>
@@ -311,59 +327,67 @@
         <ul>
           
           <li>
-            <a href="test/scittlets/dev/nrepl.html" target="_blank" rel="noopener noreferrer" title="Open in new tab">
+            <span class="nav-link-with-icon">
+              <a href="test/scittlets/dev/nrepl.html" target="_blank" rel="noopener noreferrer" title="Open in new tab">
 
-              <svg xmlns="http://www.w3.org/2000/svg" 
-                   viewBox="0 0 512 512" 
-                   width="12" height="12"
-                   style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
-                <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
-              </svg>
-              
-            </a>
-            <a href="#scittlets.dev.nrepl" onclick="window.location.hash='scittlets.dev.nrepl'; return false;">scittlets.dev.nrepl</a>
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     viewBox="0 0 512 512" 
+                     width="12" height="12"
+                     style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
+                  <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
+                </svg>
+                
+              </a>
+              <a href="#scittlets.dev.nrepl" onclick="window.location.hash='scittlets.dev.nrepl'; return false;">scittlets.dev.nrepl</a>
+            </span>
           </li>
           
           <li>
-            <a href="test/scittlets/reagent/basic.html" target="_blank" rel="noopener noreferrer" title="Open in new tab">
+            <span class="nav-link-with-icon">
+              <a href="test/scittlets/reagent/basic.html" target="_blank" rel="noopener noreferrer" title="Open in new tab">
 
-              <svg xmlns="http://www.w3.org/2000/svg" 
-                   viewBox="0 0 512 512" 
-                   width="12" height="12"
-                   style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
-                <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
-              </svg>
-              
-            </a>
-            <a href="#scittlets.reagent" onclick="window.location.hash='scittlets.reagent'; return false;">scittlets.reagent</a>
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     viewBox="0 0 512 512" 
+                     width="12" height="12"
+                     style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
+                  <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
+                </svg>
+                
+              </a>
+              <a href="#scittlets.reagent" onclick="window.location.hash='scittlets.reagent'; return false;">scittlets.reagent</a>
+            </span>
           </li>
           
           <li>
-            <a href="test/scittlets/reagent/codemirror.html" target="_blank" rel="noopener noreferrer" title="Open in new tab">
+            <span class="nav-link-with-icon">
+              <a href="test/scittlets/reagent/codemirror.html" target="_blank" rel="noopener noreferrer" title="Open in new tab">
 
-              <svg xmlns="http://www.w3.org/2000/svg" 
-                   viewBox="0 0 512 512" 
-                   width="12" height="12"
-                   style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
-                <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
-              </svg>
-              
-            </a>
-            <a href="#scittlets.reagent.codemirror" onclick="window.location.hash='scittlets.reagent.codemirror'; return false;">scittlets.reagent.codemirror</a>
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     viewBox="0 0 512 512" 
+                     width="12" height="12"
+                     style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
+                  <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
+                </svg>
+                
+              </a>
+              <a href="#scittlets.reagent.codemirror" onclick="window.location.hash='scittlets.reagent.codemirror'; return false;">scittlets.reagent.codemirror</a>
+            </span>
           </li>
           
           <li>
-            <a href="test/scittlets/reagent/mermaid.html" target="_blank" rel="noopener noreferrer" title="Open in new tab">
+            <span class="nav-link-with-icon">
+              <a href="test/scittlets/reagent/mermaid.html" target="_blank" rel="noopener noreferrer" title="Open in new tab">
 
-              <svg xmlns="http://www.w3.org/2000/svg" 
-                   viewBox="0 0 512 512" 
-                   width="12" height="12"
-                   style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
-                <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
-              </svg>
-              
-            </a>
-            <a href="#scittlets.reagent.mermaid" onclick="window.location.hash='scittlets.reagent.mermaid'; return false;">scittlets.reagent.mermaid</a>
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     viewBox="0 0 512 512" 
+                     width="12" height="12"
+                     style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
+                  <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
+                </svg>
+                
+              </a>
+              <a href="#scittlets.reagent.mermaid" onclick="window.location.hash='scittlets.reagent.mermaid'; return false;">scittlets.reagent.mermaid</a>
+            </span>
           </li>
           
         </ul>
@@ -385,8 +409,8 @@ Browse the available Scittlets below, along with related information such as API
                    style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
                 <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
               </svg>
-              
             </a>
+            <div class="descr"><strong>scittlets.dev.nrepl</strong> — Provides dependencies for Reagent, a simple ClojureScript interface to React</div>
 
             <div class="example-command">
               <span class="shell-label">ADD</span>
@@ -407,8 +431,8 @@ Browse the available Scittlets below, along with related information such as API
                    style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
                 <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
               </svg>
-              
             </a>
+            <div class="descr"><strong>scittlets.reagent</strong> — Provides dependencies for Reagent, a simple ClojureScript interface to React</div>
 
             <div class="example-command">
               <span class="shell-label">ADD</span>
@@ -429,8 +453,8 @@ Browse the available Scittlets below, along with related information such as API
                    style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
                 <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
               </svg>
-              
             </a>
+            <div class="descr"><strong>scittlets.reagent.codemirror</strong> — A Reagent component around CodeMirror, a code editor component for the web</div>
 
             <div class="example-command">
               <span class="shell-label">ADD</span>
@@ -451,8 +475,8 @@ Browse the available Scittlets below, along with related information such as API
                    style="margin-left: 4px; vertical-align: middle; fill: #2a6fdb;">
                 <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
               </svg>
-              
             </a>
+            <div class="descr"><strong>scittlets.reagent.mermaid</strong> — A Reagent component around around Mermaid, the diagramming and charting tool</div>
 
             <div class="example-command">
               <span class="shell-label">ADD</span>

@@ -98,11 +98,11 @@
   (let [scittlets (filter (fn [[_ v]]
                             (and (map? v) (contains? v "deps")))
                           catalog)]
-    (for [[scittlet info] scittlets]
-      (let [url (info "api")]
-        {:name scittlet
-         :id (safe-id scittlet)
-         :url url}))))
+    (for [[scittlet {:strs [api descr]}] scittlets]
+      {:name scittlet
+       :descr descr
+       :id (safe-id scittlet)
+       :url api})))
 
 (defn html-scittlets-generate [catalog selmer-path output-path]
   (let [scittlets (catalog->selmer-scittlets catalog)

@@ -58,15 +58,15 @@ jobs:
           for dir in $DIRS; do
             find "$dir" \( -name '*.html' -o -name '*.cljs' \) -exec cp --parents {} $TARGET/ \;
           done
-          cp index.html $TARGET
+          cp index.html scittlets.html templates.html $TARGET
           ls -R $TARGET
 
           # Update HTML root to github pages target dir
-          find $TARGET -name "*.html" -exec sed -i 's|<base href="/">|<base href="/scittlets/">|g' {} \;
-          sed -i "s|version>main</span>|version>${TAG_NAME}</span>|" $TARGET/index.html
+          find $TARGET -name "*.html" -exec sed -i 's|<base href="/"|<base href="/scittlets/"|g' {} \;
+          sed -i "s|\"version\">main</span>|\"version\">${TAG_NAME}</span>|" $TARGET/scittlets.html
 
           # Regenerate catalog.json from TAG_NAME
-          npm run scittlets --silent -- catalog ./catalog.json -r ${TAG_NAME} > $TARGET/catalog.json
+          npm run scittlets --silent -- catalog -r ./catalog.json --rewrite ${TAG_NAME} > $TARGET/catalog.json
           sed -i '1d' $TARGET/catalog.json
 
           # use updated catalog to update HTML files deps in TARGET
