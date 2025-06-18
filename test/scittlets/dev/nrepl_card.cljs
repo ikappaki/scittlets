@@ -7,6 +7,13 @@
   (let [el (.createElement js/document (name tag))]
     (doseq [[k v] attrs]
       (cond
+        ;; If key starts with "on" and value is a function, add event listener
+        (and (string? (name k))
+             (.startsWith (name k) "on")
+             (fn? v))
+        (let [event-name (.toLowerCase (subs (name k) 2))] ;; e.g. :onclick → "click"
+          (.addEventListener el event-name v))
+
         (= k :class) (.add (.-classList el) v)
         (= k :style) (when (map? v)
                        (doseq [[style-k style-v] v]
@@ -90,27 +97,64 @@
                            name))
                       see-links))))))
 
-(defn dependencies-html [catalog scittlet]
-  (h :div {}
-     (h :p {} (h :strong {} "Dependencies:"))
+(defn with-copy-button [text-to-copy & content]
+  (let [id (str "copy-btn-" (random-uuid))]
+    (h :div {:style {:position "relative"}}
+       ;; copy button absolutely positioned top-right
+       (h :button
+          {:id id
+           :style {:font-size "1em"
+                   :padding "2px 6px"
+                   :border "none"
+                   :background "transparent"
+                   :cursor "pointer"
+                   :position "absolute"
+                   :top "0px"
+                   :right "0px"
+                   :z-index 10}
+           :title "Copy to clipboard"
+           :onclick
+           (fn [_event]
+             (.writeText (.-clipboard js/navigator) text-to-copy)
+             (let [btn (.getElementById js/document id)
+                   old-text (.-textContent btn)]
+               (set! (.-textContent btn) "✔️")
+               (js/setTimeout
+                 (fn [] (set! (.-textContent btn) old-text))
+                 1500)))}
+          "📋")
 
-     (h :div {:style deps-styles}
-        (doall (interpose (h :br {})
-                          (map #(h :span {} %)
-                               (dependencies-get catalog scittlet)))))))
+       ;; your content goes here
+       (apply h :div {} content))))
+;;✔️
+
+
+(defn dependencies-html [catalog scittlet]
+  (let [deps (dependencies-get catalog scittlet)
+        deps-str (clojure.string/join "\n" deps)]
+    (h :details {}
+       (h :summary {:style {:cursor "pointer" :font-weight "bold"}} (str "Dependencies (" (count deps) ")"))
+       (h :div {:style deps-styles}
+          (with-copy-button deps-str
+            (doall (interpose (h :br {})
+                              (map #(h :span {} %)
+                                   deps))))))))
 
 (defn files-html [catalog scittlet file-contents]
   (when-let [files (files-get catalog scittlet)]
-    (h :div {:id "files"}
-       (h :p {} (h :strong {} "Files:"))
+    (h :details {:id "files"}
+       (h :summary {:style {:margin-top "15px" :cursor "pointer" :font-weight "bold"}}
+          (str "files (" (count files) ")"))
        (doall (map (fn [{:strs [dest]}]
                      (h :div {;;:style {:margin-bottom "15px"}
                               }
-                        (h :div {:style {:font-weight "bold" :margin-bottom "5px"}} dest)
+                        (h :div {:style {:font-weight "bold" :margin "5px"}} dest)
                         (h :pre {:style {:font-family "Monaco, monospace" :background "#f8f9fa"
                                          :padding "10px" :border-radius "5px" :font-size "0.85em"
                                          :overflow-x "auto" :border "1px solid #e9ecef"}}
-                           (or (get @file-contents dest) "Loading..."))))
+                           (if-let [contents (get @file-contents dest)]
+                             (with-copy-button contents contents)
+                             "Loading..."))))
                    files)))))
 
 (defn nrepl-html []
@@ -120,9 +164,12 @@
         (h :code {} "nrepl-server.clj")
         " script, which starts an nREPL server for interacting with the environment.")
 
-     (h :p {} "To launch the server using Babashka, run:")
-     (h :pre {} (h :code {} "bb nrepl-server.clj"))
-     (h :p {} "It will start on port " (h :code {} "1339") ".")
+     (h :p {} "To launch the server using "
+        (h :a {:href "https://github.com/babashka/babashka#installation" :target "_blank"} "Babashka")
+        " run:")
+     (h :pre {} (h :code {} "bb nrepl-server.clj [--port PORT]"))
+     (h :p {}
+        "The default nREPL port is " (h :code {} "1339") ".")
 
      (h :p {}
         "Once running, you can connect to it from a ClojureScript-enabled editor like "
@@ -190,7 +237,3 @@
                                            "border" "5px solid #add8e6"
                                            "border-radius" "5px"
                                            "box-shadow" "0 4px 6px rgba(0, 0, 0, 0.1)"}}))))
-
-
-
-

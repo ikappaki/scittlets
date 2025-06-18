@@ -7,230 +7,378 @@
     <title>Scittlets - Modular ClojureScript Components</title>
     <style>
       * {
-        box-sizing: border-box;
+          box-sizing: border-box;
       }
       html,
       body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-        background: #f0f4f8;
-        color: #222;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                       Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+          background: #f0f4f8;
+          color: #222;
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
       }
 
       .links-below-title {
-        margin: 12px 0 20px 0;
-        text-align: center;
+          margin: 12px 0 20px 0;
+          text-align: center;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 8px;
       }
 
       .links-below-title a {
-        margin: 0 8px;
-        display: inline-block;
+          display: inline-block;
+      }
+
+      .links-below-title img {
+          max-width: 100%;
+          height: auto;
       }
 
       .wrapper {
-        flex: 1 0 auto;
-        padding: 15px 2px 2px;
-        max-width: 900px;
-        margin: 0 auto;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+          flex: 1 0 auto;
+          padding: 15px 10px 20px;
+          max-width: 900px;
+          margin: 0 auto;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
       }
 
       header {
-        text-align: center;
-        max-width: 700px;
+          text-align: center;
+          max-width: 700px;
+          width: 100%;
       }
 
       h1 {
-        margin: 0;
-        font-weight: 800;
-        font-size: 2.8rem;
-        margin-bottom: 0.2em;
-        color: #2a6fdb;
+          margin: 0;
+          font-weight: 800;
+          font-size: 2.2rem;
+          margin-bottom: 0.2em;
+          color: #2a6fdb;
       }
 
       p.intro {
-        font-size: 1.15rem;
-        line-height: 1.5;
-        max-width: 600px;
-        color: #444;
+          font-size: 1rem;
+          line-height: 1.5;
+          max-width: 600px;
+          color: #444;
+          margin: 0 auto;
+          text-align: left;
       }
 
       main {
-        display: flex;
-        column-gap: 40px;
-        flex-wrap: wrap;
-        justify-content: center;
-        width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 30px;
+          align-items: center;
+          width: 100%;
+          margin-top: 30px;
       }
 
       .card {
-        background: white;
-        box-shadow: 0 4px 15px rgba(42, 111, 219, 0.15);
-        border-radius: 12px;
-        padding: 30px 25px;
-        flex: 1 1 300px;
-        max-width: 400px;
-        text-align: center;
-        color: #2a6fdb;
-        transition: box-shadow 0.3s ease;
+          background: white;
+          box-shadow: 0 4px 15px rgba(42, 111, 219, 0.15);
+          border-radius: 12px;
+          padding: 25px 20px;
+          width: 100%;
+          max-width: 400px;
+          text-align: center;
+          color: #2a6fdb;
+          transition: box-shadow 0.3s ease;
       }
 
       .card:hover,
       .card:focus-within {
-        box-shadow: 0 6px 20px rgba(42, 111, 219, 0.3);
-        outline: none;
+          box-shadow: 0 6px 20px rgba(42, 111, 219, 0.3);
+          outline: none;
       }
 
       .card h2 {
-        margin-top: 0;
-        font-weight: 700;
-        font-size: 1.8rem;
+          margin-top: 0;
+          font-weight: 700;
+          font-size: 1.6rem;
       }
 
       .card p {
-        font-size: 1rem;
-        color: #555;
-        margin-bottom: 1.5em;
-        min-height: 5em;
+          font-size: 1rem;
+          color: #555;
+          margin-bottom: 1.5em;
+          min-height: auto;
       }
 
       .btn {
-        background-color: #2a6fdb;
-        color: white;
-        padding: 12px 30px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 1rem;
-        display: inline-block;
-        text-decoration: none;
-        cursor: pointer;
-        user-select: none;
+          background-color: #2a6fdb;
+          color: white;
+          padding: 12px 30px;
+          border-radius: 6px;
+          font-weight: 600;
+          font-size: 1rem;
+          display: inline-block;
+          text-decoration: none;
+          cursor: pointer;
+          user-select: none;
       }
 
       .btn:hover,
       .btn:focus {
-        background-color: #1950b5;
+          background-color: #1950b5;
       }
 
       iframe.preview {
-        margin-top: 25px;
-        width: 100%;
-        height: 250px;
-        border: 2px solid #2a6fdb;
-        border-radius: 10px;
+          margin-top: 20px;
+          width: 100%;
+          height: 200px;
+          border: 2px solid #2a6fdb;
+          border-radius: 10px;
       }
 
       .instructions-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          /* padding: 30px 10px 20px; */
+          width: 100%;
       }
 
       .instructions {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-        font-family: monospace;
-        font-size: 0.9rem;
-        color: black;
-        width: max-content;
-        min-width: 33vw;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          font-family: monospace;
+          font-size: 0.85rem;
+          color: black;
+          width: 100%;
+          max-width: 600px;
       }
 
       .instruction-item {
-        padding: 8px 12px;
-        background: #fff;
-        border-radius: 6px;
-        border: 1px solid #ddd;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        min-height: 40px;
-        box-sizing: border-box;
-        width: 100%;
+          padding: 12px;
+          background: #fff;
+          border-radius: 6px;
+          border: 1px solid #ddd;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          min-height: auto;
+          box-sizing: border-box;
+          width: 100%;
       }
+
+      .instruction-top-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+      }
+
       .shell-label {
-        background-color: #0d265e;
-        color: #a9c4ff;
-        font-size: 0.9em;
-        padding: 3px 6px;
-        border-radius: 4px;
-        user-select: none;
-        font-weight: 700;
-        text-transform: uppercase;
-        flex-shrink: 0;
-        min-width: 100px;
-        text-align: center;
+          background-color: #0d265e;
+          color: #a9c4ff;
+          font-size: 0.75rem;
+          padding: 4px 8px;
+          border-radius: 4px;
+          user-select: none;
+          font-weight: 700;
+          text-transform: uppercase;
+          flex-shrink: 0;
+          min-width: 60px;
+          text-align: center;
       }
 
       .instructions .instruction-item code {
-        font-size: 1.0rem;
-        flex-shrink: 0;
-        white-space: nowrap;
+          font-size: 0.9rem;
+          flex: 1;
+          word-break: break-all;
+          overflow-wrap: break-word;
       }
 
       .instruction-descr {
-        font-size: 0.9rem;
-        color: #666;
-        flex-shrink: 0;
-        white-space: nowrap;
-        text-align: right;
-        flex-grow: 1;
+          font-size: 0.85rem;
+          color: #666;
+          font-family: sans-serif;
+          text-align: left;
+          margin-top: 4px;
       }
 
       .copy-btn {
-        background: #a6c1ff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.9em;
-        padding: 4px 6px;
-        line-height: 1;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 24px;
-        min-height: 24px;
-        color: #0033a0;
-        transition: background-color 0.2s ease;
-        flex-shrink: 0;
-        margin-left: auto;
+          background: #a6c1ff;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 1rem;
+          padding: 8px;
+          line-height: 1;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 40px;
+          min-height: 40px;
+          color: #0033a0;
+          transition: background-color 0.2s ease;
+          flex-shrink: 0;
       }
 
       .copy-btn:hover {
-        background: #84aaff;
+          background: #84aaff;
       }
 
       .instructions-header {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #2a6fdb;
-        margin: 0 0 16px 0;
-        text-align: center;
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: #2a6fdb;
+          margin: 0 0 20px 0;
+          text-align: center;
       }
 
-      @media (max-width: 768px) {
-        .instructions {
-          grid-template-columns: 1fr;
-        }
+      .instructions-header a {
+          color: inherit;
+          text-decoration: none;
+      }
 
-        .instruction-item {
-          width: 100%;
-        }
+      .instructions-header a:hover {
+          text-decoration: underline;
+      }
 
-        .instructions-wrapper {
-          padding: 20px 5px;
-        }
+      /* Tablet screens */
+      @media (min-width: 768px) {
+          .wrapper {
+              padding: 15px 20px 20px;
+          }
+
+          h1 {
+              font-size: 2.8rem;
+          }
+
+          p.intro {
+              font-size: 1.15rem;
+              text-align: center;
+          }
+
+          main {
+              flex-direction: row;
+              justify-content: center;
+              flex-wrap: wrap;
+              column-gap: 40px;
+              row-gap: 30px;
+          }
+
+          .card {
+              flex: 1 1 300px;
+              padding: 30px 25px;
+          }
+
+          .card h2 {
+              font-size: 1.8rem;
+          }
+
+          .card p {
+              min-height: 5em;
+          }
+
+          iframe.preview {
+              height: 250px;
+              margin-top: 25px;
+          }
+
+          .instructions {
+              font-size: 0.9rem;
+              max-width: 700px;
+          }
+
+          .instruction-item {
+              flex-direction: row;
+              align-items: center;
+              padding: 8px 12px;
+              gap: 12px;
+          }
+
+          .instruction-top-row {
+              flex: 1;
+              gap: 12px;
+          }
+
+          .shell-label {
+              font-size: 0.9em;
+              min-width: 100px;
+          }
+
+          .instructions .instruction-item code {
+              font-size: 1rem;
+              word-break: normal;
+              overflow-wrap: normal;
+          }
+
+          .instruction-descr {
+              font-size: 0.9rem;
+              text-align: right;
+              margin-top: 0;
+              margin-left: auto;
+              white-space: nowrap;
+          }
+
+          .copy-btn {
+              font-size: 0.9em;
+              padding: 4px 6px;
+              min-width: 24px;
+              min-height: 24px;
+          }
+      }
+
+      /* Small mobile screens */
+      @media (max-width: 480px) {
+          .wrapper {
+              padding: 10px 5px 15px;
+          }
+
+          h1 {
+              font-size: 1.8rem;
+          }
+
+          p.intro {
+              font-size: 0.95rem;
+          }
+
+          .card {
+              padding: 20px 15px;
+          }
+
+          .card h2 {
+              font-size: 1.4rem;
+          }
+
+          iframe.preview {
+              height: 180px;
+          }
+
+          .instructions {
+              font-size: 0.8rem;
+          }
+
+          .shell-label {
+              font-size: 0.7rem;
+              min-width: 50px;
+              padding: 3px 6px;
+          }
+
+          .instructions .instruction-item code {
+              font-size: 0.85rem;
+          }
+
+          .instruction-descr {
+              font-size: 0.8rem;
+          }
+
+          .instructions-header {
+              font-size: 1.2rem;
+          }
       }
     </style>
 
@@ -266,37 +414,36 @@
             target="_blank"
             rel="noopener noreferrer"
             ><img
-              src="https://img.shields.io/badge/scittlets-181717?style=flat-square&logo=github&logoColor=white"
-              alt="GitHub"
-          /></a>
+               src="https://img.shields.io/badge/scittlets-181717?style=flat-square&logo=github&logoColor=white"
+               alt="GitHub"
+               /></a>
           <a
             href="https://github.com/ikappaki/scittlets/releases/latest"
             target="_blank"
             rel="noopener noreferrer"
             ><img
-              src="https://img.shields.io/github/v/release/ikappaki/scittlets?style=flat-square"
-              alt="GitHub latest release"
-          /></a>
+               src="https://img.shields.io/github/v/release/ikappaki/scittlets?style=flat-square"
+               alt="GitHub latest release"
+               /></a>
           <a
             href="https://www.npmjs.com/package/scittlets"
             target="_blank"
             rel="noopener noreferrer"
             ><img
-              src="https://img.shields.io/npm/v/scittlets?color=cb3837&label=npm&style=flat-square"
-              alt="npm version"
-          /></a>
+               src="https://img.shields.io/npm/v/scittlets?color=cb3837&label=npm&style=flat-square"
+               alt="npm version"
+               /></a>
         </div>
 
         <p class="intro">
-Scittlets is a catalog of modular ClojureScript components (scittlets) for use with <a href="https://github.com/babashka/scittle" target="_blank">Scittle</a>, offering app templates to scaffold projects and a CLI tool to facilitate creating, adding, updating, and packaging scittlet apps.
+          Scittlets is a collection of modular HTML <code>&lt;script&gt;</code> blocks with ClojureScript code for <a href="https://github.com/babashka/scittle" target="_blank">Scittle</a>, a lightweight environment that runs ClojureScript in the browser. Each scittlet includes its own namespace and supporting JavaScript. Hosted online, they can be included directly in HTML files. The CLI tool helps scaffold templates and manage dependencies.
         </p>
-      </header>
 
       <main>
         <div class="card">
           <h2>Scittlets Catalog</h2>
           <p>
-            View components with usage instructions and live demos.
+            View scittlets with usage instructions and live demos.
           </p>
           <a class="btn" href="scittlets.html">Explore Scittlets</a>
           <iframe
@@ -304,13 +451,13 @@ Scittlets is a catalog of modular ClojureScript components (scittlets) for use w
             src="test/scittlets/reagent/mermaid.html"
             title="Scittlet Demo"
             loading="lazy"
-          ></iframe>
+            ></iframe>
         </div>
 
         <div class="card">
           <h2>Templates Gallery</h2>
           <p>
-            Browse Scittle app templates to quickly start building your scittlet apps.
+            Browse Scittle app to quickly start building your scittlet apps.
           </p>
           <a class="btn" href="templates.html">View Templates</a>
           <iframe
@@ -318,7 +465,7 @@ Scittlets is a catalog of modular ClojureScript components (scittlets) for use w
             src="examples/mermaid/mermaid_demo.html"
             title="Template Demo"
             loading="lazy"
-          ></iframe>
+            ></iframe>
         </div>
 
         <div class="instructions-wrapper">
@@ -327,7 +474,7 @@ Scittlets is a catalog of modular ClojureScript components (scittlets) for use w
               href="https://github.com/ikappaki/scittlets?tab=readme-ov-file#cli-scittlets"
               target="_blank"
               >Scittlets CLI</a
-            >
+                              >
           </h2>
           <div class="instructions">
             {% for item in instructions %}
@@ -339,7 +486,7 @@ Scittlets is a catalog of modular ClojureScript components (scittlets) for use w
                 class="copy-btn"
                 onclick="copyToClipboard('{{ item.code_id }}', this)"
                 >📋</button
-              >
+                     >
             </div>
             {% endfor %}
           </div>
