@@ -4,9 +4,11 @@
 
 ## Unreleased Catalog
 
-* Redesigned home page using Selmer templates (#21) (#22)
-
 ## Unreleased CLI
+
+## v0.6.0
+
+* Redesigned home page using Selmer templates (#21) (#22)
 
 ## cli-v0.7.0
 
