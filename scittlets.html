@@ -34,23 +34,25 @@
       }
 
       header h1 {
-          font-weight: 700;
-          font-size: 1.2rem;
-          color: #2a6fdb;
-          margin: 0;
-          text-align: center;
-          flex: 1;
-          min-width: 0;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #2a6fdb;
+      margin: 0;
+      text-align: center;
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: unset;
+      position: relative;
       }
 
       .version {
-          font-size: 0.8rem;
-          color: #666;
-          margin-left: 6px;
-          vertical-align: middle;
+      font-size: 0.6rem;
+      color: #888;
+      vertical-align: sub;
+      margin-left: 4px;
+      line-height: 0;
       }
 
       header a.back-home {
@@ -156,6 +158,18 @@
           margin: 16px auto 32px;
           max-width: 800px;
           text-align: center;
+      }
+
+      .introduction p {
+          margin: 0.5em auto;
+      }
+
+      .introduction p:first-child {
+          margin-top: 0;
+      }
+
+      .introduction p:last-child {
+          margin-bottom: 0;
       }
 
       .scittlet {
@@ -586,9 +600,14 @@
 
       <main id="top">
 
-        <div class="introduction">
-          Browse the available Scittlets below, along with related information such as API details, interactive tests, and demonstrations. Click the arrow icon to view the Scittlet API in full page, or copy the command to add it to your HTML file. If you don’t have a Scittle app yet, you can easily create one of the starter <a href="templates.html" rel="noopener" class="docs-badge" title="Templates">templates</a>.
-        </div>
+<div class="introduction">
+  <p>
+    Browse ready-to-use ClojureScript components below. Each scittlet includes API documentation, interactive tests, and live demonstrations.
+  </p>
+  <p>
+    Click the arrow icon to view full details, copy the command to add it to your project, or start with a <a href="templates.html" rel="noopener" class="docs-badge" title="Templates">template</a> if you're new to Scittle.
+  </p>
+</div>
 
         
         <div class="scittlet" id="scittlets.dev.nrepl">

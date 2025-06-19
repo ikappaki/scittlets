@@ -66,337 +66,336 @@
           color: #2a6fdb;
       }
 
-      p.intro {
-          font-size: 1rem;
+      .intro {
+          max-width: 800px;
+          margin: 0 auto;
+          text-align: left;
+      }
+
+      .intro p {
+          font-size: 0.9rem;
           line-height: 1.5;
-      max-width: 600px;
-      color: #444;
-      margin: 0 auto;
-      text-align: left;
+          color: #444;
+          margin: 0.5em 0;
       }
 
       main {
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-      align-items: center;
-      width: 100%;
-      margin-top: 30px;
+          display: flex;
+          flex-direction: column;
+          gap: 30px;
+          align-items: center;
+          width: 100%;
+          margin-top: 30px;
       }
 
       .cards-container {
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-      align-items: center;
-      width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 30px;
+          align-items: center;
+          width: 100%;
       }
 
       .card {
-      background: white;
-      box-shadow: 0 4px 15px rgba(42, 111, 219, 0.15);
-      border-radius: 12px;
-      padding: 25px 20px;
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-      color: #2a6fdb;
-      transition: box-shadow 0.3s ease;
+          background: white;
+          box-shadow: 0 4px 15px rgba(42, 111, 219, 0.15);
+          border-radius: 12px;
+          padding: 25px 20px;
+          width: 100%;
+          max-width: 400px;
+          text-align: center;
+          color: #2a6fdb;
+          transition: box-shadow 0.3s ease;
       }
 
       .card:hover,
       .card:focus-within {
-      box-shadow: 0 6px 20px rgba(42, 111, 219, 0.3);
-      outline: none;
+          box-shadow: 0 6px 20px rgba(42, 111, 219, 0.3);
+          outline: none;
       }
 
       .card h2 {
-      margin-top: 0;
-      font-weight: 700;
-      font-size: 1.6rem;
+          margin-top: 0;
+          font-weight: 700;
+          font-size: 1.6rem;
       }
 
       .card p {
-      font-size: 1rem;
-      color: #555;
-      margin-bottom: 1.5em;
-      min-height: auto;
+          font-size: 1rem;
+          color: #555;
+          margin-bottom: 1.5em;
+          min-height: auto;
       }
 
       .btn {
-      background-color: #2a6fdb;
-      color: white;
-      padding: 12px 30px;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 1rem;
-      display: inline-block;
-      text-decoration: none;
-      cursor: pointer;
-      user-select: none;
+          background-color: #2a6fdb;
+          color: white;
+          padding: 12px 30px;
+          border-radius: 6px;
+          font-weight: 600;
+          font-size: 1rem;
+          display: inline-block;
+          text-decoration: none;
+          cursor: pointer;
+          user-select: none;
       }
 
       .btn:hover,
       .btn:focus {
-      background-color: #1950b5;
+          background-color: #1950b5;
       }
 
       iframe.preview {
-      margin-top: 20px;
-      width: 100%;
-      height: 200px;
-      border: 2px solid #2a6fdb;
-      border-radius: 10px;
+          margin-top: 20px;
+          width: 100%;
+          height: 200px;
+          border: 2px solid #2a6fdb;
+          border-radius: 10px;
       }
 
       .instructions-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      /* padding: 30px 10px 20px; */
-      width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
       }
 
       .instructions {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      font-family: monospace;
-      font-size: 0.85rem;
-      color: black;
-      width: 100%;
-      max-width: 600px;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          font-family: monospace;
+          font-size: 0.85rem;
+          color: black;
+          width: 100%;
+          max-width: 600px;
       }
 
       .instruction-item {
-      padding: 12px;
-      background: #fff;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-height: auto;
-      box-sizing: border-box;
-      width: 100%;
+          padding: 12px;
+          background: #fff;
+          border-radius: 6px;
+          border: 1px solid #ddd;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          min-height: auto;
+          box-sizing: border-box;
+          width: 100%;
       }
 
       .instruction-top-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
       }
 
       .shell-label {
-      background-color: #0d265e;
-      color: #a9c4ff;
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 4px;
-      user-select: none;
-      font-weight: 700;
-      text-transform: uppercase;
-      flex-shrink: 0;
-      min-width: 60px;
-      text-align: center;
+          background-color: #0d265e;
+          color: #a9c4ff;
+          font-size: 0.75rem;
+          padding: 4px 8px;
+          border-radius: 4px;
+          user-select: none;
+          font-weight: 700;
+          text-transform: uppercase;
+          flex-shrink: 0;
+          min-width: 60px;
+          text-align: center;
       }
 
       .instructions .instruction-item code {
-      font-size: 0.9rem;
-      flex: 1;
-      text-align: left;
-      word-break: break-all;
-      overflow-wrap: break-word;
+          font-size: 0.9rem;
+          flex: 1;
+          text-align: left;
+          word-break: break-all;
+          overflow-wrap: break-word;
       }
 
       .instruction-descr {
-      font-size: 0.85rem;
-      color: #666;
-      font-family: sans-serif;
-      text-align: left;
-      margin-top: 4px;
+          font-size: 0.85rem;
+          color: #666;
+          font-family: sans-serif;
+          text-align: left;
+          margin-top: 4px;
       }
 
       .copy-btn {
-      background: #a6c1ff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 8px;
-      line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 40px;
-      min-height: 40px;
-      color: #0033a0;
-      transition: background-color 0.2s ease;
-      flex-shrink: 0;
+          background: #a6c1ff;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 1rem;
+          padding: 8px;
+          line-height: 1;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 40px;
+          min-height: 40px;
+          color: #0033a0;
+          transition: background-color 0.2s ease;
+          flex-shrink: 0;
       }
 
       .copy-btn:hover {
-      background: #84aaff;
+          background: #84aaff;
       }
 
       .instructions-header {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #2a6fdb;
-      margin: 0 0 20px 0;
-      text-align: center;
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: #2a6fdb;
+          margin: 0 0 20px 0;
+          text-align: center;
       }
 
       .instructions-header a {
-      color: inherit;
-      text-decoration: none;
+          color: inherit;
+          text-decoration: none;
       }
 
       .instructions-header a:hover {
-      text-decoration: underline;
+          text-decoration: underline;
       }
 
       /* Tablet screens */
       @media (min-width: 768px) {
-      .wrapper {
-      padding: 15px 20px 20px;
-      max-width: 1100px;
-      }
+          .wrapper {
+              padding: 15px 20px 20px;
+              max-width: 1100px;
+          }
 
-      h1 {
-      font-size: 2.8rem;
-      }
+          h1 {
+              font-size: 2.8rem;
+          }
 
-      p.intro {
-      font-size: 1.15rem;
-      text-align: center;
-      }
+          .intro p {
+              font-size: 1rem;
+              text-align: center;
+          }
 
-      main {
-      flex-direction: column;
-      align-items: center;
-      gap: 30px;
-      }
+          main {
+              flex-direction: column;
+              align-items: center;
+              gap: 30px;
+          }
 
-      .cards-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      flex-wrap: nowrap;
-      gap: 40px;
-      width: 100%;
-      }
+          .cards-container {
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              flex-wrap: nowrap;
+              gap: 40px;
+              width: 100%;
+          }
 
-      .card {
-      flex: 1 1 400px;
-      padding: 30px 25px;
-      max-width: none;
-      }
+          .card {
+              flex: 1 1 400px;
+              padding: 30px 25px;
+              max-width: none;
+          }
 
-      .card h2 {
-      font-size: 1.8rem;
-      }
+          .card h2 {
+              font-size: 1.8rem;
+          }
 
+          iframe.preview {
+              height: 250px;
+              margin-top: 25px;
+          }
 
+          .instructions {
+              font-size: 0.9rem;
+              max-width: 700px;
+          }
 
+          .instruction-item {
+              flex-direction: row;
+              align-items: center;
+              padding: 8px 12px;
+              gap: 12px;
+          }
 
+          .instruction-top-row {
+              flex: 1;
+              gap: 12px;
+          }
 
-      iframe.preview {
-      height: 250px;
-      margin-top: 25px;
-      }
+          .shell-label {
+              font-size: 0.9em;
+              min-width: 100px;
+          }
 
-      .instructions {
-      font-size: 0.9rem;
-      max-width: 700px;
-      }
+          .instructions .instruction-item code {
+              font-size: 1rem;
+              word-break: normal;
+              overflow-wrap: normal;
+          }
 
-      .instruction-item {
-      flex-direction: row;
-      align-items: center;
-      padding: 8px 12px;
-      gap: 12px;
-      }
+          .instruction-descr {
+              font-size: 0.9rem;
+              text-align: right;
+              margin-top: 0;
+              margin-left: auto;
+              white-space: nowrap;
+          }
 
-      .instruction-top-row {
-      flex: 1;
-      gap: 12px;
-      }
-
-      .shell-label {
-      font-size: 0.9em;
-      min-width: 100px;
-      }
-
-      .instructions .instruction-item code {
-      font-size: 1rem;
-      word-break: normal;
-      overflow-wrap: normal;
-      }
-
-      .instruction-descr {
-      font-size: 0.9rem;
-      text-align: right;
-      margin-top: 0;
-      margin-left: auto;
-      white-space: nowrap;
-      }
-
-      .copy-btn {
-      font-size: 0.9em;
-      padding: 4px 6px;
-      min-width: 24px;
-      min-height: 24px;
-      }
+          .copy-btn {
+              font-size: 0.9em;
+              padding: 4px 6px;
+              min-width: 24px;
+              min-height: 24px;
+          }
       }
 
       /* Small mobile screens */
       @media (max-width: 480px) {
-      .wrapper {
-      padding: 10px 5px 15px;
-      }
+          .wrapper {
+              padding: 10px 5px 15px;
+          }
 
-      h1 {
-      font-size: 1.8rem;
-      }
+          h1 {
+              font-size: 1.8rem;
+          }
 
-      p.intro {
-      font-size: 0.95rem;
-      }
+          .intro p {
+              font-size: 0.85rem;
+          }
 
-      .card {
-      padding: 20px 15px;
-      }
+          .card {
+              padding: 20px 15px;
+          }
 
-      .card h2 {
-      font-size: 1.4rem;
-      }
+          .card h2 {
+              font-size: 1.4rem;
+          }
 
-      iframe.preview {
-      height: 180px;
-      }
+          iframe.preview {
+              height: 180px;
+          }
 
-      .instructions {
-      font-size: 0.8rem;
-      }
+          .instructions {
+              font-size: 0.8rem;
+          }
 
-      .shell-label {
-      font-size: 0.7rem;
-      min-width: 50px;
-      padding: 3px 6px;
-      }
+          .shell-label {
+              font-size: 0.7rem;
+              min-width: 50px;
+              padding: 3px 6px;
+          }
 
-      .instructions .instruction-item code {
-      font-size: 0.85rem;
-      }
+          .instructions .instruction-item code {
+              font-size: 0.85rem;
+          }
 
-      .instruction-descr {
-      font-size: 0.8rem;
-      }
+          .instruction-descr {
+              font-size: 0.8rem;
+          }
 
-      .instructions-header {
-      font-size: 1.2rem;
-      }
+          .instructions-header {
+              font-size: 1.2rem;
+          }
       }
     </style>
 
@@ -454,17 +453,16 @@
         </div>
 
         <div class="intro">
-          <div class="intro">
-            <p>
-              Scittlets is a collection of modular HTML <code>&lt;script&gt;</code> blocks with ClojureScript code for <a href="https://github.com/babashka/scittle" target="_blank">Scittle</a>, a zero-build ClojureScript interpreter and runtime for the browser.
-            </p>
-            <p>
-              Each scittlet includes ClojureScript components and their JavaScript dependencies. Browse the catalog, add components to your HTML files, or create new apps from templates using the CLI.
-            </p>
-            <p>
-              Build interactive ClojureScript web apps easily - no compilation, no build tools, just copy-paste components and start coding. Pack everything into a single HTML file for easy deployment.
-            </p>
-          </div>
+          <p>
+            Scittlets is a catalog of modular HTML <code>&lt;script&gt;</code> blocks with ClojureScript code for <a href="https://github.com/babashka/scittle" target="_blank">Scittle</a>, a zero-build ClojureScript interpreter and runtime for the browser.
+          </p>
+          <p>
+            Each scittlet is a ClojureScript namespace with its JavaScript dependencies, served via CDN. Browse the catalog, add components to your HTML files, or create apps from templates using the CLI.
+          </p>
+          <p>
+            Build interactive ClojureScript web apps easily - no compilation, no build tools, just copy-paste components and start coding. Pack everything into a single HTML file for easy deployment.
+          </p>
+        </div>
       </header>
 
       <main>
@@ -610,6 +608,6 @@
           </div>
         </div>
       </main>
-      </div>
+    </div>
   </body>
 </html>
