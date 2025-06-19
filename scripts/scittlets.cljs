@@ -496,10 +496,11 @@ Happy hacking! 🚀")))))
         (assoc ret :content (fs/readFileSync src-path "utf-8"))))))
 
 (defn  scittlets-print [catalog]
-  (let [scittlets (scittlets-get catalog)
-        scittlet-names (keys scittlets)]
+  (let [scittlets (scittlets-get catalog)]
     (println "📦 Available scittlets:")
-    (println (str/join "\n" (map #(str "  • " %) scittlet-names)))
+    (doseq [[scittlet props] (sort-by first scittlets)]
+      (let [{:strs [descr]} props]
+        (println "  • " scittlet "\t" descr)))
     (println)
     (println "📝 Add scittlets to an HTML file with:
    scittlets add <html-file> [scittlets..]")))

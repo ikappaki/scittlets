@@ -24,59 +24,62 @@
           top: 0;
           z-index: 100;
           background: #ffffff;
-          padding: 10px 20px;
+          padding: 10px 15px;
           border-bottom: 1px solid #ccc;
-
           display: flex;
-          flex-direction: row;
           align-items: center;
-
-          position: relative;
-      }
-
-      header a.back-home {
-          position: absolute;
-          left: 20px;
-          color: #2a6fdb;
-          text-decoration: none;
-          font-weight: bold;
-          font-size: 1rem;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 10px;
       }
 
       header h1 {
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
-          font-weight: 700;
-          font-size: 1.4rem;
-          color: #2a6fdb;
-          margin: 0;
-          white-space: nowrap;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #2a6fdb;
+      margin: 0;
+      text-align: center;
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: unset;
+      position: relative;
       }
 
       .version {
+      font-size: 0.6rem;
+      color: #888;
+      vertical-align: sub;
+      margin-left: 4px;
+      line-height: 0;
+      }
+
+      header a.back-home {
+          color: #2a6fdb;
+          text-decoration: none;
+          font-weight: bold;
           font-size: 0.9rem;
-          color: #666;
-          margin-left: 8px;
-          vertical-align: middle;
+          flex-shrink: 0;
       }
 
       .right-links {
-          margin-left: auto;
           display: flex;
-          gap: 12px;
+          gap: 8px;
+          flex-shrink: 0;
       }
 
       header a.docs-badge {
           background: #2a6fdb;
           color: white;
-          padding: 4px 10px;
-          font-size: 0.85rem;
+          padding: 4px 8px;
+          font-size: 0.75rem;
           font-weight: 600;
           border-radius: 4px;
           text-decoration: none;
           user-select: none;
           transition: background-color 0.2s ease;
+          white-space: nowrap;
       }
 
       header a.docs-badge:hover {
@@ -90,19 +93,20 @@
       }
 
       nav {
-          min-width: 250px;
-          width: max-content;
-          max-width: 100%;
+          min-width: 200px;
+          width: 200px;
           background: #ffffff;
-          padding: 20px;
+          padding: 15px;
           border-right: 1px solid #ccc;
           overflow-y: auto;
           box-sizing: border-box;
+          display: none; /* Hidden on mobile by default */
       }
 
       nav h3 {
           margin-top: 0;
           color: #2a6fdb;
+          font-size: 1rem;
       }
 
       nav ul {
@@ -112,13 +116,14 @@
       }
 
       nav li {
-          margin: 10px 0;
+          margin: 8px 0;
       }
 
       nav a {
           color: #2a6fdb;
           text-decoration: none;
           cursor: pointer;
+          font-size: 0.9rem;
       }
 
       nav a:hover {
@@ -128,33 +133,51 @@
       .nav-link-with-icon {
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 4px;
           flex-wrap: nowrap;
+      }
+
+      .nav-link-with-icon svg {
+          width: 10px;
+          height: 10px;
       }
 
       main {
           flex-grow: 1;
-          padding: 20px;
+          padding: 15px 10px 80px;
           overflow-y: auto;
           background: #f0f4f8;
           box-sizing: border-box;
       }
 
       .introduction {
-          font-size: 1.05rem;
+          font-size: 1rem;
           color: #444;
           font-style: italic;
           line-height: 1.6;
           margin: 16px auto 32px;
           max-width: 800px;
+          text-align: center;
+      }
+
+      .introduction p {
+          margin: 0.5em auto;
+      }
+
+      .introduction p:first-child {
+          margin-top: 0;
+      }
+
+      .introduction p:last-child {
+          margin-bottom: 0;
       }
 
       .scittlet {
           background: #fff;
           border-radius: 10px;
           box-shadow: 0 4px 10px rgba(42, 111, 219, 0.1);
-          margin-bottom: 40px;
-          padding: 20px;
+          margin-bottom: 30px;
+          padding: 15px;
       }
 
       .scittlet:last-child {
@@ -167,10 +190,10 @@
 
       .scittlet iframe {
           width: 100%;
-          height: 50vh;
+          height: 300px;
           border: 2px solid #2a6fdb;
           border-radius: 10px;
-          margin-top: 10px;
+          margin-top: 15px;
       }
 
       .instructions-wrapper {
@@ -183,6 +206,7 @@
           z-index: 99;
           border-top: 1px solid #ccc;
           box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+          padding: 8px;
       }
 
       .instructions-wrapper .copy-btn {
@@ -195,47 +219,51 @@
       }
 
       .instructions {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
           font-family: monospace;
-          font-size: 0.95rem;
+          font-size: 0.85rem;
           color: black;
-
           max-width: 1200px;
           margin: 0 auto;
-          padding: 2px;
       }
+
       .instruction-item {
           display: flex;
           align-items: center;
-          justify-content: flex-start;
-          padding: 0;
-          margin: 0; 
-          width: 100%;
+          gap: 8px;
+          background: white;
+          padding: 8px;
+          border-radius: 4px;
+          min-height: 40px;
       }
 
       .instructions .instruction-item code {
           background: transparent;
           color: inherit;
-          margin-left: 12px;
           padding: 0;
           font-weight: 600;
           font-family: monospace;
           user-select: text;
+          flex: 1;
+          overflow-x: auto;
+          white-space: nowrap;
       }
 
       .shell-label {
           background-color: #0d265e;
           color: #a9c4ff;
-          font-size: 0.75em;
-          padding: 4px 8px;
+          font-size: 0.7rem;
+          padding: 4px 6px;
           border-radius: 4px;
           user-select: none;
           flex-shrink: 0;
           font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
           font-weight: 700;
           text-transform: uppercase;
+          min-width: 50px;
+          text-align: center;
       }
 
       .copy-btn {
@@ -243,28 +271,27 @@
           border: none;
           border-radius: 6px;
           cursor: pointer;
-          font-size: 1.2em;
-          padding: 0 6px;
+          font-size: 1.1em;
+          padding: 8px;
           line-height: 1;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          min-width: 1.5em;
-          min-height: 1.5em;
-          margin-left: auto;
+          min-width: 40px;
+          min-height: 40px;
           color: #0033a0;
           transition: background-color 0.2s ease;
+          flex-shrink: 0;
       }
 
       .copy-btn:hover {
           background: #84aaff;
       }
 
-
       .header-with-command {
           display: flex;
-          align-items: center;
-          flex-wrap: wrap;
+          align-items: flex-start;
+          flex-direction: column;
           gap: 12px;
           margin-bottom: 10px;
       }
@@ -273,24 +300,195 @@
           font-size: 0.95rem;
           color: #333;
           font-style: italic;
+          width: 100%;
       }
 
       .example-command {
           margin: 0;
           background: #f5f5f5;
           font-family: monospace;
-          font-size: 1em;
-          padding: 6px 10px;
-          border-top: 1px solid #ddd;
-          border-bottom: 1px solid #ddd;
+          font-size: 0.85rem;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
           display: flex;
           align-items: center;
-          gap: 10px;
-          flex-grow: 1;
-          min-width: 200px;
+          gap: 8px;
+          width: 100%;
+          box-sizing: border-box;
       }
 
+      .example-command code {
+          flex: 1;
+          overflow-x: auto;
+          white-space: nowrap;
+      }
+
+      .example-command .shell-label {
+          background-color: #333;
+          color: #fff;
+          font-size: 0.7em;
+          padding: 4px 8px;
+          border-radius: 3px;
+          min-width: 40px;
+      }
+
+      /* Tablet and larger screens */
+      @media (min-width: 768px) {
+          header {
+              padding: 10px 20px;
+          }
+
+          header h1 {
+              font-size: 1.4rem;
+          }
+
+          .version {
+              font-size: 0.9rem;
+              margin-left: 8px;
+          }
+
+          header a.back-home {
+              font-size: 1rem;
+          }
+
+          header a.docs-badge {
+              font-size: 0.85rem;
+              padding: 4px 10px;
+          }
+
+          nav {
+              display: block !important;
+              min-width: 250px;
+              width: max-content;
+              max-width: 100%;
+              padding: 20px;
+          }
+
+          nav h3 {
+              font-size: 1.1rem;
+          }
+
+          nav li {
+              margin: 10px 0;
+          }
+
+          nav a {
+              font-size: 1rem;
+          }
+
+          .nav-link-with-icon svg {
+              width: 12px;
+              height: 12px;
+          }
+
+          main {
+              padding: 20px;
+          }
+
+          .introduction {
+              font-size: 1.05rem;
+          }
+
+          .scittlet {
+              padding: 20px;
+              margin-bottom: 40px;
+          }
+
+          .scittlet iframe {
+              height: 50vh;
+              margin-top: 10px;
+          }
+
+          .instructions {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: 10px;
+              font-size: 0.95rem;
+              padding: 2px;
+          }
+
+          .instruction-item {
+              background: transparent;
+              padding: 0;
+              border-radius: 0;
+          }
+
+          .header-with-command {
+              flex-direction: row;
+              align-items: center;
+              flex-wrap: wrap;
+          }
+
+          .descr {
+              flex: 1;
+              min-width: 200px;
+          }
+
+          .example-command {
+              font-size: 1em;
+              padding: 6px 10px;
+              flex-grow: 1;
+              min-width: 200px;
+              border: 1px solid #ddd;
+          }
+      }
+
+      /* Small mobile screens */
+      @media (max-width: 480px) {
+          header {
+              padding: 8px 10px;
+          }
+
+          header h1 {
+              font-size: 1rem;
+          }
+
+          .version {
+              font-size: 0.75rem;
+              margin-left: 4px;
+          }
+
+          header a.docs-badge {
+              font-size: 0.7rem;
+              padding: 3px 6px;
+          }
+
+          main {
+              padding: 10px 5px 80px;
+          }
+
+          .introduction {
+              font-size: 0.95rem;
+              margin: 12px auto 24px;
+          }
+
+          .scittlet {
+              padding: 12px;
+              margin-bottom: 20px;
+          }
+
+          .scittlet iframe {
+              height: 250px;
+          }
+
+          .example-command {
+              font-size: 0.8rem;
+              padding: 8px;
+          }
+
+          .shell-label {
+              font-size: 0.65rem;
+              padding: 3px 5px;
+              min-width: 35px;
+          }
+
+          .descr {
+              font-size: 0.9rem;
+          }
+      }
     </style>
+
     <script>
       function copyToClipboard(codeId, btn) {
         const codeElem = document.getElementById(codeId);
@@ -323,7 +521,10 @@
 
     <div class="content">
       <nav>
-        <h3>Scittlets</h3>
+        <h3>
+          <a href="#" onclick="document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' }); return false;">Scittlets</a>
+        </h3>
+
         <ul>
           
           <li>
@@ -338,7 +539,8 @@
                 </svg>
                 
               </a>
-              <a href="#scittlets.dev.nrepl" onclick="window.location.hash='scittlets.dev.nrepl'; return false;">scittlets.dev.nrepl</a>
+              <a href="#scittlets.dev.nrepl" onclick="document.getElementById('scittlets.dev.nrepl').scrollIntoView({ behavior: 'smooth' }); return false;">scittlets.dev.nrepl</a>
+
             </span>
           </li>
           
@@ -354,7 +556,8 @@
                 </svg>
                 
               </a>
-              <a href="#scittlets.reagent" onclick="window.location.hash='scittlets.reagent'; return false;">scittlets.reagent</a>
+              <a href="#scittlets.reagent" onclick="document.getElementById('scittlets.reagent').scrollIntoView({ behavior: 'smooth' }); return false;">scittlets.reagent</a>
+
             </span>
           </li>
           
@@ -370,7 +573,8 @@
                 </svg>
                 
               </a>
-              <a href="#scittlets.reagent.codemirror" onclick="window.location.hash='scittlets.reagent.codemirror'; return false;">scittlets.reagent.codemirror</a>
+              <a href="#scittlets.reagent.codemirror" onclick="document.getElementById('scittlets.reagent.codemirror').scrollIntoView({ behavior: 'smooth' }); return false;">scittlets.reagent.codemirror</a>
+
             </span>
           </li>
           
@@ -386,18 +590,24 @@
                 </svg>
                 
               </a>
-              <a href="#scittlets.reagent.mermaid" onclick="window.location.hash='scittlets.reagent.mermaid'; return false;">scittlets.reagent.mermaid</a>
+              <a href="#scittlets.reagent.mermaid" onclick="document.getElementById('scittlets.reagent.mermaid').scrollIntoView({ behavior: 'smooth' }); return false;">scittlets.reagent.mermaid</a>
+
             </span>
           </li>
           
         </ul>
       </nav>
 
-      <main>
+      <main id="top">
 
-        <div class="introduction">
-Browse the available Scittlets below, along with related information such as API details, interactive tests, and demonstrations. Click the arrow icon to view a Scittlet in full page, or copy the command to add it to your HTML file.
-        </div>
+<div class="introduction">
+  <p>
+    Browse ready-to-use ClojureScript components below. Each scittlet includes API documentation, interactive tests, and live demonstrations.
+  </p>
+  <p>
+    Click the arrow icon to view full details, copy the command to add it to your project, or start with a <a href="templates.html" rel="noopener" class="docs-badge" title="Templates">template</a> if you're new to Scittle.
+  </p>
+</div>
 
         
         <div class="scittlet" id="scittlets.dev.nrepl">
@@ -410,11 +620,11 @@ Browse the available Scittlets below, along with related information such as API
                 <path d="M432 320a16 16 0 0 1 16 16v112a48 48 0 0 1-48 48H64a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h112a16 16 0 0 1 0 32H64a16 16 0 0 0-16 16v336a16 16 0 0 0 16 16h336a16 16 0 0 0 16-16V336a16 16 0 0 1 16-16zm56-304H320a24 24 0 0 0 0 48h86.06L201 329a24 24 0 0 0 33.94 33.94L440 97.94V184a24 24 0 0 0 48 0V40a16 16 0 0 0-16-16z"/>
               </svg>
             </a>
-            <div class="descr"><strong>scittlets.dev.nrepl</strong> — Provides dependencies for Reagent, a simple ClojureScript interface to React</div>
+            <div class="descr"><strong>scittlets.dev.nrepl</strong> — Provides dependencies and a babashka script for opening up an nREPL connection to the Scittle app</div>
 
             <div class="example-command">
               <span class="shell-label">ADD</span>
-              <code id="cmd-scittlets.dev.nrepl">npx scittlets add HTML-FILE scittlets.dev.nrepl</code>
+              <code id="cmd-scittlets.dev.nrepl">npx scittlets add HTML-PATH scittlets.dev.nrepl</code>
               <button class="copy-btn" onclick="copyToClipboard('cmd-scittlets.dev.nrepl', this)">📋</button>
             </div>
           </div>
@@ -436,7 +646,7 @@ Browse the available Scittlets below, along with related information such as API
 
             <div class="example-command">
               <span class="shell-label">ADD</span>
-              <code id="cmd-scittlets.reagent">npx scittlets add HTML-FILE scittlets.reagent</code>
+              <code id="cmd-scittlets.reagent">npx scittlets add HTML-PATH scittlets.reagent</code>
               <button class="copy-btn" onclick="copyToClipboard('cmd-scittlets.reagent', this)">📋</button>
             </div>
           </div>
@@ -458,7 +668,7 @@ Browse the available Scittlets below, along with related information such as API
 
             <div class="example-command">
               <span class="shell-label">ADD</span>
-              <code id="cmd-scittlets.reagent.codemirror">npx scittlets add HTML-FILE scittlets.reagent.codemirror</code>
+              <code id="cmd-scittlets.reagent.codemirror">npx scittlets add HTML-PATH scittlets.reagent.codemirror</code>
               <button class="copy-btn" onclick="copyToClipboard('cmd-scittlets.reagent.codemirror', this)">📋</button>
             </div>
           </div>
@@ -480,7 +690,7 @@ Browse the available Scittlets below, along with related information such as API
 
             <div class="example-command">
               <span class="shell-label">ADD</span>
-              <code id="cmd-scittlets.reagent.mermaid">npx scittlets add HTML-FILE scittlets.reagent.mermaid</code>
+              <code id="cmd-scittlets.reagent.mermaid">npx scittlets add HTML-PATH scittlets.reagent.mermaid</code>
               <button class="copy-btn" onclick="copyToClipboard('cmd-scittlets.reagent.mermaid', this)">📋</button>
             </div>
           </div>
