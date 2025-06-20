@@ -4,9 +4,16 @@
             ["node-fetch$default" :as fetch]
             ["path" :as path]
             ["proxy-from-env" :refer [getProxyForUrl]]
+            ["semver" :as semver]
+            ["url" :as url]
             ["yargs$default" :as yargs]
             [clojure.string :as str]))
 
+
+(defn version-get []
+  (let [__dirname (path/dirname (url/fileURLToPath (.-url js/import.meta)))
+        pkg-json  (.readFileSync fs (path/join __dirname ".." "package.json") "utf8")]
+    (-> pkg-json js/JSON.parse (.-version))))
 
 (def v? (atom false))
 (defn debug [& args]
@@ -20,9 +27,15 @@
               (.wrap 120)
               (.showHelpOnFail true)
               (.scriptName script-filename)
+              (.version (version-get))
               (.usage (str "Usage: scittlets <command> [options]"
                            "\n\nRun `scittlets <command> --help` for detailed usage of a specific command."))
-              (.command "releases" "List all published versions of the scittlets Catalog.")
+              (.command "releases" "List all published versions of the scittlets Catalog."
+                        (fn [y]
+                          (-> y
+                              (.option "tags"
+                                       (clj->js {:description "Path to the tags.txt file"
+                                                 :type "string"})))))
               (.command "catalog" "List all scittlets in the catalog."
                         (fn [y]
                           (-> y
@@ -108,23 +121,21 @@
                                               :global true
                                               :default false}))
               (.epilog (str "[1] RELEASE may also be a local path to a catalog file. The special value `latest` resolves to the most recent release version."
-                            "\n[2] To avoid GitHub API rate limits, set the GITHUB_PUBLIC_TOKEN env var (no scopes needed)."
-                            "\n[3] Set the HTTP_PROXY, HTTPS_PROXY, or NO_PROXY environment variables to use a proxy."
-                            "\n[4] Use NODE_EXTRA_CA_CERTS env variable to add custom CA certificates for HTTPS."))
+                            "\n[2] Set the HTTP_PROXY, HTTPS_PROXY, or NO_PROXY environment variables to use a proxy."
+                            "\n[3] Use NODE_EXTRA_CA_CERTS env variable to add custom CA certificates for HTTPS."))
 
               (.middleware (fn [argv]
                              (when (.-verbose argv)
                                (reset! v? true))))
               (.help)))
 
-(def releases-url "https://api.github.com/repos/ikappaki/scittlets/releases") 
-(def catalog-download-url "https://github.com/ikappaki/scittlets/releases/download/")
-(def gh-token (.-GITHUB_PUBLIC_TOKEN js/process.env))
-(def fetch-opts (clj->js (cond-> {:headers {"User-Agent" "scittlets"}}
-                           gh-token
-                           (assoc :headers {"Authorization" (str "Bearer " gh-token)}))))
-
 (def scittlets-jsdelivr-url "https://cdn.jsdelivr.net/gh/ikappaki/scittlets")
+(def releases-tags-url (str scittlets-jsdelivr-url "/releases/tags.txt"))
+(def catalog-download-url "https://github.com/ikappaki/scittlets/releases/download/")
+(def gh-token-deprecated (.-GITHUB_PUBLIC_TOKEN js/process.env))
+(def fetch-opts (clj->js (cond-> {:headers {"User-Agent" "scittlets"}}
+                           gh-token-deprecated
+                           (assoc :headers {"Authorization" (str "Bearer " gh-token-deprecated)}))))
 
 (declare tags-get)
 (declare catalog-get)
@@ -141,9 +152,8 @@
 (declare win-ca-load!)
 
 (defn ^:async dispatch [argv]
-  (debug :releases/url releases-url)
-  (debug :catalog/url catalog-download-url)
-  (debug :env/GITHUB_PUBLIC_TOKEN (if gh-token :set :not-set) "\n")
+  (debug :tags/url releases-tags-url)
+  (debug :env/GITHUB_PUBLIC_TOKEN (if gh-token-deprecated :set :not-set) "\n")
   (let [cmd (get (.-_ argv) 0)
         arg-sec-win-ca (.-secWinCa argv)]
 
@@ -152,8 +162,10 @@
 
     (case cmd
       "releases"
-      (let [tags (js/await (tags-get))
+      (let [arg-tags (.-tags argv)
+            tags (js/await (tags-get arg-tags))
             tags (concat ["latest"] tags)]
+
         (println)
         (println "✴️ Running: scittlets releases")
         (println)
@@ -312,16 +324,16 @@
   (apply println msg)
   (js/process.exit code))
 
-(defn ^:async tags-get []
-  (let [{:keys [result error]} (js/await (data-fetch releases-url))]
-    (if error
-      (exit 1 :tags-get/error error)
+(defn ^:async tags-get [path]
+  (let [content (if path
+                  (fs/readFileSync path "utf8")
 
-      (let [tags (.sort result (fn [a b] (- (js/Date. (.-published_at b)) (js/Date. (.-published_at a)))))
-            tags (js->clj (->> (map #(.-tag_name %) tags)
-                               ;; only the catalog releases
-                               (filter #(str/starts-with? % "v"))))]
-        tags))))
+                  (let [{:keys [result error]} (js/await (data-fetch releases-tags-url))]
+                    (if error
+                      (exit 1 :tags-get/error error)
+                      result)))
+        tags (str/split-lines content)]
+    tags))
 
 (defn templates-print [catalog]
   (let [templates (catalog "templates")]
@@ -335,21 +347,33 @@
    scittlets new <template-name> [output-dir]")))
 
 (defn ^:async catalog-get [tag]
-  (let [tag (if (= tag "latest")
-              (first (js/await (tags-get)))
+  (let [tag (cond
+              (= tag "latest")
+              (first (js/await (tags-get nil)))
 
-              tag)]
+              :else
+              tag)
+
+        catalog-url (if (and (semver/valid tag) (semver/lt tag "v0.6.1"))
+                      (str catalog-download-url tag "/catalog.json")
+                      (str scittlets-jsdelivr-url "@" (js/encodeURIComponent tag) "/releases/catalog.json"))]
     (debug :catalog/tag tag)
+    (debug :catalog/catalog-url catalog-url)
     (if (readable? tag)
       (let [data (fs/readFileSync tag "utf8")]
         {:tag tag :catalog  (js->clj (.parse js/JSON data))})
 
-      (let [catalog-url (str catalog-download-url tag "/catalog.json")
-            {asset :result error :error} (js/await (data-fetch catalog-url))]
+      (let [{catalog-raw :result error :error} (js/await (data-fetch catalog-url))]
         (if error
           (exit 1 :catalog-get/asset-error error)
 
-          {:tag tag :catalog (js->clj (.parse js/JSON asset))})))))
+          {:tag tag :catalog (js->clj (if (string? catalog-raw)
+                                        ;; the catalog from the github
+                                        ;; releases is a string.
+                                        (.parse js/JSON catalog-raw)
+                                        ;; while from jsdelivr it
+                                        ;; comes back as json.
+                                        catalog-raw))})))))
 
 (defn vals-with-files-rewrite [templates base]
   (reduce (fn [acc [k v]]
@@ -503,7 +527,7 @@ Happy hacking! 🚀")))))
         (println "  • " scittlet "\t" descr)))
     (println)
     (println "📝 Add scittlets to an HTML file with:
-   scittlets add <html-file> [scittlets..]")))
+   scittlets add <html-file> <scittlets..>")))
 (defn ^:async scittlets-add! [catalog tag html-path scittlets]
   (let [html (.toString (fs/readFileSync html-path))
         scittlets-cat (scittlets-get catalog)
