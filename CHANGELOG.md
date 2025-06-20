@@ -4,9 +4,11 @@
 
 ## Unreleased Catalog
 
-* Published catalog and tags on scittlets' project `releases/` directory at `v0.6.1` (#23)
-
 ## Unreleased CLI
+
+## v0.6.1
+
+* Published catalog and tags to the `releases/` directory of the Scittlets project at version `v0.6.1` (#23)
 
 ## v0.6.0
 
