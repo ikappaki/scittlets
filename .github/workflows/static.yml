@@ -5,11 +5,6 @@ on:
   release:
     types: [published]
 
-# on:
-#   # Runs on pushes targeting the default branch
-#   push:
-#     branches: ["main"]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -43,6 +38,28 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Verify tag is setup in both releases/tags.txt and releases/catalog.json
+        run: |
+          TAG_VERSION=$(jq -r .release.tag_name "$GITHUB_EVENT_PATH")
+          FILE="releases/tags.txt"
+          FILE_VERSION=$(head -n 1 $FILE | tr -d '\r')
+
+          # Verify tag version matches first line of releases/tags.txt
+          if [ "$TAG_VERSION" != "$FILE_VERSION" ]; then
+            echo "Error: Tag version ($TAG_VERSION) does not match $FILE first line ($FILE_VERSION)"
+            exit 1
+          else
+            echo "Version match confirmed: $TAG_VERSION"
+          fi
+
+          # Verify tag version matches version in releases/catalog.json
+          if ! grep -q "\"version\" *: *\"$TAG_VERSION\"" releases/catalog.json; then
+            echo "Error: version \"$TAG_VERSION\" not found in releases/catalog.json"
+            exit 1
+          else
+            echo "Version match found in releases/catalog.json: $TAG_VERSION"
+          fi
+
       - name: rebase
         run: |
           # The target dir, it is named after the repo since this is
@@ -65,13 +82,9 @@ jobs:
           find $TARGET -name "*.html" -exec sed -i 's|<base href="/"|<base href="/scittlets/"|g' {} \;
           sed -i "s|\"version\">main</span>|\"version\">${TAG_NAME}</span>|" $TARGET/scittlets.html
 
-          # Regenerate catalog.json from TAG_NAME
-          npm run scittlets --silent -- catalog -r ./catalog.json --rewrite ${TAG_NAME} > $TARGET/catalog.json
-          sed -i '1d' $TARGET/catalog.json
-
           # use updated catalog to update HTML files deps in TARGET
-          cat $TARGET/catalog.json
-          npm run updateLocalHtmlFiles $TARGET/catalog.json $TARGET
+          cat releases/catalog.json
+          npm run updateLocalHtmlFiles releases/catalog.json $TARGET
 
         env:
           TAG_NAME: ${{ github.event.release.tag_name }}
@@ -89,4 +102,4 @@ jobs:
       - name: Upload catalog.json to Release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./scittlets/catalog.json
+          files: ./releases/catalog.json

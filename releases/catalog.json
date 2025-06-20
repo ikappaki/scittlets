@@ -1,0 +1,147 @@
+{
+  "version": "v0.6.1",
+  "scittlets.dev.nrepl": {
+    "home": "https://github.com/ikappaki/scittlets",
+    "descr": "Provides dependencies and a babashka script for opening up an nREPL connection to the Scittle app",
+    "deps": [
+      "<script>var SCITTLE_NREPL_WEBSOCKET_PORT = 1340;</script>",
+      "<script src=\"https://cdn.jsdelivr.net/npm/scittle@0.6.22/dist/scittle.nrepl.js\" type=\"application/javascript\"></script>"
+    ],
+    "files": [
+      {
+        "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/dev/nrepl-server.clj",
+        "dest": "nrepl-server.clj"
+      }
+    ],
+    "api": "test/scittlets/dev/nrepl.html",
+    "see": {
+      "Scittle nREPL": "https://github.com/babashka/scittle/tree/main/doc/nrepl"
+    }
+  },
+  "scittlets.reagent": {
+    "home": "https://github.com/ikappaki/scittlets",
+    "descr": "Provides dependencies for Reagent, a simple ClojureScript interface to React",
+    "deps": [
+      "<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",
+      "<script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>",
+      "<script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>"
+    ],
+    "api": "test/scittlets/reagent/basic.html",
+    "see": {
+      "reagent": "https://reagent-project.github.io/"
+    }
+  },
+  "scittlets.reagent.codemirror": {
+    "home": "https://github.com/ikappaki/scittlets",
+    "descr": "A Reagent component around CodeMirror, a code editor component for the web",
+    "deps": [
+      "<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",
+      "<script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>",
+      "<script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>",
+      "<script src=\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/src/scittlets/reagent/codemirror.cljs\" type=\"application/x-scittle\"></script>"
+    ],
+    "api": "test/scittlets/reagent/codemirror.html",
+    "see": {
+      "codemirror": "https://codemirror.net/",
+      "reagent": "https://reagent-project.github.io/"
+    }
+  },
+  "scittlets.reagent.mermaid": {
+    "home": "https://github.com/ikappaki/scittlets",
+    "descr": "A Reagent component around around Mermaid, the diagramming and charting tool",
+    "deps": [
+      "<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",
+      "<script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>",
+      "<script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>",
+      "<script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\"></script>",
+      "<script src=\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>"
+    ],
+    "api": "test/scittlets/reagent/mermaid.html",
+    "see": {
+      "mermaid": "https://mermaid.js.org/",
+      "reagent": "https://reagent-project.github.io/"
+    }
+  },
+  "templates": {
+    "dev/nrepl": {
+      "name": "Scittle nREPL",
+      "src": "examples/dev",
+      "descr": "A minimal nREPL capable scittlet template",
+      "files": [
+        {
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/dev/nrepl.html",
+          "dest": "index.html"
+        },
+        {
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/dev/nrepl.cljs",
+          "dest": "nrepl.cljs"
+        }
+      ],
+      "target": "scits_nrepl"
+    },
+    "reagent/basic": {
+      "name": "Reagent Basic",
+      "src": "examples/reagent",
+      "descr": "A minimal Reagent template",
+      "files": [
+        {
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/reagent/reagent_basic.html",
+          "dest": "index.html"
+        },
+        {
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/reagent/reagent_basic.cljs",
+          "dest": "reagent_basic.cljs"
+        }
+      ],
+      "target": "scits_reagent"
+    },
+    "reagent/codemirror": {
+      "name": "CodeMirror Reagent",
+      "src": "examples/codemirror",
+      "descr": "A Reagent template around CodeMirror, a code editor component for the web",
+      "files": [
+        {
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/codemirror/codemirror_demo.html",
+          "dest": "index.html"
+        },
+        {
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/codemirror/codemirror_demo.cljs",
+          "dest": "codemirror_demo.cljs"
+        }
+      ],
+      "target": "scits_reagent_codemirror"
+    },
+    "reagent/mermaid": {
+      "name": "Mermaid Reagent",
+      "src": "examples/mermaid",
+      "descr": "A Reagent template around Mermaid, the diagramming and charting tool",
+      "files": [
+        {
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/mermaid/mermaid_demo.html",
+          "dest": "index.html"
+        },
+        {
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/mermaid/mermaid_demo.cljs",
+          "dest": "mermaid_demo.cljs"
+        }
+      ],
+      "target": "scits_reagent_mermaid"
+    },
+    "scittle/basic": {
+      "name": "Scittle Basic",
+      "src": "examples/scittle",
+      "descr": "A minimal Scittle template with zero dependencies",
+      "files": [
+        {
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/scittle/scittle_basic.html",
+          "dest": "index.html"
+        },
+        {
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/scittle/scittle_basic.cljs",
+          "dest": "scittle_basic.cljs"
+        }
+      ],
+      "target": "scittle_basic"
+    }
+  }
+}
