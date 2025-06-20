@@ -6,6 +6,8 @@
 
 ## Unreleased CLI
 
+## cli-v0.8.0
+
 * Updated to retrieve the catalog file and tags list from the Scittlets project's `releases/` directory for versions `v0.6.1` and above (#24)
 * Added `--tags <path>` option to the `releases` command to specify a custom `tags.txt` file path (#24)
 * Fixed `--version` to correctly retrieve the version number from the published Scittlets `package.json` file (#24)
