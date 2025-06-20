@@ -1,5 +1,5 @@
 {
-  "version": "v0.6.0",
+  "version": "v0.6.1",
   "scittlets.dev.nrepl": {
     "home": "https://github.com/ikappaki/scittlets",
     "descr": "Provides dependencies and a babashka script for opening up an nREPL connection to the Scittle app",
@@ -9,7 +9,7 @@
     ],
     "files": [
       {
-        "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/examples/dev/nrepl-server.clj",
+        "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/dev/nrepl-server.clj",
         "dest": "nrepl-server.clj"
       }
     ],
@@ -38,7 +38,7 @@
       "<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",
       "<script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>",
       "<script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>",
-      "<script src=\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/src/scittlets/reagent/codemirror.cljs\" type=\"application/x-scittle\"></script>"
+      "<script src=\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/src/scittlets/reagent/codemirror.cljs\" type=\"application/x-scittle\"></script>"
     ],
     "api": "test/scittlets/reagent/codemirror.html",
     "see": {
@@ -54,7 +54,7 @@
       "<script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>",
       "<script src=\"https://cdn.jsdelivr.net/npm/scittle@latest/dist/scittle.reagent.min.js\"></script>",
       "<script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\"></script>",
-      "<script src=\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>"
+      "<script src=\"https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>"
     ],
     "api": "test/scittlets/reagent/mermaid.html",
     "see": {
@@ -69,11 +69,11 @@
       "descr": "A minimal nREPL capable scittlet template",
       "files": [
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/examples/dev/nrepl.html",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/dev/nrepl.html",
           "dest": "index.html"
         },
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/examples/dev/nrepl.cljs",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/dev/nrepl.cljs",
           "dest": "nrepl.cljs"
         }
       ],
@@ -85,11 +85,11 @@
       "descr": "A minimal Reagent template",
       "files": [
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/examples/reagent/reagent_basic.html",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/reagent/reagent_basic.html",
           "dest": "index.html"
         },
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/examples/reagent/reagent_basic.cljs",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/reagent/reagent_basic.cljs",
           "dest": "reagent_basic.cljs"
         }
       ],
@@ -101,11 +101,11 @@
       "descr": "A Reagent template around CodeMirror, a code editor component for the web",
       "files": [
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/examples/codemirror/codemirror_demo.html",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/codemirror/codemirror_demo.html",
           "dest": "index.html"
         },
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/examples/codemirror/codemirror_demo.cljs",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/codemirror/codemirror_demo.cljs",
           "dest": "codemirror_demo.cljs"
         }
       ],
@@ -117,11 +117,11 @@
       "descr": "A Reagent template around Mermaid, the diagramming and charting tool",
       "files": [
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/examples/mermaid/mermaid_demo.html",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/mermaid/mermaid_demo.html",
           "dest": "index.html"
         },
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/examples/mermaid/mermaid_demo.cljs",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/mermaid/mermaid_demo.cljs",
           "dest": "mermaid_demo.cljs"
         }
       ],
@@ -133,11 +133,11 @@
       "descr": "A minimal Scittle template with zero dependencies",
       "files": [
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/examples/scittle/scittle_basic.html",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/scittle/scittle_basic.html",
           "dest": "index.html"
         },
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.0/examples/scittle/scittle_basic.cljs",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v0.6.1/examples/scittle/scittle_basic.cljs",
           "dest": "scittle_basic.cljs"
         }
       ],
