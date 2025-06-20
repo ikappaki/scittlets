@@ -527,7 +527,7 @@ Happy hacking! 🚀")))))
         (println "  • " scittlet "\t" descr)))
     (println)
     (println "📝 Add scittlets to an HTML file with:
-   scittlets add <html-file> [scittlets..]")))
+   scittlets add <html-file> <scittlets..>")))
 (defn ^:async scittlets-add! [catalog tag html-path scittlets]
   (let [html (.toString (fs/readFileSync html-path))
         scittlets-cat (scittlets-get catalog)
