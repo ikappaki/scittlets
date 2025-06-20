@@ -44,19 +44,35 @@
            (.-stdout e)))))
 
 (deftest test-cmd-releases
-  (try
-    (let [stdout (execSync (str scittlets-cmd " releases"))]
-      (let [tags (-> (re-find #"(?s)Available catalog releases:\s+(.*)" (str stdout))
-                     second
-                     (str/split #"\s+"))]
-        (is (some #{"v0.1.0"} tags))
-        (is (every? #(or (str/starts-with? % "v")
-                         (some #{%} ["latest"])) tags)))
-      )
-    (catch :default e
-      (is false {:status (.-status e)
-                 :stdout (.-stdout e)
-                 :stderr (.-stderr e)}))))
+  (testing "with local tags.txt"
+    (try
+      (let [stdout (execSync (str scittlets-cmd " releases --tags releases/tags.txt"))]
+        (let [tags (-> (re-find #"(?s)Available catalog releases:\s+(.*)" (str stdout))
+                       second
+                       (str/split #"\s+"))]
+          (is (some #{"v0.1.0"} tags))
+          (is (every? #(or (str/starts-with? % "v")
+                           (some #{%} ["latest"])) tags)))
+        )
+      (catch :default e
+        (is false {:status (.-status e)
+                   :stdout (.-stdout e)
+                   :stderr (.-stderr e)}))))
+
+  (testing "with remote tags (no --tags option)"
+    (try
+      (let [stdout (execSync (str scittlets-cmd " releases"))]
+        (let [tags (-> (re-find #"(?s)Available catalog releases:\s+(.*)" (str stdout))
+                       second
+                       (str/split #"\s+"))]
+          (is (some #{"v0.1.0"} tags))
+          (is (every? #(or (str/starts-with? % "v")
+                           (some #{%} ["latest"])) tags)))
+        )
+      (catch :default e
+        (is false {:status (.-status e)
+                   :stdout (.-stdout e)
+                   :stderr (.-stderr e)})))))
 
 (deftest test-cmd-catalog
   (try
