@@ -6,13 +6,13 @@
 
 [Scittle](https://babashka.org/scittle/) brings the Small Clojure Interpreter to the browser, allowing you to run ClojureScript using simple `<script>` tags.
 
-**Scittlets** (short for *Scittle applets*) is a catalog of ready-made components and starter templates for Scittle apps—covering charting, editing, UI, and developer tools.
+**Scittlets** (short for *Scittle applets*) is a catalog of ready-made components and starter templates for bulding Scittle apps, covering charting, editing, UI, and developer tools.
 
-👉 ** [Visit the Scittlets website](https://ikappaki.github.io/scittlets/)** to browse components with live demos, copy installation commands, and explore starter templates.
+👉 **[Visit the Scittlets website](https://ikappaki.github.io/scittlets/)** to browse components with live demos, copy installation commands, and explore starter templates.
 
 ## Overview
 
-A **scittlet** is a ready to use ClojureScript component designed for [Scittle](https://babashka.org/scittle/), with its JavaScript dependencies that can be loaded in any Scittle HTML file.
+A **scittlet** is a ready to use ClojureScript component designed for adding functionality to [Scittle](https://babashka.org/scittle/) apps, with its JavaScript dependencies that can be loaded in any Scittle HTML file.
 
 Each component includes examples and instructions for loading from CDN into your Scittle apps. The CLI tool helps organize and scaffold your projects.
 
@@ -20,12 +20,12 @@ The repository offers the scaffolding needed to develop, test, showcase, and pub
 
 ## Getting Started
 
-** New to Scittle?** Create a starter app using a template:
+**New to Scittle?** Create a starter app from a template with the CLI:
 ```bash
 npx scittlets new
 ```
 
-** Add components to your Scittle app:**
+**Add components to your Scittle app:**
 1. **Using the CLI:** Manage components automatically with the Scittlets CLI (see below)
 2. **Manual setup:** Browse components on the [Scittlets Catalog](https://ikappaki.github.io/scittlets/scittlets.html) and copy script tags into your HTML file
 
@@ -35,15 +35,9 @@ Each component includes live demos and copy-paste code examples.
 
 The Scittlets CLI helps you create, manage, and pack Scittle apps and components.
 
-### Installation
-
-Install globally with npm:
-
-```bash
-npm install -g scittlets
-```
-
 ### Usage
+
+Install globally with npm (requires [Node.js and npm](https://nodejs.org/)): `npm install -g scittlets`
 
 Run commands with:
 ``` bash
