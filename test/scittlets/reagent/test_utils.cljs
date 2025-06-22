@@ -12,7 +12,7 @@
                 (.then (fn [res]
                          (println :fetching/response url)
                          (if-not (.-ok res)
-                           (throw (str "HTTP error: status " (.-status res) " url " url))
+                           (throw (js/Error. (str "HTTP error: status " (.-status res) " url " url)))
                            (.text res))))
                 (.then (fn [text]
                          (println :fetching/text url)
