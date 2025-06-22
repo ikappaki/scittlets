@@ -4,6 +4,8 @@
 
 ## Unreleased Catalog
 
+* Release script now copies `catalog.json` from local `releases/` to `scittlets/` on GitHub Pages for API dependency display, correcting an omission in the previous release (#25)
+
 ## Unreleased CLI
 
 ## cli-v0.8.0
