@@ -40,23 +40,24 @@ jobs:
 
       - name: Verify tag is setup in both releases/tags.txt and releases/catalog.json
         run: |
+          TAG_VERSION=$(jq -r .release.tag_name "$GITHUB_EVENT_PATH")
           FILE="releases/tags.txt"
           FILE_VERSION=$(head -n 1 $FILE | tr -d '\r')
 
           # Verify tag version matches first line of releases/tags.txt
-          if [ "$TAG_NAME" != "$FILE_VERSION" ]; then
-            echo "Error: Tag version ($TAG_NAME) does not match $FILE first line ($FILE_VERSION)"
+          if [ "$TAG_VERSION" != "$FILE_VERSION" ]; then
+            echo "Error: Tag version ($TAG_VERSION) does not match $FILE first line ($FILE_VERSION)"
             exit 1
           else
-            echo "Version match confirmed: $TAG_NAME"
+            echo "Version match confirmed: $TAG_VERSION"
           fi
 
           # Verify tag version matches version in releases/catalog.json
-          if ! grep -q "\"version\" *: *\"$TAG_NAME\"" releases/catalog.json; then
-            echo "Error: version \"$TAG_NAME\" not found in releases/catalog.json"
+          if ! grep -q "\"version\" *: *\"$TAG_VERSION\"" releases/catalog.json; then
+            echo "Error: version \"$TAG_VERSION\" not found in releases/catalog.json"
             exit 1
           else
-            echo "Version match found in releases/catalog.json: $TAG_NAME"
+            echo "Version match found in releases/catalog.json: $TAG_VERSION"
           fi
 
       - name: rebase
@@ -86,7 +87,7 @@ jobs:
           # TODO: this is needed from API pages to source the
           # dependnecies dependencies. The API pages should construct
           # the jsdelivr URL based on the version instead.
-          cp releases/catalog.json scittelts/catalog.json
+          cp releases/catalog.json $TARGET/catalog.json
           npm run updateLocalHtmlFiles releases/catalog.json $TARGET
 
         env:
