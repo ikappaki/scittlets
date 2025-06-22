@@ -6,30 +6,44 @@
 
 [Scittle](https://babashka.org/scittle/) brings the Small Clojure Interpreter to the browser, allowing you to run ClojureScript using simple `<script>` tags.
 
+**Scittlets** (short for *Scittle applets*) is a catalog of ready-made components and starter templates for Scittle apps—covering charting, editing, UI, and developer tools.
+
+👉 ** [Visit the Scittlets website](https://ikappaki.github.io/scittlets/)** to browse components with live demos, copy installation commands, and explore starter templates.
+
 ## Overview
 
-A **scittlet** is a Clojurescript namespace designed for use with [Scittle](https://babashka.org/scittle/), with a clearly defined set of `<script>` dependencies that can be loaded in any Scittle HTML file.
+A **scittlet** is a ready to use ClojureScript component designed for [Scittle](https://babashka.org/scittle/), with its JavaScript dependencies that can be loaded in any Scittle HTML file.
 
-**Scittlets** is a versioned catalog and repository of these modules, providing examples and instructions for loading from CDN into your Scittle file. It also includes a command-line tool (`scittlets`) to help manage scittlet dependencies in HTML files.
+Each component includes examples and instructions for loading from CDN into your Scittle apps. The CLI tool helps organize and scaffold your projects.
 
-The repository offers the scaffolding needed to develop, test, showcase, and publish scittlets, served via [jsDelivr](https://www.jsdelivr.com/) from the [Scitlets GitHub project](https://github.com/ikappaki/scittlets) itself.
+The repository offers the scaffolding needed to develop, test, showcase, and publish scittlets, served via [jsDelivr](https://www.jsdelivr.com/) from this GitHub repository.
 
-## Usage
+## Getting Started
 
-Explore available scittlets in the [Web Catalog](https://ikappaki.github.io/scittlets/).
+** New to Scittle?** Create a starter app using a template:
+```bash
+npx scittlets new
+```
 
-To use one:
+** Add components to your Scittle app:**
+1. **Using the CLI:** Manage components automatically with the Scittlets CLI (see below)
+2. **Manual setup:** Browse components on the [Scittlets Catalog](https://ikappaki.github.io/scittlets/scittlets.html) and copy script tags into your HTML file
 
-1. Add its listed dependencies to your Scittle HTML file manually, or
-2. Use the [scittlets](#CLI-scittlets) CLI command available via `npx` to manage dependencies easily.
+Each component includes live demos and copy-paste code examples.
 
-Follow the usage instructions and demo code provided.
+## CLI: scittlets
 
-### CLI: scittlets
+The Scittlets CLI helps you create, manage, and pack Scittle apps and components.
 
-Manage scittlet dependencies in HTML files.
+### Installation
 
-Use the CLI with `npx`, no install required. Optional global install: `npm install -g scittlets`.
+Install globally with npm:
+
+```bash
+npm install -g scittlets
+```
+
+### Usage
 
 Run commands with:
 ``` bash
@@ -108,34 +122,14 @@ Pack an HTML file and specify output filename:
 npx scittlets pack ./index.html output.html
 ```
 
-#### Important
+## Contributing & Development
 
-- To avoid GitHub API rate limits, set the environment variable `GITHUB_PUBLIC_TOKEN` (no scopes needed):
-  ```bash
-  export GITHUB_PUBLIC_TOKEN=your_token_here
-  # or, on PowerShell
-  $env:GITHUB_PUBLIC_TOKEN="your_token_here"
-  ```
+First, clone the repository:
 
-## Scittlets
-
-### [scittlets.dev.nrepl](https://ikappaki.github.io/scittlets/test/scittlets/dev/nrepl.html)
-
-Provides dependencies and a babashka script for opening up an nREPL connection to the Scittle app.
-
-### [scittlets.reagent](https://ikappaki.github.io/scittlets/test/scittlets/reagent/basic.html)
-
-Provides dependencies for [reagent](https://reagent-project.github.io/), a simple ClojureScript interface to [React](https://react.dev/).
-
-### [scittlets.reagent.codemirror](https://ikappaki.github.io/scittlets/test/scittlets/reagent/codemirror.html)
-
-A [reagent](https://reagent-project.github.io/) component around [CodeMirror](https://codemirror.net/), a code editor component for the web.
-
-### [scittlets.reagent.mermaid](https://ikappaki.github.io/scittlets/test/scittlets/reagent/mermaid.html)
-
-A [reagent](https://reagent-project.github.io/) component around [Mermaid](https://mermaid.js.org/), the diagramming and charting tool.
-
-## Development
+```bash
+git clone https://github.com/ikappaki/scittlets.git
+cd scittlets
+```
 
 Install dev dependencies:
 ```bash
