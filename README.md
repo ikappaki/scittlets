@@ -4,8 +4,6 @@
 > This project is in β.
 > Features and APIs are subject to change.
 
-👉 **[Visit the Scittlets website](https://ikappaki.github.io/scittlets/)** to browse components with live demos, copy installation commands, and explore starter templates.
-
 [Scittle](https://babashka.org/scittle/) brings the Small Clojure Interpreter to the browser, allowing you to run ClojureScript using simple `<script>` tags.
 
 **Scittlets** (short for *Scittle applets*) is a catalog of ready-made components and starter templates for bulding Scittle apps, covering charting, editing, UI, and developer tools.
@@ -17,6 +15,8 @@ A **scittlet** is a ready to use ClojureScript component designed for adding fun
 Each component includes examples and instructions for loading from CDN into your Scittle apps. The CLI tool helps organize and scaffold your projects.
 
 The repository offers the scaffolding needed to develop, test, showcase, and publish scittlets, served via [jsDelivr](https://www.jsdelivr.com/) from this GitHub repository.
+
+👉 **[Visit the Scittlets website](https://ikappaki.github.io/scittlets/)** to browse components with live demos, copy installation commands, and explore starter templates.
 
 ## Getting Started
 
