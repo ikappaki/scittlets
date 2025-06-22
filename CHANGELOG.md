@@ -4,6 +4,8 @@
 
 ## Unreleased Catalog
 
+* Fix Scittle and scittle.nrepl versions in the catalog to 0.7.23; improve documentation (#26)
+
 ## Unreleased CLI
 
 ## v0.6.2
