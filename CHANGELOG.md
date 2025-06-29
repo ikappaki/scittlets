@@ -4,6 +4,8 @@
 
 ## Unreleased Catalog
 
+* Fix catalog loading in nrepl dev card (#27)
+
 ## Unreleased CLI
 
 ## v0.6.3

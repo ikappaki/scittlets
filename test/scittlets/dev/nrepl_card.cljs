@@ -199,7 +199,7 @@
     (.replaceChild (.-parentNode old) content old)))
 
 (defn load-catalog! [catalog]
-  (-> (js/fetch "/catalog.json")
+  (-> (js/fetch "catalog.json")
       (.then #(.json %))
       (.then #(reset! catalog (js->clj %)))
       (.catch #(println :load-catalog/error (str %)))))
