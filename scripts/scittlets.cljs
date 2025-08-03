@@ -21,6 +21,7 @@
 
 
 (def script-filename "scittlets")
+(def home "https://ikappaki.github.io/scittlets")
 
 (def spec (-> (yargs)
               (.strict)
@@ -121,14 +122,13 @@
                                               :default false}))
               (.epilog (str "[1] RELEASE may also be a local path to a catalog file. The special value `latest` resolves to the most recent release version."
                             "\n[2] Set the HTTP_PROXY, HTTPS_PROXY, or NO_PROXY environment variables to use a proxy."
-                            "\n[3] Use NODE_EXTRA_CA_CERTS env variable to add custom CA certificates for HTTPS."))
+                            "\n[3] Use NODE_EXTRA_CA_CERTS env variable to add custom CA certificates for HTTPS."
+                            "\n[4] Homepage: " home))
 
               (.middleware (fn [argv]
                              (when (.-verbose argv)
                                (reset! v? true))))
               (.help)))
-
-(def home "https://ikappaki.github.io/scittlets")
 
 (def scittlets-jsdelivr-url "https://cdn.jsdelivr.net/gh/ikappaki/scittlets")
 (def releases-tags-url (str scittlets-jsdelivr-url "/releases/tags.txt"))
