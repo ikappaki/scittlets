@@ -54,7 +54,7 @@
                                             (clj->js {:describe "Template name"
                                                       :type "string"}))
                                (.positional "output-dir"
-                                        (clj->js {:describe "Optional target directory for the new app."
+                                        (clj->js {:describe "Optional target directory for the new app"
                                                   :type "string"}))
                                (.option "list-templates"
                                        (clj->js {:alias "l"
