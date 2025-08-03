@@ -6,13 +6,16 @@
 
 ## Unreleased CLI
 
+* Replaced `--directory` with positional `output-dir` in `new` command (#28)
+* Added homepage link to CLI output (#28)
+
 ## v0.6.4
 
-* Fix catalog loading in nrepl dev card (#27)
+* Fixed catalog loading in nrepl dev card (#27)
 
 ## v0.6.3
 
-* Fix Scittle and scittle.nrepl versions in the catalog to 0.7.23; improve documentation (#26)
+* Fixed Scittle and scittle.nrepl versions in the catalog to 0.7.23; improve documentation (#26)
 
 ## v0.6.2
 

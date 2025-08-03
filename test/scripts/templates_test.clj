@@ -22,7 +22,7 @@
        (map #(re-find #"src=\"([^\"]+)\"" %))
        (map second)))
 
-(deftest scittelts-new-all-test
+(deftest scittlets-new-all-test
   ;; create an instance of each template and test some key elements
   ;; were loaded.
   (let [templates (catalog "templates")]
@@ -35,7 +35,7 @@
       (fs/with-temp-dir [d]
         (let [target (fs/path d "target")
               index-path (fs/path target "index.html")
-              _stdout   (:out (shell (str "npm run scittlets -- new " template " --directory " target " -r ./catalog.json")
+              _stdout   (:out (shell (str "npm run scittlets -- new " template " " target " -r ./catalog.json")
                                     {:out :string}))]
           ;;(println :command/stdout _stdout)
 

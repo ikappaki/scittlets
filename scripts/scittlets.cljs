@@ -21,6 +21,7 @@
 
 
 (def script-filename "scittlets")
+(def home "https://ikappaki.github.io/scittlets")
 
 (def spec (-> (yargs)
               (.strict)
@@ -47,15 +48,14 @@
                               (.option "rewrite"
                                        (clj->js {:description "Rewrite source URLs to this version (may not exist) and print the result"
                                                  :type "string"})))))
-              (.command "new [template]" "Create a new app from TEMPLATE. If no template is provided, lists available templates."
+              (.command "new [template] [output-dir]" "Create a new app from TEMPLATE to OUTPUT-DIR (defaults to the template's default dir if not specified). If no template is given, lists available templates."
                         (fn [y]
                           (-> y
                                (.positional "template"
                                             (clj->js {:describe "Template name"
                                                       :type "string"}))
-                               (.option "directory"
-                                        (clj->js {:alias "d"
-                                                  :describe "Override the default output directory for the template"
+                               (.positional "output-dir"
+                                        (clj->js {:describe "Optional target directory for the new app"
                                                   :type "string"}))
                                (.option "list-templates"
                                        (clj->js {:alias "l"
@@ -122,7 +122,8 @@
                                               :default false}))
               (.epilog (str "[1] RELEASE may also be a local path to a catalog file. The special value `latest` resolves to the most recent release version."
                             "\n[2] Set the HTTP_PROXY, HTTPS_PROXY, or NO_PROXY environment variables to use a proxy."
-                            "\n[3] Use NODE_EXTRA_CA_CERTS env variable to add custom CA certificates for HTTPS."))
+                            "\n[3] Use NODE_EXTRA_CA_CERTS env variable to add custom CA certificates for HTTPS."
+                            "\n[4] Homepage: " home))
 
               (.middleware (fn [argv]
                              (when (.-verbose argv)
@@ -168,6 +169,7 @@
 
         (println)
         (println "✴️ Running: scittlets releases")
+        (println "🏠" home)
         (println)
         (println "🏷️ Available catalog releases:" (str/join " " tags))
         (exit 0))
@@ -178,6 +180,7 @@
         (when-not arg-rewrite
           (println)
           (println "✴️ Running: scittlets catalog")
+          (println "🏠" home)
           (println))
         (let [{:keys [catalog tag]} (js/await (catalog-get arg-release))
               version-inline (get catalog "version")]
@@ -237,12 +240,13 @@
 
       "new"
       (let [arg-template (.-template argv)
-            arg-directory (.-directory argv)
+            arg-output-dir (.-outputDir argv)
             arg-release (.-release argv)
             arg-list-templates (.-listTemplates argv)
             {:keys [catalog tag]} (js/await (catalog-get arg-release))]
         (println)
         (println "✴️ Running: scittlets new")
+        (println "🏠" home)
         (println)
         (when arg-list-templates
           (templates-print catalog)
@@ -250,14 +254,14 @@
 
         (println "📚 Using Catalog:" tag)
         (println)
-        (debug :new/args :template arg-template :directory arg-directory :tag arg-release)
+        (debug :new/args :template arg-template :directory arg-output-dir :tag arg-release)
 
         (if-not arg-template
           (do
             (println "⚠️ Please specify a template name.")
             (println)
             (templates-print catalog))
-          (js/await (template-new tag catalog arg-template arg-directory)))
+          (js/await (template-new tag catalog arg-template arg-output-dir)))
         (exit 0))
 
       "pack"
@@ -265,6 +269,7 @@
             arg-target (.-target argv)]
         (println)
         (println "✴️ Running: scittlets pack")
+        (println "🏠" home)
         (println)
 
         (if-not (readable? arg-path)
@@ -344,7 +349,8 @@
         (println " - " template "\t" descr)))
     (println)
     (println "📝 Create a new app with:
-   scittlets new <template-name> [output-dir]")))
+   scittlets new <template> [output-dir]")))
+
 
 (defn ^:async catalog-get [tag]
   (let [tag (cond
