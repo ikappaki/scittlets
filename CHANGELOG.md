@@ -6,6 +6,8 @@
 
 ## Unreleased CLI
 
+## cli-v0.9.0
+
 * Replaced `--directory` with positional `output-dir` in `new` command (#28)
 * Added homepage link to CLI output (#28)
 
