@@ -45,11 +45,9 @@ npx scittlets <command> [options]
 ```
 
 #### Commands
-- `new [template] [--directory path]`
+- `new [template] [output-dir]`
 
-  Create a new app from the specified TEMPLATE. If no template is provided, lists available templates.
-
-  Output directory defaults to the template's default directory but can be overridden with `--directory` (or `-d`).
+  Create a new app from the specified TEMPLATE to OUTPUT-DIR. If no template is provided, lists available templates.
 
 - `add <html> [scittlets..] [--list-scittlets]`
 

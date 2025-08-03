@@ -243,7 +243,7 @@
 (deftest test-cmd-new
   (async done
          (let [target (path/join (transient-dir-make!) "test-cmd-new")]
-           (exec (str scittlets-cmd " new scittle/basic -d " target " -r ./catalog.json")
+           (exec (str scittlets-cmd " new scittle/basic " target " -r ./catalog.json")
                  (fn [error stdout stderr]
                    (is (nil? error) (str "stdout: " stdout
                                          "\n\nstderr: " stderr))
@@ -273,7 +273,7 @@
 (deftest test-cmd-new-other
   (async done
          (let [target (path/join (transient-dir-make!) "test-cmd-new-other")]
-           (exec (str scittlets-cmd " new reagent/mermaid -d " target " -r ./catalog.json")
+           (exec (str scittlets-cmd " new reagent/mermaid " target " -r ./catalog.json")
                  (fn [error stdout stderr]
                    (is (nil? error) (str "stdout: " stdout
                                          "\n\nstderr: " stderr))
