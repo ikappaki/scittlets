@@ -1,6 +1,6 @@
 {
   "release": {
-    "tag_name": "enh/site-update",
+    "tag_name": "v0.6.4",
     "upload_url": "https://api.github.com/repos/ikappaki/scittlets/releases/1/assets{?name,label}"
   },
   "repository": {
