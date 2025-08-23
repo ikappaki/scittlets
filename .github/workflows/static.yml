@@ -68,7 +68,7 @@ jobs:
           rm -fr $TARGET
           mkdir -p $TARGET
 
-          DIRS="./examples ./test/scittlets"
+          DIRS="./templates ./test/scittlets"
           echo :github-pages/info :target $TARGET :source-dirs $DIRS
 
           # copy html and cljs files

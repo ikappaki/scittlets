@@ -48,7 +48,7 @@
    [todo-list+]]
 
   [:section.demo
-   [demo+ "examples/reagent/reagent_basic.html" "examples/reagent/reagent_basic.cljs"]]]
+   [demo+ "templates/reagent/reagent_basic.html" "templates/reagent/reagent_basic.cljs"]]]
              ;;[app]
  (.getElementById js/document "app"))
 

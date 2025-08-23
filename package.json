@@ -34,7 +34,7 @@
     "scittlets": "npx cherry run scripts/scittlets.cljs",
     "tests": "npx nbb test/scripts/scittlets_test.cljs",
     "updateLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs",
-    "updateAllLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs ./catalog.json ./examples ./test/scittlets",
+    "updateAllLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs ./catalog.json ./templates ./test/scittlets",
     "gh-action-test": "act -j test -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest",
     "gh-action-pages": "act --eventpath ./test/corpus/gh-deploy-release.json -j deploy --bind \"${PWD}/scittlets:/github/workspace/scittlets\" -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest",
     "html-gen": "bb scripts/pages_generate.clj",

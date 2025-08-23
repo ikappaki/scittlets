@@ -230,7 +230,7 @@
   (set! (.-innerHTML app) "")
   (info-el-append app "scittlets.dev.nrepl" (nrepl-html))
   (.appendChild app (h :h4 {} "Demo"
-                       (h :iframe {:name "nrepl" :src "examples/dev/nrepl.html"
+                       (h :iframe {:name "nrepl" :src "templates/dev/nrepl.html"
                                    :style {"height" "45vh"
                                            "margin-top" "1em"
                                            "width" "99%"
