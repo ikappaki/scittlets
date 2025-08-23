@@ -2,13 +2,13 @@
   (:require [reagent.core :as r]
             [reagent.dom :as rdom]
             [scittlets.reagent.mermaid :refer [mermaid+]]
-            [scittlets.reagent.test-utils :refer [info+ file-open+ demo+]]))
+            [scittlets.reagent.api-utils :refer [info+ file-open+ demo+]]))
 
-;; (def info+ (or (requiring-resolve 'scittlets.reagent.test-utils/info+)
+;; (def info+ (or (requiring-resolve 'scittlets.reagent.api-utils/info+)
 ;;                (fn [ns-kw] (r/as-element [:div (str ns-kw)]))))
-;; (def file-open+ (or (requiring-resolve 'scittlets.reagent.test-utils/file-open+)
+;; (def file-open+ (or (requiring-resolve 'scittlets.reagent.api-utils/file-open+)
 ;;                     (fn [label url] (r/as-element [:a {:href url} (str label)]))))
-;; (def demo+ (or (requiring-resolve 'scittlets.reagent.test-utils/demo+)
+;; (def demo+ (or (requiring-resolve 'scittlets.reagent.api-utils/demo+)
 ;;                (fn [html-url cljs-url] (r/as-element [:a {:href html-url} (str html-url)]))))
 
 (defn text-input+ [input*]

@@ -1,4 +1,4 @@
-(ns scittlets.reagent.test-utils
+(ns scittlets.reagent.api-utils
   (:require [reagent.core :as r]
             [clojure.string :as str]))
 

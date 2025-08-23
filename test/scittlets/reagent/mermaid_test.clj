@@ -10,7 +10,7 @@
 
 (deftest text-change-test
   (doto *driver*
-    (e/go (utu/test-server-url-get "test/scittlets/reagent/mermaid.html"))
+    (e/go (utu/test-server-url-get "api/scittlets/reagent/mermaid.html"))
     (e/refresh)
     (e/wait-visible :text-input)
     (e/click :text-input))
