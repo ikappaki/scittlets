@@ -4,9 +4,11 @@
 
 ## Unreleased Catalog
 
-* Fixed Scittle version to @0.7.3 (from @latest) to stay in sync with the Scittle plugins version (#29)
-
 ## Unreleased CLI
+
+## v0.7.0
+
+* Fixed Scittle version to @0.7.3 (from @latest) to stay in sync with the Scittle plugins version (#29)
 
 ## cli-v0.9.0
 
