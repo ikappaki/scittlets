@@ -278,7 +278,7 @@
                    (is (nil? error) (str "stdout: " stdout
                                          "\n\nstderr: " stderr))
                    (is (empty? stderr))
-                   (is (= #{"index.html" "mermaid_demo.cljs"} (set (fs/readdirSync target))))
+                   (is (= #{"index.html" "mermaid.cljs"} (set (fs/readdirSync target))))
 
                    (done))))))
 
@@ -309,7 +309,7 @@
                      (is (= ["<!DOCTYPE html>"
                              "<html lang=\"en-us\">"
                              "  <head>"
-                             "    <title>Mermaid Demo</title>"
+                             "    <title>Mermaid Template</title>"
                              "    <meta charset=\"utf-8\">"
                              ""
                              "    <script src=\"https://cdn.jsdelivr.net/npm/scittle@0.7.23/dist/scittle.min.js\" type=\"application/javascript\"></script>"

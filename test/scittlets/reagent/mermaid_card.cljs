@@ -44,6 +44,6 @@ graph LR
      [diagram+ input*]]
 
     [:section.demo
-     [demo+ "templates/mermaid/mermaid_demo.html" "templates/mermaid/mermaid_demo.cljs"]]]
+     [demo+ "templates/mermaid/mermaid.html" "templates/mermaid/mermaid.cljs"]]]
 
    (.getElementById js/document "app")))

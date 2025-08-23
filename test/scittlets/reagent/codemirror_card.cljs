@@ -57,6 +57,6 @@
        [codemirror-demo+ example syntax-error?*]]]]
 
     [:section.demo
-     [demo+ "templates/codemirror/codemirror_demo.html" "templates/codemirror/codemirror_demo.cljs"]]]
+     [demo+ "templates/codemirror/codemirror.html" "templates/codemirror/codemirror.cljs"]]]
 
    (.getElementById js/document "app")))
