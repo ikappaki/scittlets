@@ -1,4 +1,4 @@
-(ns scripts.scittlets-test
+(ns cli.scittlets-test
   (:require ["child_process" :refer [exec execSync]]
             ["fs" :as fs]
             ["os" :as os]

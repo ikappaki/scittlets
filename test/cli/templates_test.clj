@@ -1,4 +1,4 @@
-(ns scripts.templates-test
+(ns cli.templates-test
   "Tests all templates in the catalog can be created and loaded with `scittlets new`."
   (:require [babashka.fs :as fs]
             [babashka.process :refer [shell]]
