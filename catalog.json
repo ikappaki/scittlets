@@ -5,8 +5,8 @@
   "descr": "Provides dependencies and a babashka script for opening up an nREPL connection to the Scittle app",
   "deps": ["<script>var SCITTLE_NREPL_WEBSOCKET_PORT = 1340;</script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/scittle@0.7.23/dist/scittle.nrepl.js\" type=\"application/javascript\"></script>"],
-  "files": [{"src": "examples/dev/nrepl-server.clj", "dest": "nrepl-server.clj"}],
-  "api" : "test/scittlets/dev/nrepl.html",
+  "files": [{"src": "templates/dev/nrepl-server.clj", "dest": "nrepl-server.clj"}],
+  "api" : "api/scittlets/dev/nrepl.html",
   "see" : {"Scittle nREPL" : "https://github.com/babashka/scittle/tree/main/doc/nrepl"
           }},
 
@@ -16,7 +16,7 @@
   "deps": ["<script src=\"https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js\"></script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/scittle@0.7.23/dist/scittle.reagent.min.js\"></script>"],
-  "api" : "test/scittlets/reagent/basic.html",
+  "api" : "api/scittlets/reagent/basic.html",
   "see" : {"reagent" : "https://reagent-project.github.io/"
           }},
 
@@ -27,7 +27,7 @@
            "<script src=\"https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js\"></script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/scittle@0.7.23/dist/scittle.reagent.min.js\"></script>",
            "<script src=\"src/scittlets/reagent/codemirror.cljs\" type=\"application/x-scittle\"></script>"],
-  "api" : "test/scittlets/reagent/codemirror.html",
+  "api" : "api/scittlets/reagent/codemirror.html",
   "see" : {"codemirror" : "https://codemirror.net/",
            "reagent" : "https://reagent-project.github.io/"
           }},
@@ -40,7 +40,7 @@
            "<script src=\"https://cdn.jsdelivr.net/npm/scittle@0.7.23/dist/scittle.reagent.min.js\"></script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js\"></script>",
            "<script src=\"src/scittlets/reagent/mermaid.cljs\" type=\"application/x-scittle\"></script>"],
-  "api" : "test/scittlets/reagent/mermaid.html",
+  "api" : "api/scittlets/reagent/mermaid.html",
   "see" : {"mermaid" : "https://mermaid.js.org/",
            "reagent" : "https://reagent-project.github.io/"
           }},
@@ -48,35 +48,35 @@
  "templates" :
  {"dev/nrepl":
   {"name": "Scittle nREPL",
-   "src": "examples/dev",
+   "src": "templates/dev",
    "descr": "A minimal nREPL capable scittlet template",
    "files": [{"src": "nrepl.html", "dest": "index.html"},
              "nrepl.cljs"],
    "target": "scits_nrepl"},
   "reagent/basic":
   {"name": "Reagent Basic",
-   "src": "examples/reagent",
+   "src": "templates/reagent",
    "descr": "A minimal Reagent template",
    "files": [{"src": "reagent_basic.html", "dest": "index.html"},
              "reagent_basic.cljs"],
    "target": "scits_reagent"},
   "reagent/codemirror":
   {"name": "CodeMirror Reagent",
-   "src": "examples/codemirror",
+   "src": "templates/codemirror",
    "descr": "A Reagent template around CodeMirror, a code editor component for the web",
-   "files": [{"src": "codemirror_demo.html", "dest": "index.html"},
-             "codemirror_demo.cljs"],
+   "files": [{"src": "codemirror.html", "dest": "index.html"},
+             "codemirror.cljs"],
    "target": "scits_reagent_codemirror"},
   "reagent/mermaid":
   {"name": "Mermaid Reagent",
-   "src": "examples/mermaid",
+   "src": "templates/mermaid",
    "descr": "A Reagent template around Mermaid, the diagramming and charting tool",
-   "files": [{"src": "mermaid_demo.html", "dest": "index.html"},
-             "mermaid_demo.cljs"],
+   "files": [{"src": "mermaid.html", "dest": "index.html"},
+             "mermaid.cljs"],
    "target": "scits_reagent_mermaid"},
   "scittle/basic":
   {"name": "Scittle Basic",
-   "src": "examples/scittle",
+   "src": "templates/scittle",
    "descr": "A minimal Scittle template with zero dependencies",
    "files": [{"src": "scittle_basic.html", "dest": "index.html"},
              "scittle_basic.cljs"],

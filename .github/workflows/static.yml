@@ -68,7 +68,7 @@ jobs:
           rm -fr $TARGET
           mkdir -p $TARGET
 
-          DIRS="./examples ./test/scittlets"
+          DIRS="./templates ./test/scittlets"
           echo :github-pages/info :target $TARGET :source-dirs $DIRS
 
           # copy html and cljs files
@@ -85,8 +85,8 @@ jobs:
           # use updated catalog to update HTML files deps in TARGET
           cat releases/catalog.json
           # TODO: this is needed from API pages to source the
-          # dependnecies dependencies. The API pages should construct
-          # the jsdelivr URL based on the version instead.
+          # dependencies. The API pages should construct the jsdelivr
+          # URL based on the version instead.
           cp releases/catalog.json $TARGET/catalog.json
           npm run updateLocalHtmlFiles releases/catalog.json $TARGET
 

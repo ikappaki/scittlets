@@ -1,7 +1,7 @@
 (ns scittlets.reagent.basic-card
   (:require [reagent.core :as r]
             [reagent.dom :as rdom]
-            [scittlets.reagent.test-utils :refer [info+ file-open+ demo+]]))
+            [scittlets.reagent.api-utils :refer [info+ file-open+ demo+]]))
 
 (defonce todos (r/atom [{:id 1 :text "Learn Reagent" :done false}
                         {:id 2 :text "Build something cool" :done false}]))
@@ -48,7 +48,7 @@
    [todo-list+]]
 
   [:section.demo
-   [demo+ "examples/reagent/reagent_basic.html" "examples/reagent/reagent_basic.cljs"]]]
+   [demo+ "templates/reagent/reagent_basic.html" "templates/reagent/reagent_basic.cljs"]]]
              ;;[app]
  (.getElementById js/document "app"))
 

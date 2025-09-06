@@ -11,7 +11,7 @@
 
 (deftest border-change-test
   (doto *driver*
-    (e/go (utu/test-server-url-get "test/scittlets/reagent/codemirror.html"))
+    (e/go (utu/test-server-url-get "api/scittlets/reagent/codemirror.html"))
     (e/refresh)
     (e/wait-visible :codemirror-editor)
     (e/click :codemirror-editor)

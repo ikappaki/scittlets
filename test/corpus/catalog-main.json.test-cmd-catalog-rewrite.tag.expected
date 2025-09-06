@@ -47,15 +47,15 @@
   },
   "templates": {
     "scittle/basic": {
-      "src": "examples/scittle",
+      "src": "templates/scittle",
       "descr": "A minimal Scittle template with zero dependencies",
       "files": [
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v99.99.99/examples/scittle/scittle_basic.html",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v99.99.99/templates/scittle/scittle_basic.html",
           "dest": "index.html"
         },
         {
-          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v99.99.99/examples/scittle/scittle_basic.cljs",
+          "src": "https://cdn.jsdelivr.net/gh/ikappaki/scittlets@v99.99.99/templates/scittle/scittle_basic.cljs",
           "dest": "scittle_basic.cljs"
         }
       ],

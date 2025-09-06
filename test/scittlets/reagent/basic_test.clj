@@ -12,7 +12,7 @@
 
 (deftest todo-done-test
   (doto *driver*
-    (e/go (utu/test-server-url-get  "test/scittlets/reagent/basic.html"))
+    (e/go (utu/test-server-url-get  "api/scittlets/reagent/basic.html"))
     (e/refresh)
     (e/wait-visible :todo-cb-1))
   (is (= false (e/selected? *driver* :todo-cb-1)))

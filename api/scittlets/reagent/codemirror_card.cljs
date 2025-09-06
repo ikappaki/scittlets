@@ -4,7 +4,7 @@
             [scittlets.reagent.codemirror :refer [EditorView+
                                                   esm-import when-esm-modules-ready+
                                                   esm-codemirror* esm-codemirror-view*]]
-            [scittlets.reagent.test-utils :refer [info+ file-open+ demo+]]))
+            [scittlets.reagent.api-utils :refer [info+ file-open+ demo+]]))
 
 (def esm-lang-clojure* (esm-import "https://esm.sh/@nextjournal/lang-clojure" clojure))
 
@@ -57,6 +57,6 @@
        [codemirror-demo+ example syntax-error?*]]]]
 
     [:section.demo
-     [demo+ "examples/codemirror/codemirror_demo.html" "examples/codemirror/codemirror_demo.cljs"]]]
+     [demo+ "templates/codemirror/codemirror.html" "templates/codemirror/codemirror.cljs"]]]
 
    (.getElementById js/document "app")))

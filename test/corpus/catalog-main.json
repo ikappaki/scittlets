@@ -33,7 +33,7 @@
 
  "templates" :
  {"scittle/basic":
-  {"src": "examples/scittle",
+  {"src": "templates/scittle",
    "descr": "A minimal Scittle template with zero dependencies",
    "files": [{"src": "scittle_basic.html", "dest": "index.html"},
              "scittle_basic.cljs"],
