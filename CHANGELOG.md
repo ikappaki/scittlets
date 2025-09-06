@@ -4,10 +4,12 @@
 
 ## Unreleased Catalog
 
+## Unreleased CLI
+
+## v0.7.1
+
 * Restructured directories, filenames, and code identifiers to better align with the Scittlets, templates, and tests organization (#30)
 * Added CONTRIBUTING.md file (#30)
-
-## Unreleased CLI
 
 ## v0.7.0
 
