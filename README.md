@@ -114,41 +114,9 @@ Pack an HTML file and specify output filename:
 npx scittlets pack ./index.html output.html
 ```
 
-## Contributing & Development
+## Contributing
 
-First, clone the repository:
-
-```bash
-git clone https://github.com/ikappaki/scittlets.git
-cd scittlets
-```
-
-Install dev dependencies:
-```bash
-$ npm install
-```
-
-Run the excellent [cljs-josh](https://github.com/chr15m/cljs-josh) live-reloading Scittle server:
-```bash
-$ npx josh
-Serving ./ on port 8000:
-- http://192.168.1.100:8000
-- http://127.0.0.1:8000
-SSE connection established
-```
-
-Scittlets are listed in [catalog.json](catalog.json), the metadata registry.
-
-### Example Scittlet: `scittlet.reagent.mermaid`
-
-Use this scittlet as a starting point for development:
-* Code: [src/scittlets/reagent/mermaid.cljs](src/scittlets/reagent/mermaid.cljs)
-* Metadata: [catalog.json](catalog.json)
-* Card: [api/scittlets/reagent/mermaid_card.cljs](api/scittlets/reagent/mermaid_card.cljs)
-* UI Test: [test/scittlets/reagent/mermaid_test.cljs](test/scittlets/reagent/mermaid_test.cljs)
-* API page: [api/scittlets/reagent/mermaid.html](test/scittlets/reagent/mermaid.html)
-* Template code: [templates/mermaid/mermaid.cljs](templates/mermaid/mermaid.cljs)
-* Template page: [templates/mermaid/mermaid.html](templates/mermaid/mermaid.html)
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 

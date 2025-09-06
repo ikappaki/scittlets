@@ -33,6 +33,7 @@
   "scripts": {
     "scittlets": "npx cherry run scripts/scittlets.cljs",
     "tests": "npx nbb test/cli/scittlets_test.cljs",
+    "test-ui": "bb test-ui",
     "updateLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs",
     "updateAllLocalHtmlFiles": "npx nbb scripts/html_local_deps_update.cljs ./catalog.json ./templates ./test/scittlets",
     "gh-action-test": "act -j test -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest",
