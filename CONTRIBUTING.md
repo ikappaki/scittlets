@@ -1,13 +1,17 @@
 # Contributing
 
+This document describe how to add and test new scittlets and templates, including scripts and file structure.
+
 ## Scripts
+
+Helper scripts for development.
 
 Install dev dependencies:
 ```bash
 $ npm install
 ```
 
-Several Node scripts can be run with npx. Some require `bb` ([babaskha](https://babashka.org/)):
+Several Node scripts can be run with npm. Some require ([Babaskha](https://babashka.org/)) being in the PATH:
 
 - `npm run scittlets -- <options>`: run the dev version of the `scittlets` CLI.
 - `npm run tests`: run CLI tests.
@@ -15,6 +19,8 @@ Several Node scripts can be run with npx. Some require `bb` ([babaskha](https://
 - `npm run html-gen`: update site index pages.
 
 ## Scittlets
+
+Anatomy
 
 ```
 .
@@ -40,7 +46,7 @@ Several Node scripts can be run with npx. Some require `bb` ([babaskha](https://
             └── ...
 ```
 
-Ⓒ `catalog.json`: scittlets registry
+Ⓒ `catalog.json`: Scittlets registry
 
 Ⓐ `api/`: API documentation and demo page
 
@@ -73,21 +79,24 @@ A scittlet is a ClojureScript namespace listed in the catalog. Example entry:
 ```
 
 
-- Source: [src/scittlets/reagent/mermaid.cljs](src/scittlets/reagent/mermaid.cljs).
-- API docs: [api/scittlets/reagent](api/scittlets/reagent).
-- UI test (using [Etaoin](https://github.com/clj-commons/etaoin)): [test/scittlets/reagent/mermaid_test.clj](test/scittlets/reagent/mermaid_test.clj).
+- Source: [src/scittlets/reagent/mermaid.cljs](src/scittlets/reagent/mermaid.cljs)
+- API docs: [api/scittlets/reagent](api/scittlets/reagent)
+- UI test (using [Etaoin](https://github.com/clj-commons/etaoin)): [test/scittlets/reagent/mermaid_test.clj](test/scittlets/reagent/mermaid_test.clj)
 
 Suggested workflow:
 
 1. Create the API doc page including dependencies.
 2. Add an empty scittlet source file.
 3. Start development using [cljs-josh](https://github.com/chr15m/cljs-josh), navigate to the API page.
-
 ```shell
 $ npx josh
 ```
+4. Add a UI test to verify functionality.
+5. Update `catalog.json` with the new scittlet's details.
 
 ## Templates
+
+Templates anatomy
 
 ```
 .
