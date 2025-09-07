@@ -4,6 +4,9 @@
 
 ## Unreleased Catalog
 
+* `dev/nrepl` template: Upgraded `sci.nrepl` dependency to include the local `describe` op, improving compatibility with `clojure-mcp` (#31)
+* `dev/nrepl` template: Renamed `nrepl-server.clj` to `nrepl-proxy.clj` for clarity (#31)
+
 ## Unreleased CLI
 
 ## v0.7.1

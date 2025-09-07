@@ -161,13 +161,13 @@
   (h :div {}
      (h :p {}
         "This Scittlet includes an "
-        (h :code {} "nrepl-server.clj")
-        " script, which starts an nREPL server for interacting with the environment.")
+        (h :code {} "nrepl-proxy.clj")
+        " script, which runs an nREPL server that proxies requests to a ClojureScript runtime in the browser via WebSockets.")
 
-     (h :p {} "To launch the server using "
+     (h :p {} "To launch the proxy using "
         (h :a {:href "https://github.com/babashka/babashka#installation" :target "_blank"} "Babashka")
         " run:")
-     (h :pre {} (h :code {} "bb nrepl-server.clj [--port PORT]"))
+     (h :pre {} (h :code {} "bb nrepl-proxy.clj [--port PORT]"))
      (h :p {}
         "The default nREPL port is " (h :code {} "1339") ".")
 
