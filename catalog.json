@@ -5,7 +5,7 @@
   "descr": "Provides dependencies and a babashka script for opening up an nREPL connection to the Scittle app",
   "deps": ["<script>var SCITTLE_NREPL_WEBSOCKET_PORT = 1340;</script>",
            "<script src=\"https://cdn.jsdelivr.net/npm/scittle@0.7.23/dist/scittle.nrepl.js\" type=\"application/javascript\"></script>"],
-  "files": [{"src": "templates/dev/nrepl-server.clj", "dest": "nrepl-server.clj"}],
+  "files": [{"src": "templates/dev/nrepl-proxy.clj", "dest": "nrepl-proxy.clj"}],
   "api" : "api/scittlets/dev/nrepl.html",
   "see" : {"Scittle nREPL" : "https://github.com/babashka/scittle/tree/main/doc/nrepl"
           }},
